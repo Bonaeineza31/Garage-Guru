@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:garage_guru/core/theme/app_theme.dart';
 import 'package:garage_guru/screens/customer/home_screen.dart';
 import 'package:garage_guru/screens/customer/map_screen.dart';
-import 'package:garage_guru/screens/customer/bookings_list_screen.dart';
+import 'package:garage_guru/screens/customer/repairs_screen.dart';
 import 'package:garage_guru/screens/customer/profile_screen.dart';
+
 class CustomerShell extends StatefulWidget {
   final int initialTab;
 
@@ -19,7 +20,7 @@ class _CustomerShellState extends State<CustomerShell> {
   final _screens = const [
     HomeScreen(),
     MapScreen(),
-    BookingsListScreen(),
+    RepairsScreen(),
     ProfileScreen(),
   ];
 
@@ -50,14 +51,14 @@ class _CustomerShellState extends State<CustomerShell> {
               label: 'Home',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.map_outlined),
-              activeIcon: Icon(Icons.map_rounded),
-              label: 'Map',
+              icon: Icon(Icons.location_on_outlined),
+              activeIcon: Icon(Icons.location_on_rounded),
+              label: 'Garages',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.calendar_month_outlined),
-              activeIcon: Icon(Icons.calendar_month_rounded),
-              label: 'Bookings',
+              icon: Icon(Icons.build_outlined),
+              activeIcon: Icon(Icons.build_rounded),
+              label: 'Repairs',
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.person_outline_rounded),
@@ -69,4 +70,4 @@ class _CustomerShellState extends State<CustomerShell> {
       ),
     );
   }
-}
+}
