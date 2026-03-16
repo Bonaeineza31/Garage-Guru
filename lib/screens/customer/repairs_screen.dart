@@ -91,16 +91,14 @@ class _RepairsScreenState extends State<RepairsScreen>
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: AppColors.primary,
         elevation: 0,
         leadingWidth: 60,
         leading: Padding(
-          padding: const EdgeInsets.only(left: 16),
+          padding: const EdgeInsets.all(12),
           child: Container(
-            width: 36,
-            height: 36,
             decoration: BoxDecoration(
-              gradient: AppColors.primaryGradient,
+              color: Colors.white.withOpacity(0.2),
               borderRadius: BorderRadius.circular(8),
             ),
             child: const Center(
@@ -110,7 +108,7 @@ class _RepairsScreenState extends State<RepairsScreen>
                   color: Colors.white,
                   fontFamily: 'Poppins',
                   fontWeight: FontWeight.w700,
-                  fontSize: 18,
+                  fontSize: 16,
                 ),
               ),
             ),
@@ -122,26 +120,27 @@ class _RepairsScreenState extends State<RepairsScreen>
             fontFamily: 'Poppins',
             fontWeight: FontWeight.w700,
             fontSize: 18,
-            color: AppColors.textPrimary,
+            color: Colors.white,
           ),
         ),
         actions: [
           Stack(
             children: [
               IconButton(
-                icon: const Icon(Icons.notifications_outlined,
-                    color: AppColors.textPrimary),
+                icon: const Icon(Icons.notifications_none_rounded,
+                    color: Colors.white),
                 onPressed: () {},
               ),
               Positioned(
-                right: 10,
-                top: 10,
+                right: 12,
+                top: 12,
                 child: Container(
                   width: 8,
                   height: 8,
-                  decoration: const BoxDecoration(
+                  decoration: BoxDecoration(
                     color: AppColors.error,
                     shape: BoxShape.circle,
+                    border: Border.all(color: AppColors.primary, width: 1.5),
                   ),
                 ),
               ),
@@ -153,25 +152,18 @@ class _RepairsScreenState extends State<RepairsScreen>
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            color: Colors.white,
-            padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+            color: AppColors.primary,
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  'Repairs',
-                  style: TextStyle(
-                    fontFamily: 'Poppins',
-                    fontWeight: FontWeight.w700,
-                    fontSize: 22,
-                    color: AppColors.textPrimary,
-                  ),
-                ),
-                const SizedBox(height: 8),
                 TabBar(
                   controller: _tabController,
-                  labelColor: AppColors.info,
-                  unselectedLabelColor: AppColors.textSecondary,
+                  labelColor: Colors.white,
+                  unselectedLabelColor: Colors.white.withOpacity(0.7),
+                  indicatorColor: Colors.white,
+                  dividerColor: Colors.transparent,
+                  indicatorWeight: 3,
                   labelStyle: const TextStyle(
                     fontFamily: 'Poppins',
                     fontWeight: FontWeight.w600,
@@ -182,8 +174,6 @@ class _RepairsScreenState extends State<RepairsScreen>
                     fontWeight: FontWeight.w400,
                     fontSize: 14,
                   ),
-                  indicatorColor: AppColors.info,
-                  indicatorWeight: 2,
                   tabs: const [
                     Tab(text: 'Current'),
                     Tab(text: 'History'),
