@@ -2,30 +2,30 @@ import 'package:flutter/material.dart';
 
 class AppColors {
   AppColors._();
-  static const Color primary = Color(0xFF1E3A5F);
-  static const Color primaryDark = Color(0xFF0F2440);
-  static const Color primaryLight = Color(0xFFD6E4F0);
-  static const Color primaryMedium = Color(0xFF2B5C8A);
-  static const Color accent = Color(0xFFFF6B35);
-  static const Color accentLight = Color(0xFFFFE0CC);
-  static const Color background = Color(0xFFF4F6FA);
+  static const Color primary = Color(0xFF0097DA);
+  static const Color primaryDark = Color(0xFF007BAB);
+  static const Color primaryLight = Color(0xFFE1F5FE);
+  static const Color primaryMedium = Color(0xFF2DB0E1);
+  static const Color accent = Color(0xFFFFA000);
+  static const Color accentLight = Color(0xFFFFF8E1);
+  static const Color background = Color(0xFFF8FAFC);
   static const Color surface = Color(0xFFFFFFFF);
   static const Color cardBackground = Color(0xFFFFFFFF);
-  static const Color divider = Color(0xFFE8ECF1);
-  static const Color scaffoldDark = Color(0xFF121826);
-  static const Color textPrimary = Color(0xFF1A1E2C);
-  static const Color textSecondary = Color(0xFF6B7280);
-  static const Color textHint = Color(0xFFB0B8C4);
+  static const Color divider = Color(0xFFE2E8F0);
+  static const Color scaffoldDark = Color(0xFF0F172A);
+  static const Color textPrimary = Color(0xFF1E293B);
+  static const Color textSecondary = Color(0xFF64748B);
+  static const Color textHint = Color(0xFF94A3B8);
   static const Color textOnPrimary = Color(0xFFFFFFFF);
   static const Color success = Color(0xFF10B981);
   static const Color warning = Color(0xFFF59E0B);
-  static const Color error = Color(0xFFEF4444);
-  static const Color info = Color(0xFF3B82F6);
+  static const Color error = Color(0xFFF43F5E);
+  static const Color info = Color(0xFF2DB0E1);
   static const Color starFilled = Color(0xFFFBBF24);
-  static const Color starEmpty = Color(0xFFE5E7EB);
-  static const Color shadow = Color(0x14000000);
+  static const Color starEmpty = Color(0xFFE2E8F0);
+  static const Color shadow = Color(0x0F000000);
   static const LinearGradient primaryGradient = LinearGradient(
-    colors: [Color(0xFF1E3A5F), Color(0xFF2B5C8A)],
+    colors: [Color(0xFF0097DA), Color(0xFF2DB0E1)],
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );
@@ -37,7 +37,7 @@ class AppColors {
   );
 
   static const LinearGradient heroGradient = LinearGradient(
-    colors: [Color(0xFF0F2440), Color(0xFF1E3A5F), Color(0xFF2B5C8A)],
+    colors: [Color(0xFF0097DA), Color(0xFF2DB0E1)],
     begin: Alignment.topCenter,
     end: Alignment.bottomCenter,
   );

@@ -84,10 +84,8 @@ class _GarageDetailScreenState extends State<GarageDetailScreen>
                     garage.coverImageUrl,
                     fit: BoxFit.cover,
                     errorBuilder: (_, __, ___) => Container(
-                      decoration: const BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [Color(0xFF1E3A5F), Color(0xFF2B5C8A)],
-                        ),
+                      decoration: BoxDecoration(
+                        gradient: AppColors.primaryGradient,
                       ),
                       child: const Icon(Icons.garage_rounded, size: 64, color: Colors.white38),
                     ),
