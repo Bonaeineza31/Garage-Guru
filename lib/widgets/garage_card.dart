@@ -26,7 +26,7 @@ class GarageCard extends StatelessWidget {
         margin: const EdgeInsets.only(bottom: AppSpacing.lg),
         decoration: BoxDecoration(
           color: AppColors.cardBackground,
-          borderRadius: BorderRadius.circular(AppRadius.xl),
+          borderRadius: BorderRadius.circular(AppRadius.lg),
           boxShadow: AppShadows.card,
           border: Border.all(color: AppColors.divider.withOpacity(0.3)),
         ),
@@ -35,19 +35,19 @@ class GarageCard extends StatelessWidget {
           children: [
             ClipRRect(
               borderRadius: const BorderRadius.vertical(
-                top: Radius.circular(AppRadius.xl),
+                top: Radius.circular(AppRadius.lg),
               ),
               child: Stack(
                 children: [
                   Container(
-                    height: 170,
+                    height: 140,
                     width: double.infinity,
                     color: AppColors.primaryLight,
                     child: Image.network(
                       garage.coverImageUrl,
                       fit: BoxFit.cover,
                       errorBuilder: (_, __, ___) => Container(
-                        decoration: BoxDecoration(
+                        decoration: const BoxDecoration(
                           gradient: AppColors.primaryGradient,
                         ),
                         child: const Center(
@@ -57,83 +57,23 @@ class GarageCard extends StatelessWidget {
                     ),
                   ),
                   Positioned(
-                    bottom: 0,
-                    left: 0,
-                    right: 0,
-                    height: 60,
-                    child: Container(
-                      decoration: const BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                          colors: [Colors.transparent, Colors.black26],
-                        ),
-                      ),
-                    ),
-                  ),
-                  Positioned(
-                    top: AppSpacing.md,
-                    right: AppSpacing.md,
+                    top: AppSpacing.sm,
+                    right: AppSpacing.sm,
                     child: Container(
                       padding: const EdgeInsets.symmetric(
                         horizontal: AppSpacing.md,
-                        vertical: AppSpacing.xs + 2,
+                        vertical: 6,
                       ),
                       decoration: BoxDecoration(
                         color: AppColors.surface,
                         borderRadius: BorderRadius.circular(AppRadius.pill),
-                        boxShadow: AppShadows.card,
                       ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const Icon(Icons.near_me, color: AppColors.primary, size: 13),
-                          const SizedBox(width: 3),
-                          Text(
-                            '${garage.distanceKm.toStringAsFixed(1)} km',
-                            style: AppTextStyles.caption.copyWith(
-                              color: AppColors.primary,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  Positioned(
-                    top: AppSpacing.md,
-                    left: AppSpacing.md,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: AppSpacing.md,
-                        vertical: AppSpacing.xs + 2,
-                      ),
-                      decoration: BoxDecoration(
-                        color: garage.isOpen
-                            ? AppColors.success.withOpacity(0.9)
-                            : AppColors.error.withOpacity(0.9),
-                        borderRadius: BorderRadius.circular(AppRadius.pill),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Container(
-                            width: 6,
-                            height: 6,
-                            decoration: const BoxDecoration(
-                              color: Colors.white,
-                              shape: BoxShape.circle,
-                            ),
-                          ),
-                          const SizedBox(width: 4),
-                          Text(
-                            garage.isOpen ? 'Open' : 'Closed',
-                            style: AppTextStyles.caption.copyWith(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ],
+                      child: Text(
+                        garage.isOpen ? 'Open Now' : 'Closes at 6PM',
+                        style: AppTextStyles.caption.copyWith(
+                          color: garage.isOpen ? AppColors.success : AppColors.textSecondary,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ),
                   ),
@@ -141,11 +81,12 @@ class GarageCard extends StatelessWidget {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.all(AppSpacing.lg),
+              padding: const EdgeInsets.all(AppSpacing.md),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Expanded(
                         child: Text(
@@ -155,94 +96,89 @@ class GarageCard extends StatelessWidget {
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),
-                      if (garage.isVerified)
-                        Container(
-                          margin: const EdgeInsets.only(left: AppSpacing.xs),
-                          padding: const EdgeInsets.all(2),
-                          decoration: BoxDecoration(
-                            color: AppColors.primary.withOpacity(0.1),
-                            shape: BoxShape.circle,
-                          ),
-                          child: const Icon(
-                            Icons.verified,
-                            color: AppColors.primary,
-                            size: 18,
-                          ),
-                        ),
+                      const Icon(Icons.favorite_border_rounded, size: 20, color: AppColors.textSecondary),
+                      const SizedBox(width: AppSpacing.sm),
+                      const Icon(Icons.star_rounded, size: 16, color: AppColors.starFilled),
+                      const SizedBox(width: 4),
+                      Text(
+                        '${garage.rating} (${garage.reviewCount})',
+                        style: AppTextStyles.caption.copyWith(fontWeight: FontWeight.w600),
+                      ),
                     ],
                   ),
-                  const SizedBox(height: AppSpacing.xs),
+                  const SizedBox(height: 4),
                   Row(
                     children: [
                       const Icon(Icons.location_on_outlined, size: 14, color: AppColors.textSecondary),
-                      const SizedBox(width: AppSpacing.xs),
+                      const SizedBox(width: 4),
                       Expanded(
                         child: Text(
-                          garage.address,
-                          style: AppTextStyles.bodySmall,
+                          '${garage.distanceKm.toStringAsFixed(1)}km away • ~5min • ${garage.address.split(',').last.trim()}',
+                          style: AppTextStyles.caption,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),
                     ],
                   ),
-                  const SizedBox(height: AppSpacing.md),
-                  Row(
+                  const SizedBox(height: AppSpacing.sm),
+                  Wrap(
+                    spacing: AppSpacing.sm,
+                    runSpacing: AppSpacing.sm,
                     children: [
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: AppSpacing.sm,
-                          vertical: 3,
-                        ),
-                        decoration: BoxDecoration(
-                          color: AppColors.starFilled.withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(AppRadius.sm),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const Icon(Icons.star_rounded, color: AppColors.starFilled, size: 16),
-                            const SizedBox(width: 3),
-                            Text(
-                              garage.rating.toStringAsFixed(1),
-                              style: AppTextStyles.bodySmall.copyWith(
-                                color: AppColors.textPrimary,
-                                fontWeight: FontWeight.w700,
-                              ),
+                      ...garage.services.take(2).map((service) {
+                        return Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: AppSpacing.sm,
+                            vertical: 4,
+                          ),
+                          decoration: BoxDecoration(
+                            color: AppColors.primaryLight.withOpacity(0.5),
+                            borderRadius: BorderRadius.circular(AppRadius.pill),
+                          ),
+                          child: Text(
+                            service,
+                            style: AppTextStyles.caption.copyWith(
+                              color: AppColors.primary,
+                              fontWeight: FontWeight.w500,
                             ),
-                          ],
+                          ),
+                        );
+                      }),
+                      if (garage.services.length > 2)
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: AppSpacing.sm,
+                            vertical: 4,
+                          ),
+                          decoration: BoxDecoration(
+                            color: AppColors.divider.withOpacity(0.5),
+                            borderRadius: BorderRadius.circular(AppRadius.pill),
+                          ),
+                          child: Text(
+                            '+${garage.services.length - 2} more',
+                            style: AppTextStyles.caption.copyWith(
+                              color: AppColors.textSecondary,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
                         ),
-                      ),
-                      const SizedBox(width: AppSpacing.sm),
-                      Text(
-                        '(${garage.reviewCount} reviews)',
-                        style: AppTextStyles.bodySmall,
-                      ),
                     ],
                   ),
                   const SizedBox(height: AppSpacing.md),
-                  Wrap(
-                    spacing: AppSpacing.sm,
-                    runSpacing: AppSpacing.xs,
-                    children: garage.services.take(3).map((service) {
-                      return Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: AppSpacing.md,
-                          vertical: 4,
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: onTap,
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 0),
+                        minimumSize: const Size(double.infinity, 40),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(AppRadius.md),
                         ),
-                        decoration: BoxDecoration(
-                          color: AppColors.primaryLight.withOpacity(0.4),
-                          borderRadius: BorderRadius.circular(AppRadius.pill),
-                        ),
-                        child: Text(
-                          service,
-                          style: AppTextStyles.caption.copyWith(
-                            color: AppColors.primaryDark,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      );
-                    }).toList(),
+                      ),
+                      child: const Text('View Details'),
+                    ),
                   ),
                 ],
               ),

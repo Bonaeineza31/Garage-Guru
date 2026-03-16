@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:garage_guru/core/theme/app_theme.dart';
 import 'package:garage_guru/screens/customer/home_screen.dart';
-import 'package:garage_guru/screens/customer/map_screen.dart';
+import 'package:garage_guru/screens/customer/find_garages_screen.dart';
 import 'package:garage_guru/screens/customer/repairs_screen.dart';
 import 'package:garage_guru/screens/customer/profile_screen.dart';
 
@@ -19,7 +19,7 @@ class _CustomerShellState extends State<CustomerShell> {
 
   final _screens = const [
     HomeScreen(),
-    MapScreen(),
+    FindGaragesScreen(),
     RepairsScreen(),
     ProfileScreen(),
   ];
@@ -70,4 +70,4 @@ class _CustomerShellState extends State<CustomerShell> {
       ),
     );
   }
-}
+}
