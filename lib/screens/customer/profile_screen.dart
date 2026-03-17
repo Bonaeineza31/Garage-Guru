@@ -6,6 +6,7 @@ import 'package:garage_guru/screens/auth/login_screen.dart';
 import 'package:garage_guru/screens/customer/my_vehicles_screen.dart';
 import 'package:garage_guru/screens/customer/notifications_screen.dart';
 import 'package:garage_guru/screens/customer/edit_profile_screen.dart';
+import 'package:garage_guru/screens/customer/account_settings_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -171,7 +172,11 @@ class ProfileScreen extends StatelessWidget {
             _buildProfileMenuItem(
               icon: Icons.person_outline_rounded,
               title: 'Account Settings',
-              onTap: () {},
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => const AccountSettingsScreen()),
+                );
+              },
             ),
             _buildLogoutItem(context),
             const SizedBox(height: AppSpacing.xl),
