@@ -1,5 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:garage_guru/core/theme/app_theme.dart';
+import '../../core/theme/app_theme.dart';
+import 'battery_service_screen.dart';
+import 'emergency_repair_screen.dart';
+import 'request_repair_screen.dart';
+import 'tire_service_screen.dart';
+import 'map_screen.dart';
+import 'find_garages_screen.dart';
+import 'add_vehicle_screen.dart';
+import 'notifications_screen.dart';
 
 /// Main home screen displaying map, quick services, nearby garages, and maintenance
 class HomeScreen extends StatelessWidget {
@@ -8,22 +16,36 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: AppTheme.scaffoldBackground,
       body: SafeArea(
         child: Column(
           children: [
+            // App header with logo and notification
             _buildHeader(context),
+
+            // Scrollable content
             Expanded(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.only(bottom: 16),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    // Search bar
                     _buildSearchBar(),
+
+                    // Map section
                     _buildMapSection(context),
+
+                    // Quick action buttons
                     _buildQuickActions(context),
+
+                    // Quick Services section
                     _buildQuickServices(context),
+
+                    // Nearby Garages section
                     _buildNearbyGarages(context),
+
+                    // Upcoming Maintenance section
                     _buildUpcomingMaintenance(context),
                   ],
                 ),
@@ -42,40 +64,45 @@ class HomeScreen extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
+          // Logo and app name
           Row(
             children: [
               Container(
                 width: 36,
                 height: 36,
                 decoration: BoxDecoration(
-                  color: AppColors.primary,
+                  color: AppTheme.primaryBlue,
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: const Icon(Icons.build, color: Colors.white, size: 20),
               ),
               const SizedBox(width: 10),
-              Text(
+              const Text(
                 'GarageGuru',
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
-                  color: AppColors.textPrimary,
+                  color: AppTheme.textPrimary,
                 ),
               ),
             ],
           ),
+
+          // Notification icon
           Stack(
             children: [
               IconButton(
-                icon: Icon(Icons.notifications_outlined, color: AppColors.textSecondary),
+                icon: const Icon(Icons.notifications_outlined),
+                color: AppTheme.iconGray,
                 onPressed: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Notifications will be implemented with backend'),
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => const NotificationsScreen(),
                     ),
                   );
                 },
               ),
+              // Notification badge
               Positioned(
                 right: 8,
                 top: 8,
@@ -83,7 +110,7 @@ class HomeScreen extends StatelessWidget {
                   width: 8,
                   height: 8,
                   decoration: const BoxDecoration(
-                    color: AppColors.error,
+                    color: AppTheme.errorRed,
                     shape: BoxShape.circle,
                   ),
                 ),
@@ -103,15 +130,19 @@ class HomeScreen extends StatelessWidget {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: AppColors.divider),
+          border: Border.all(color: AppTheme.dividerColor),
         ),
         child: Row(
           children: [
-            Icon(Icons.location_on_outlined, color: AppColors.textSecondary, size: 20),
+            const Icon(
+              Icons.location_on_outlined,
+              color: AppTheme.iconGray,
+              size: 20,
+            ),
             const SizedBox(width: 12),
             Text(
               'Find nearby repair shops',
-              style: TextStyle(color: AppColors.textHint, fontSize: 14),
+            style: TextStyle(color: AppTheme.textHint, fontSize: 14),
             ),
           ],
         ),
@@ -123,12 +154,16 @@ class HomeScreen extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: GestureDetector(
-        onTap: () => Navigator.pushNamed(context, '/map'),
+        onTap: () {
+          Navigator.of(context).push(
+            MaterialPageRoute(builder: (_) => const MapScreen()),
+          );
+        },
         child: Container(
           height: 280,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: AppColors.divider),
+            border: Border.all(color: AppTheme.dividerColor),
             image: const DecorationImage(
               image: NetworkImage(
                 'https://api.mapbox.com/styles/v1/mapbox/streets-v11/static/-0.1276,51.5074,11/600x400@2x?access_token=pk.eyJ1IjoiZXhhbXBsZSIsImEiOiJja2x2ZGFuYW8wMDFjMm5xbzFxZGc4Ym0yIn0.example',
@@ -138,11 +173,15 @@ class HomeScreen extends StatelessWidget {
           ),
           child: Stack(
             children: [
+              // Google Maps logo in bottom right (like in design)
               Positioned(
                 bottom: 8,
                 right: 8,
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(4),
@@ -153,8 +192,14 @@ class HomeScreen extends StatelessWidget {
                   ),
                 ),
               ),
+
+              // User location indicator
               Center(
-                child: Icon(Icons.my_location, color: AppColors.primary, size: 32),
+                child: Icon(
+                  Icons.my_location,
+                  color: AppTheme.primaryBlue,
+                  size: 32,
+                ),
               ),
             ],
           ),
@@ -172,9 +217,15 @@ class HomeScreen extends StatelessWidget {
             child: _buildActionButton(
               context,
               label: 'Emergency Repair',
-              color: AppColors.accent,
+              color: AppTheme.emergencyOrange,
               icon: Icons.warning_amber_rounded,
-              onTap: () => Navigator.pushNamed(context, '/emergency-repair'),
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (_) => const EmergencyRepairScreen(),
+                  ),
+                );
+              },
             ),
           ),
           const SizedBox(width: 12),
@@ -182,9 +233,15 @@ class HomeScreen extends StatelessWidget {
             child: _buildActionButton(
               context,
               label: 'Schedule Repair',
-              color: AppColors.primary,
+              color: AppTheme.scheduleBlue,
               icon: Icons.calendar_today,
-              onTap: () => Navigator.pushNamed(context, '/request-repair'),
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (_) => const RequestRepairScreen(),
+                  ),
+                );
+              },
             ),
           ),
           const SizedBox(width: 12),
@@ -192,11 +249,13 @@ class HomeScreen extends StatelessWidget {
             child: _buildActionButton(
               context,
               label: 'Repair Updates',
-              color: AppColors.success,
+              color: AppTheme.repairGreen,
               icon: Icons.update,
               onTap: () {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Repair updates will load from backend')),
+                  const SnackBar(
+                    content: Text('Repair updates will load from backend'),
+                  ),
                 );
               },
             ),
@@ -247,38 +306,66 @@ class HomeScreen extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
+          const Text(
             'Quick Services',
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
-              color: AppColors.textPrimary,
+              color: AppTheme.textPrimary,
             ),
           ),
           const SizedBox(height: 16),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              _buildServiceIcon(context,
-                  icon: Icons.oil_barrel_outlined,
-                  label: 'Oil Change',
-                  onTap: () => Navigator.pushNamed(context, '/request-repair')),
-              _buildServiceIcon(context,
-                  icon: Icons.tire_repair,
-                  label: 'Tire Service',
-                  onTap: () => Navigator.pushNamed(context, '/tire-service')),
-              _buildServiceIcon(context,
-                  icon: Icons.battery_charging_full,
-                  label: 'Battery',
-                  onTap: () => Navigator.pushNamed(context, '/battery-service')),
-              _buildServiceIcon(context,
-                  icon: Icons.add_circle_outline,
-                  label: 'Add Vehicle',
-                  onTap: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Vehicle management coming with backend')),
-                    );
-                  }),
+              _buildServiceIcon(
+                context,
+                icon: Icons.oil_barrel_outlined,
+                label: 'Oil Change',
+                onTap: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => const RequestRepairScreen(),
+                    ),
+                  );
+                },
+              ),
+              _buildServiceIcon(
+                context,
+                icon: Icons.tire_repair,
+                label: 'Tire Service',
+                onTap: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => const TireServiceScreen(),
+                    ),
+                  );
+                },
+              ),
+              _buildServiceIcon(
+                context,
+                icon: Icons.battery_charging_full,
+                label: 'Battery',
+                onTap: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => const BatteryServiceScreen(),
+                    ),
+                  );
+                },
+              ),
+              _buildServiceIcon(
+                context,
+                icon: Icons.add_circle_outline,
+                label: 'Add Vehicle',
+                onTap: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => const AddVehicleScreen(),
+                    ),
+                  );
+                },
+              ),
             ],
           ),
         ],
@@ -301,15 +388,15 @@ class HomeScreen extends StatelessWidget {
             width: 56,
             height: 56,
             decoration: BoxDecoration(
-              color: AppColors.primary.withOpacity(0.1),
+              color: AppTheme.primaryBlue.withOpacity(0.1),
               borderRadius: BorderRadius.circular(12),
             ),
-            child: Icon(icon, color: AppColors.primary, size: 28),
+            child: Icon(icon, color: AppTheme.primaryBlue, size: 28),
           ),
           const SizedBox(height: 8),
           Text(
             label,
-            style: TextStyle(fontSize: 12, color: AppColors.textSecondary),
+            style: const TextStyle(fontSize: 12, color: AppTheme.textSecondary),
           ),
         ],
       ),
@@ -324,16 +411,22 @@ class HomeScreen extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
+              const Text(
                 'Nearby Garages',
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
-                  color: AppColors.textPrimary,
+                  color: AppTheme.textPrimary,
                 ),
               ),
               TextButton(
-                onPressed: () => Navigator.pushNamed(context, '/garages'),
+                onPressed: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => const FindGaragesScreen(),
+                    ),
+                  );
+                },
                 child: const Text('View All'),
               ),
             ],
@@ -344,11 +437,14 @@ class HomeScreen extends StatelessWidget {
             name: 'Auto Finit',
             distance: '0.6km',
             rating: 5,
-            image: 'https://images.unsplash.com/photo-1625047509168-a7026f36de04?w=200&h=200&fit=crop',
+            image:
+                'https://images.unsplash.com/photo-1625047509168-a7026f36de04?w=200&h=200&fit=crop',
             isFavorite: true,
             onTap: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Garage details coming with backend')),
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) => const FindGaragesScreen(),
+                ),
               );
             },
           ),
@@ -358,11 +454,14 @@ class HomeScreen extends StatelessWidget {
             name: 'Kigali Motors',
             distance: '1.2km',
             rating: 4,
-            image: 'https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?w=200&h=200&fit=crop',
+            image:
+                'https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?w=200&h=200&fit=crop',
             isFavorite: false,
             onTap: () {
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Garage details coming with backend')),
+                const SnackBar(
+                  content: Text('Garage details coming with backend'),
+                ),
               );
             },
           ),
@@ -388,10 +487,11 @@ class HomeScreen extends StatelessWidget {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: AppColors.divider),
+          border: Border.all(color: AppTheme.dividerColor),
         ),
         child: Row(
           children: [
+            // Garage image
             ClipRRect(
               borderRadius: BorderRadius.circular(8),
               child: Image.network(
@@ -403,23 +503,28 @@ class HomeScreen extends StatelessWidget {
                   return Container(
                     width: 60,
                     height: 60,
-                    color: AppColors.divider,
-                    child: Icon(Icons.garage, color: AppColors.textSecondary),
+                    color: AppTheme.dividerColor,
+                    child: const Icon(
+                      Icons.garage,
+                      color: AppTheme.iconGray,
+                    ),
                   );
                 },
               ),
             ),
             const SizedBox(width: 12),
+
+            // Garage info
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     name,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
-                      color: AppColors.textPrimary,
+                      color: AppTheme.textPrimary,
                     ),
                   ),
                   const SizedBox(height: 4),
@@ -427,7 +532,18 @@ class HomeScreen extends StatelessWidget {
                     children: [
                       Text(
                         distance,
-                        style: TextStyle(fontSize: 12, color: AppColors.textSecondary),
+                        style: const TextStyle(
+                          fontSize: 12,
+                        color: AppTheme.textSecondary,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        '~${distance.replaceAll('km', '')}0.${distance.replaceAll('km', '')}km',
+                        style: const TextStyle(
+                          fontSize: 12,
+                        color: AppTheme.textSecondary,
+                        ),
                       ),
                       const SizedBox(width: 8),
                       Row(
@@ -436,7 +552,9 @@ class HomeScreen extends StatelessWidget {
                           (index) => Icon(
                             Icons.star,
                             size: 14,
-                            color: index < rating ? Colors.amber : AppColors.divider,
+                            color: index < rating
+                                ? Colors.amber
+                                : AppTheme.dividerColor,
                           ),
                         ),
                       ),
@@ -445,18 +563,22 @@ class HomeScreen extends StatelessWidget {
                 ],
               ),
             ),
+
+            // Favorite icon and Details button
             Column(
               children: [
                 IconButton(
                   icon: Icon(
                     isFavorite ? Icons.favorite : Icons.favorite_border,
-                    color: isFavorite ? AppColors.error : AppColors.textSecondary,
+                    color: isFavorite ? AppTheme.errorRed : AppTheme.iconGray,
                   ),
                   onPressed: () {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
                         content: Text(
-                          isFavorite ? 'Removed from favorites' : 'Added to favorites',
+                          isFavorite
+                              ? 'Removed from favorites'
+                              : 'Added to favorites',
                         ),
                       ),
                     );
@@ -477,12 +599,12 @@ class HomeScreen extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
+          const Text(
             'Upcoming Maintenance',
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
-              color: AppColors.textPrimary,
+              color: AppTheme.textPrimary,
             ),
           ),
           const SizedBox(height: 12),
@@ -491,7 +613,7 @@ class HomeScreen extends StatelessWidget {
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: AppColors.divider),
+              border: Border.all(color: AppTheme.dividerColor),
             ),
             child: Row(
               children: [
@@ -499,45 +621,56 @@ class HomeScreen extends StatelessWidget {
                   width: 48,
                   height: 48,
                   decoration: BoxDecoration(
-                    color: AppColors.info.withOpacity(0.1),
+                    color: AppTheme.infoBlue.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: Icon(Icons.oil_barrel, color: AppColors.info, size: 24),
+                  child: const Icon(
+                    Icons.oil_barrel,
+                    color: AppTheme.infoBlue,
+                    size: 24,
+                  ),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
+                      const Text(
                         'Oil Change Due',
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
-                          color: AppColors.textPrimary,
+                          color: AppTheme.textPrimary,
                         ),
                       ),
                       const SizedBox(height: 4),
-                      Text(
+                      const Text(
                         'Toyota Camry • RAC 881C',
-                        style: TextStyle(fontSize: 13, color: AppColors.textSecondary),
+                        style: TextStyle(
+                          fontSize: 13,
+                          color: AppTheme.textSecondary,
+                        ),
                       ),
                       const SizedBox(height: 2),
                       Text(
                         'Due in 2 days or 300km',
-                        style: TextStyle(fontSize: 12, color: AppColors.warning),
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: AppTheme.warningYellow,
+                        ),
                       ),
                     ],
                   ),
                 ),
                 TextButton(
-                  onPressed: () => Navigator.pushNamed(context, '/request-repair'),
+                  onPressed: () {
+                    Navigator.pushNamed(context, '/request-repair');
+                  },
                   child: const Text('Schedule Now'),
                 ),
               ],
             ),
           ),
-          const SizedBox(height: AppSpacing.xxxl),
         ],
       ),
     );

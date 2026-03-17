@@ -31,7 +31,7 @@ class _RequestRepairScreenState extends State<RequestRepairScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor:  GarageGuruTheme.scaffoldBackground,
+      backgroundColor: AppTheme.scaffoldBackground,
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
@@ -50,7 +50,7 @@ class _RequestRepairScreenState extends State<RequestRepairScreen> {
               style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
-                color:  GarageGuruTheme.textPrimary,
+                color: AppTheme.textPrimary,
               ),
             ),
             const SizedBox(height: 8),
@@ -99,7 +99,7 @@ class _RequestRepairScreenState extends State<RequestRepairScreen> {
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w600,
-                          color:  GarageGuruTheme.textPrimary,
+                          color: AppTheme.textPrimary,
                         ),
                       ),
                       const SizedBox(height: 8),
@@ -138,7 +138,7 @@ class _RequestRepairScreenState extends State<RequestRepairScreen> {
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w600,
-                          color:  GarageGuruTheme.textPrimary,
+                          color: AppTheme.textPrimary,
                         ),
                       ),
                       const SizedBox(height: 8),
@@ -173,7 +173,7 @@ class _RequestRepairScreenState extends State<RequestRepairScreen> {
               style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
-                color:  GarageGuruTheme.textPrimary,
+                color: AppTheme.textPrimary,
               ),
             ),
             const SizedBox(height: 8),
@@ -194,7 +194,7 @@ class _RequestRepairScreenState extends State<RequestRepairScreen> {
               style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
-                color:  GarageGuruTheme.textPrimary,
+                color: AppTheme.textPrimary,
               ),
             ),
             const SizedBox(height: 8),
@@ -230,7 +230,7 @@ class _RequestRepairScreenState extends State<RequestRepairScreen> {
               style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
-                color:  GarageGuruTheme.textPrimary,
+                color: AppTheme.textPrimary,
               ),
             ),
             const SizedBox(height: 8),
@@ -260,7 +260,6 @@ class _RequestRepairScreenState extends State<RequestRepairScreen> {
           ],
         ),
       ),
-      bottomNavigationBar: const AppBottomNavigation(currentIndex: 0),
     );
   }
 
@@ -302,7 +301,7 @@ class _RequestRepairScreenState extends State<RequestRepairScreen> {
       builder: (context) => AlertDialog(
         title: Row(
           children: [
-            Icon(Icons.check_circle, color:  GarageGuruTheme.successGreen),
+            Icon(Icons.check_circle, color: AppTheme.successGreen),
             const SizedBox(width: 8),
             const Text('Request Submitted'),
           ],
@@ -325,7 +324,7 @@ class _RequestRepairScreenState extends State<RequestRepairScreen> {
 
   void _showError(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message), backgroundColor:  GarageGuruTheme.errorRed),
+      SnackBar(content: Text(message), backgroundColor: AppTheme.errorRed),
     );
   }
 }

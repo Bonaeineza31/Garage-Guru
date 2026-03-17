@@ -151,7 +151,13 @@ class _GarageDetailScreenState extends State<GarageDetailScreen>
                   icon: const Icon(Icons.phone_outlined, size: 16),
                   label: const Text('Call'),
                   style: OutlinedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm, horizontal: 0),
+                    padding: const EdgeInsets.symmetric(
+                      vertical: AppSpacing.sm,
+                      horizontal: 0,
+                    ),
+                    foregroundColor: AppColors.primary,
+                    side: const BorderSide(color: AppColors.primary, width: 1.5),
+                    backgroundColor: Colors.white,
                   ),
                 ),
               ),
@@ -167,7 +173,13 @@ class _GarageDetailScreenState extends State<GarageDetailScreen>
                   icon: const Icon(Icons.chat_bubble_outline_rounded, size: 16),
                   label: const Text('Message'),
                   style: OutlinedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm, horizontal: 0),
+                    padding: const EdgeInsets.symmetric(
+                      vertical: AppSpacing.sm,
+                      horizontal: 0,
+                    ),
+                    foregroundColor: AppColors.primary,
+                    side: const BorderSide(color: AppColors.primary, width: 1.5),
+                    backgroundColor: Colors.white,
                   ),
                 ),
               ),
