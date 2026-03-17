@@ -4,6 +4,8 @@ import 'package:garage_guru/data/mock_data.dart';
 import 'package:garage_guru/widgets/widgets.dart';
 import 'package:garage_guru/screens/auth/login_screen.dart';
 import 'package:garage_guru/screens/customer/my_vehicles_screen.dart';
+import 'package:garage_guru/screens/customer/notifications_screen.dart';
+import 'package:garage_guru/screens/customer/edit_profile_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -59,7 +61,11 @@ class ProfileScreen extends StatelessWidget {
                 ),
               ],
             ),
-            onPressed: () {},
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const NotificationsScreen()),
+              );
+            },
           ),
         ],
         bottom: PreferredSize(
@@ -114,23 +120,30 @@ class ProfileScreen extends StatelessWidget {
                     style: AppTextStyles.bodySmall.copyWith(color: Colors.white70),
                   ),
                   const SizedBox(height: AppSpacing.md),
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: 6),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.2),
-                      borderRadius: BorderRadius.circular(AppRadius.pill),
-                      border: Border.all(color: Colors.white30),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Icon(Icons.edit_note_rounded, color: Colors.white, size: 18),
-                        const SizedBox(width: 4),
-                        Text(
-                          'Edit Profile',
-                          style: AppTextStyles.caption.copyWith(color: Colors.white, fontWeight: FontWeight.w600),
-                        ),
-                      ],
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(builder: (_) => const EditProfileScreen()),
+                      );
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: 6),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.2),
+                        borderRadius: BorderRadius.circular(AppRadius.pill),
+                        border: Border.all(color: Colors.white30),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(Icons.edit_note_rounded, color: Colors.white, size: 18),
+                          const SizedBox(width: 4),
+                          Text(
+                            'Edit Profile',
+                            style: AppTextStyles.caption.copyWith(color: Colors.white, fontWeight: FontWeight.w600),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ],
@@ -149,7 +162,11 @@ class ProfileScreen extends StatelessWidget {
             _buildProfileMenuItem(
               icon: Icons.notifications_none_rounded,
               title: 'Notifications',
-              onTap: () {},
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => const NotificationsScreen()),
+                );
+              },
             ),
             _buildProfileMenuItem(
               icon: Icons.person_outline_rounded,

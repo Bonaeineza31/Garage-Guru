@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:garage_guru/core/theme/app_theme.dart';
-import 'package:garage_guru/data/mock_data.dart';
-import 'package:garage_guru/models/models.dart';
 import 'package:garage_guru/widgets/widgets.dart';
 
 class ScheduledServicesScreen extends StatelessWidget {
@@ -30,28 +28,28 @@ class ScheduledServicesScreen extends StatelessWidget {
               style: AppTextStyles.heading2,
             ),
             const SizedBox(height: AppSpacing.lg),
-            const _ServiceSelectionCard(
+            _ServiceSelectionCard(
               title: 'Oil Change',
               subtitle: 'Replace engine oil and filter',
-              estCost: '\$45 - \$80',
+              estCost: r'$45 - $80',
               estTime: '30 min',
             ),
-            const _ServiceSelectionCard(
+            _ServiceSelectionCard(
               title: 'Tire Rotation',
               subtitle: 'Rotate tires to ensure even wear',
-              estCost: '\$30 - \$50',
+              estCost: r'$30 - $50',
               estTime: '30 min',
             ),
-            const _ServiceSelectionCard(
+            _ServiceSelectionCard(
               title: 'Brake Service',
               subtitle: 'Inspect and service brake system',
-              estCost: '\$100 - \$300',
+              estCost: r'$100 - $300',
               estTime: '1-2 hours',
             ),
-            const _ServiceSelectionCard(
+            _ServiceSelectionCard(
               title: 'Full Inspection',
               subtitle: 'Complete vehicle inspection',
-              estCost: '\$80 - \$150',
+              estCost: r'$80 - $150',
               estTime: '1 hour',
             ),
           ],
@@ -83,7 +81,9 @@ class _ServiceSelectionCard extends StatelessWidget {
         color: Colors.white,
         borderRadius: BorderRadius.circular(AppRadius.lg),
         border: Border.all(color: AppColors.divider.withOpacity(0.5)),
-        boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 4, offset: Offset(0, 2))],
+        boxShadow: [
+          BoxShadow(color: Colors.black12, blurRadius: 4, offset: Offset(0, 2)),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -95,11 +95,19 @@ class _ServiceSelectionCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(title, style: AppTextStyles.subtitle.copyWith(fontWeight: FontWeight.bold, fontSize: 18)),
-                    const SizedBox(height: 4),
+                    Text(
+                      title,
+                      style: AppTextStyles.subtitle.copyWith(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                      ),
+                    ),
+                    SizedBox(height: 4),
                     Text(
                       subtitle,
-                      style: AppTextStyles.bodySmall.copyWith(color: AppColors.textSecondary),
+                      style: AppTextStyles.bodySmall.copyWith(
+                        color: AppColors.textSecondary,
+                      ),
                     ),
                   ],
                 ),
@@ -108,22 +116,32 @@ class _ServiceSelectionCard extends StatelessWidget {
                 onPressed: () {},
                 style: OutlinedButton.styleFrom(
                   foregroundColor: AppColors.primary,
-                  side: const BorderSide(color: AppColors.primary),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.sm)),
-                  minimumSize: const Size(80, 40),
+                  side: BorderSide(color: AppColors.primary),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(AppRadius.sm),
+                  ),
+                  minimumSize: Size(80, 40),
                 ),
-                child: const Text('Select', style: TextStyle(fontWeight: FontWeight.bold)),
+                child: Text(
+                  'Select',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
               ),
             ],
           ),
-          const SizedBox(height: AppSpacing.lg),
+          SizedBox(height: AppSpacing.lg),
           Row(
             children: [
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Est. cost: $estCost', style: AppTextStyles.caption.copyWith(fontWeight: FontWeight.w500)),
+                    Text(
+                      'Est. cost: $estCost',
+                      style: AppTextStyles.caption.copyWith(
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -131,7 +149,12 @@ class _ServiceSelectionCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Est. time: $estTime', style: AppTextStyles.caption.copyWith(fontWeight: FontWeight.w500)),
+                    Text(
+                      'Est. time: $estTime',
+                      style: AppTextStyles.caption.copyWith(
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
                   ],
                 ),
               ),

@@ -7,6 +7,9 @@ import 'package:intl/intl.dart';
 
 import 'package:garage_guru/screens/customer/scheduled_services_screen.dart';
 
+import 'package:garage_guru/screens/customer/service_history_screen.dart';
+import 'package:garage_guru/screens/customer/add_vehicle_screen.dart';
+
 class MyVehiclesScreen extends StatelessWidget {
   const MyVehiclesScreen({super.key});
 
@@ -41,7 +44,11 @@ class MyVehiclesScreen extends StatelessWidget {
             child: GgButton(
               label: 'Add New Vehicle',
               icon: Icons.add,
-              onPressed: () {},
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => const AddVehicleScreen()),
+                );
+              },
             ),
           ),
         ],
@@ -158,7 +165,11 @@ class _VehicleCard extends StatelessWidget {
               children: [
                 Expanded(
                   child: TextButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(builder: (_) => ServiceHistoryScreen(vehicle: vehicle)),
+                      );
+                    },
                     child: Text(
                       'View Service History',
                       style: AppTextStyles.bodySmall.copyWith(
