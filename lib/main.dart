@@ -10,6 +10,7 @@ import 'presentation/screens/battery_service_screen.dart';
 import 'presentation/screens/garages_screen.dart';
 import 'presentation/screens/repairs_screen.dart';
 import 'presentation/screens/profile_screen.dart';
+import 'package:garageguru_app/screens/auth/login_screen.dart';
 
 void main() {
   // Lock app to portrait mode for consistent UI
@@ -18,7 +19,14 @@ void main() {
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
   ]);
-
+  SystemChrome.setSystemUIOverlayStyle(
+    const SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      statusBarIconBrightness: Brightness.dark,
+      systemNavigationBarColor: Colors.white,
+      systemNavigationBarIconBrightness: Brightness.dark,
+    ),
+  );
   runApp(const GarageGuruApp());
 }
 
@@ -42,6 +50,7 @@ class GarageGuruApp extends StatelessWidget {
         '/garages': (context) => const GaragesScreen(),
         '/repairs': (context) => const RepairsScreen(),
         '/profile': (context) => const ProfileScreen(),
+        '/login': (context) => const LoginScreen(),
       },
     );
   }
