@@ -2,15 +2,15 @@ import 'package:flutter/material.dart';
 import '../../core/theme/app_theme.dart';
 import '../widgets/app_bottom_navigation.dart';
 
-/// Battery service booking screen
-class BatteryServiceScreen extends StatefulWidget {
-  const BatteryServiceScreen({super.key});
+/// Tire service booking screen with service options
+class TireServiceScreen extends StatefulWidget {
+  const TireServiceScreen({super.key});
 
   @override
-  State<BatteryServiceScreen> createState() => _BatteryServiceScreenState();
+  State<TireServiceScreen> createState() => _TireServiceScreenState();
 }
 
-class _BatteryServiceScreenState extends State<BatteryServiceScreen> {
+class _TireServiceScreenState extends State<TireServiceScreen> {
   final TextEditingController _dateController = TextEditingController();
   final TextEditingController _timeController = TextEditingController();
   final TextEditingController _locationController = TextEditingController();
@@ -30,13 +30,13 @@ class _BatteryServiceScreenState extends State<BatteryServiceScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.scaffoldBackground,
+      backgroundColor:  GarageGuruTheme.scaffoldBackground,
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text('Battery Service'),
+        title: const Text('Tire Service'),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
@@ -49,7 +49,7 @@ class _BatteryServiceScreenState extends State<BatteryServiceScreen> {
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: AppTheme.dividerColor),
+                border: Border.all(color:  GarageGuruTheme.dividerColor),
               ),
               child: Row(
                 children: [
@@ -57,12 +57,12 @@ class _BatteryServiceScreenState extends State<BatteryServiceScreen> {
                     width: 48,
                     height: 48,
                     decoration: BoxDecoration(
-                      color: AppTheme.primaryBlue.withOpacity(0.1),
+                      color:  GarageGuruTheme.primaryBlue.withOpacity(0.1),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: const Icon(
-                      Icons.battery_charging_full,
-                      color: AppTheme.primaryBlue,
+                      Icons.tire_repair,
+                      color:  GarageGuruTheme.primaryBlue,
                       size: 24,
                     ),
                   ),
@@ -72,19 +72,19 @@ class _BatteryServiceScreenState extends State<BatteryServiceScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Battery Services',
+                          'Tire Services',
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
-                            color: AppTheme.textPrimary,
+                            color:  GarageGuruTheme.textPrimary,
                           ),
                         ),
                         SizedBox(height: 4),
                         Text(
-                          'Professional battery care for your vehicle',
+                          'Professional tire care for your vehicle',
                           style: TextStyle(
                             fontSize: 13,
-                            color: AppTheme.textSecondary,
+                            color:  GarageGuruTheme.textSecondary,
                           ),
                         ),
                       ],
@@ -101,15 +101,15 @@ class _BatteryServiceScreenState extends State<BatteryServiceScreen> {
               children: [
                 Expanded(
                   child: _buildServiceOption(
-                    title: 'Battery Replacement',
-                    price: 'From Frw 45,000',
+                    title: 'Tire Replacement',
+                    price: 'From Frw 20,000',
                   ),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
                   child: _buildServiceOption(
-                    title: 'Battery Testing',
-                    price: 'From Frw 10,000',
+                    title: 'Tire Rotation',
+                    price: 'From Frw 15,000',
                   ),
                 ),
               ],
@@ -121,14 +121,14 @@ class _BatteryServiceScreenState extends State<BatteryServiceScreen> {
               children: [
                 Expanded(
                   child: _buildServiceOption(
-                    title: 'Charging System',
-                    price: 'From Frw 15,000',
+                    title: 'Wheel Alignment',
+                    price: 'From Frw 25,000',
                   ),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
                   child: _buildServiceOption(
-                    title: 'Jump Start',
+                    title: 'Tire Pressure',
                     price: 'From Frw 5,000',
                   ),
                 ),
@@ -143,7 +143,7 @@ class _BatteryServiceScreenState extends State<BatteryServiceScreen> {
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
-                color: AppTheme.textPrimary,
+                color:  GarageGuruTheme.textPrimary,
               ),
             ),
 
@@ -155,7 +155,7 @@ class _BatteryServiceScreenState extends State<BatteryServiceScreen> {
               style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
-                color: AppTheme.textPrimary,
+                color:  GarageGuruTheme.textPrimary,
               ),
             ),
             const SizedBox(height: 8),
@@ -168,17 +168,20 @@ class _BatteryServiceScreenState extends State<BatteryServiceScreen> {
               items: const [
                 DropdownMenuItem(
                   value: 'replacement',
-                  child: Text('Battery Replacement'),
+                  child: Text('Tire Replacement'),
                 ),
                 DropdownMenuItem(
-                  value: 'testing',
-                  child: Text('Battery Testing'),
+                  value: 'rotation',
+                  child: Text('Tire Rotation'),
                 ),
                 DropdownMenuItem(
-                  value: 'charging',
-                  child: Text('Charging System'),
+                  value: 'alignment',
+                  child: Text('Wheel Alignment'),
                 ),
-                DropdownMenuItem(value: 'jumpstart', child: Text('Jump Start')),
+                DropdownMenuItem(
+                  value: 'pressure',
+                  child: Text('Tire Pressure Check'),
+                ),
               ],
               onChanged: (value) {
                 setState(() {
@@ -195,7 +198,7 @@ class _BatteryServiceScreenState extends State<BatteryServiceScreen> {
               style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
-                color: AppTheme.textPrimary,
+                color:  GarageGuruTheme.textPrimary,
               ),
             ),
             const SizedBox(height: 8),
@@ -234,7 +237,7 @@ class _BatteryServiceScreenState extends State<BatteryServiceScreen> {
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w600,
-                          color: AppTheme.textPrimary,
+                          color:  GarageGuruTheme.textPrimary,
                         ),
                       ),
                       const SizedBox(height: 8),
@@ -273,7 +276,7 @@ class _BatteryServiceScreenState extends State<BatteryServiceScreen> {
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w600,
-                          color: AppTheme.textPrimary,
+                          color:  GarageGuruTheme.textPrimary,
                         ),
                       ),
                       const SizedBox(height: 8),
@@ -308,7 +311,7 @@ class _BatteryServiceScreenState extends State<BatteryServiceScreen> {
               style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
-                color: AppTheme.textPrimary,
+                color:  GarageGuruTheme.textPrimary,
               ),
             ),
             const SizedBox(height: 8),
@@ -329,7 +332,7 @@ class _BatteryServiceScreenState extends State<BatteryServiceScreen> {
               style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
-                color: AppTheme.textPrimary,
+                color:  GarageGuruTheme.textPrimary,
               ),
             ),
             const SizedBox(height: 8),
@@ -381,9 +384,9 @@ class _BatteryServiceScreenState extends State<BatteryServiceScreen> {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: AppTheme.scaffoldBackground,
+        color:  GarageGuruTheme.scaffoldBackground,
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: AppTheme.dividerColor),
+        border: Border.all(color:  GarageGuruTheme.dividerColor),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -393,13 +396,13 @@ class _BatteryServiceScreenState extends State<BatteryServiceScreen> {
             style: const TextStyle(
               fontSize: 13,
               fontWeight: FontWeight.w600,
-              color: AppTheme.textPrimary,
+              color:  GarageGuruTheme.textPrimary,
             ),
           ),
           const SizedBox(height: 4),
           Text(
             price,
-            style: const TextStyle(fontSize: 11, color: AppTheme.textSecondary),
+            style: const TextStyle(fontSize: 11, color:  GarageGuruTheme.textSecondary),
           ),
         ],
       ),
@@ -417,7 +420,7 @@ class _BatteryServiceScreenState extends State<BatteryServiceScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Please fill all fields'),
-          backgroundColor: AppTheme.errorRed,
+          backgroundColor:  GarageGuruTheme.errorRed,
         ),
       );
       return;
@@ -428,14 +431,12 @@ class _BatteryServiceScreenState extends State<BatteryServiceScreen> {
       builder: (context) => AlertDialog(
         title: Row(
           children: [
-            Icon(Icons.check_circle, color: AppTheme.successGreen),
+            Icon(Icons.check_circle, color:  GarageGuruTheme.successGreen),
             const SizedBox(width: 8),
             const Text('Booking Confirmed'),
           ],
         ),
-        content: const Text(
-          'Your battery service has been booked successfully!',
-        ),
+        content: const Text('Your tire service has been booked successfully!'),
         actions: [
           TextButton(
             onPressed: () {

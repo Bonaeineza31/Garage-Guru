@@ -25,7 +25,7 @@ class _EmergencyRepairScreenState extends State<EmergencyRepairScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.scaffoldBackground,
+      backgroundColor:  GarageGuruTheme.scaffoldBackground,
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
@@ -38,7 +38,7 @@ class _EmergencyRepairScreenState extends State<EmergencyRepairScreen> {
             const Text('Emergency Repair'),
           ],
         ),
-        backgroundColor: AppTheme.emergencyOrange,
+        backgroundColor:  GarageGuruTheme.emergencyOrange,
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
@@ -49,16 +49,16 @@ class _EmergencyRepairScreenState extends State<EmergencyRepairScreen> {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: AppTheme.emergencyOrange.withOpacity(0.1),
+                color:  GarageGuruTheme.emergencyOrange.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(8),
                 border: Border.all(
-                  color: AppTheme.emergencyOrange.withOpacity(0.3),
+                  color:  GarageGuruTheme.emergencyOrange.withOpacity(0.3),
                 ),
               ),
               child: const Text(
                 'Emergency repairs are prioritized and will connect you with the nearest available mechanic.',
                 style: TextStyle(
-                  color: AppTheme.emergencyOrange,
+                  color:  GarageGuruTheme.emergencyOrange,
                   fontSize: 14,
                   fontWeight: FontWeight.w500,
                 ),
@@ -73,7 +73,7 @@ class _EmergencyRepairScreenState extends State<EmergencyRepairScreen> {
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
-                color: AppTheme.textPrimary,
+                color:  GarageGuruTheme.textPrimary,
               ),
             ),
             const SizedBox(height: 12),
@@ -105,7 +105,7 @@ class _EmergencyRepairScreenState extends State<EmergencyRepairScreen> {
                 children: [
                   Icon(
                     Icons.my_location,
-                    color: AppTheme.primaryBlue,
+                    color:  GarageGuruTheme.primaryBlue,
                     size: 20,
                   ),
                   const SizedBox(width: 8),
@@ -113,7 +113,7 @@ class _EmergencyRepairScreenState extends State<EmergencyRepairScreen> {
                     'Use current location',
                     style: TextStyle(
                       fontSize: 14,
-                      color: AppTheme.primaryBlue,
+                      color:  GarageGuruTheme.primaryBlue,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
@@ -129,7 +129,7 @@ class _EmergencyRepairScreenState extends State<EmergencyRepairScreen> {
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
-                color: AppTheme.textPrimary,
+                color:  GarageGuruTheme.textPrimary,
               ),
             ),
             const SizedBox(height: 12),
@@ -152,7 +152,7 @@ class _EmergencyRepairScreenState extends State<EmergencyRepairScreen> {
               child: ElevatedButton(
                 onPressed: _submitEmergencyRequest,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: AppTheme.emergencyOrange,
+                  backgroundColor:  GarageGuruTheme.emergencyOrange,
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -179,7 +179,7 @@ class _EmergencyRepairScreenState extends State<EmergencyRepairScreen> {
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
-                color: AppTheme.textPrimary,
+                color:  GarageGuruTheme.textPrimary,
               ),
             ),
             const SizedBox(height: 12),
@@ -223,7 +223,7 @@ class _EmergencyRepairScreenState extends State<EmergencyRepairScreen> {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: AppTheme.dividerColor),
+          border: Border.all(color:  GarageGuruTheme.dividerColor),
         ),
         child: Row(
           children: [
@@ -231,10 +231,10 @@ class _EmergencyRepairScreenState extends State<EmergencyRepairScreen> {
               width: 40,
               height: 40,
               decoration: BoxDecoration(
-                color: AppTheme.emergencyOrange.withOpacity(0.1),
+                color:  GarageGuruTheme.emergencyOrange.withOpacity(0.1),
                 shape: BoxShape.circle,
               ),
-              child: Icon(icon, color: AppTheme.emergencyOrange, size: 20),
+              child: Icon(icon, color:  GarageGuruTheme.emergencyOrange, size: 20),
             ),
             const SizedBox(width: 12),
             Expanded(
@@ -246,7 +246,7 @@ class _EmergencyRepairScreenState extends State<EmergencyRepairScreen> {
                     style: const TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
-                      color: AppTheme.textPrimary,
+                      color:  GarageGuruTheme.textPrimary,
                     ),
                   ),
                   if (subtitle != null) ...[
@@ -255,7 +255,7 @@ class _EmergencyRepairScreenState extends State<EmergencyRepairScreen> {
                       subtitle,
                       style: const TextStyle(
                         fontSize: 12,
-                        color: AppTheme.textSecondary,
+                        color:  GarageGuruTheme.textSecondary,
                       ),
                     ),
                   ],
@@ -274,7 +274,7 @@ class _EmergencyRepairScreenState extends State<EmergencyRepairScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Please provide your location'),
-          backgroundColor: AppTheme.errorRed,
+          backgroundColor:  GarageGuruTheme.errorRed,
         ),
       );
       return;
@@ -284,7 +284,7 @@ class _EmergencyRepairScreenState extends State<EmergencyRepairScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Please describe the issue'),
-          backgroundColor: AppTheme.errorRed,
+          backgroundColor:  GarageGuruTheme.errorRed,
         ),
       );
       return;
@@ -296,7 +296,7 @@ class _EmergencyRepairScreenState extends State<EmergencyRepairScreen> {
       builder: (context) => AlertDialog(
         title: Row(
           children: [
-            Icon(Icons.check_circle, color: AppTheme.successGreen),
+            Icon(Icons.check_circle, color:  GarageGuruTheme.successGreen),
             const SizedBox(width: 8),
             const Text('Request Submitted'),
           ],

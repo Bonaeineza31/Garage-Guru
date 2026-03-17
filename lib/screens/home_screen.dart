@@ -9,7 +9,7 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.scaffoldBackground,
+      backgroundColor:  GarageGuruTheme.scaffoldBackground,
       body: SafeArea(
         child: Column(
           children: [
@@ -65,7 +65,7 @@ class HomeScreen extends StatelessWidget {
                 width: 36,
                 height: 36,
                 decoration: BoxDecoration(
-                  color: AppTheme.primaryBlue,
+                  color:  GarageGuruTheme.primaryBlue,
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: const Icon(Icons.build, color: Colors.white, size: 20),
@@ -76,7 +76,7 @@ class HomeScreen extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
-                  color: AppTheme.textPrimary,
+                  color:  GarageGuruTheme.textPrimary,
                 ),
               ),
             ],
@@ -87,7 +87,7 @@ class HomeScreen extends StatelessWidget {
             children: [
               IconButton(
                 icon: const Icon(Icons.notifications_outlined),
-                color: AppTheme.iconGray,
+                color:  GarageGuruTheme.iconGray,
                 onPressed: () {
                   // Navigate to notifications (future implementation)
                   ScaffoldMessenger.of(context).showSnackBar(
@@ -107,7 +107,7 @@ class HomeScreen extends StatelessWidget {
                   width: 8,
                   height: 8,
                   decoration: const BoxDecoration(
-                    color: AppTheme.errorRed,
+                    color:  GarageGuruTheme.errorRed,
                     shape: BoxShape.circle,
                   ),
                 ),
@@ -127,19 +127,19 @@ class HomeScreen extends StatelessWidget {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: AppTheme.dividerColor),
+          border: Border.all(color:  GarageGuruTheme.dividerColor),
         ),
         child: Row(
           children: [
             const Icon(
               Icons.location_on_outlined,
-              color: AppTheme.iconGray,
+              color:  GarageGuruTheme.iconGray,
               size: 20,
             ),
             const SizedBox(width: 12),
             Text(
               'Find nearby repair shops',
-              style: TextStyle(color: AppTheme.textHint, fontSize: 14),
+              style: TextStyle(color:  GarageGuruTheme.textHint, fontSize: 14),
             ),
           ],
         ),
@@ -158,7 +158,7 @@ class HomeScreen extends StatelessWidget {
           height: 280,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: AppTheme.dividerColor),
+            border: Border.all(color:  GarageGuruTheme.dividerColor),
             image: const DecorationImage(
               image: NetworkImage(
                 'https://api.mapbox.com/styles/v1/mapbox/streets-v11/static/-0.1276,51.5074,11/600x400@2x?access_token=pk.eyJ1IjoiZXhhbXBsZSIsImEiOiJja2x2ZGFuYW8wMDFjMm5xbzFxZGc4Ym0yIn0.example',
@@ -192,7 +192,7 @@ class HomeScreen extends StatelessWidget {
               Center(
                 child: Icon(
                   Icons.my_location,
-                  color: AppTheme.primaryBlue,
+                  color:  GarageGuruTheme.primaryBlue,
                   size: 32,
                 ),
               ),
@@ -212,7 +212,7 @@ class HomeScreen extends StatelessWidget {
             child: _buildActionButton(
               context,
               label: 'Emergency Repair',
-              color: AppTheme.emergencyOrange,
+              color:  GarageGuruTheme.emergencyOrange,
               icon: Icons.warning_amber_rounded,
               onTap: () {
                 Navigator.pushNamed(context, '/emergency-repair');
@@ -224,7 +224,7 @@ class HomeScreen extends StatelessWidget {
             child: _buildActionButton(
               context,
               label: 'Schedule Repair',
-              color: AppTheme.scheduleBlue,
+              color:  GarageGuruTheme.scheduleBlue,
               icon: Icons.calendar_today,
               onTap: () {
                 Navigator.pushNamed(context, '/request-repair');
@@ -236,7 +236,7 @@ class HomeScreen extends StatelessWidget {
             child: _buildActionButton(
               context,
               label: 'Repair Updates',
-              color: AppTheme.repairGreen,
+              color:  GarageGuruTheme.repairGreen,
               icon: Icons.update,
               onTap: () {
                 ScaffoldMessenger.of(context).showSnackBar(
@@ -298,7 +298,7 @@ class HomeScreen extends StatelessWidget {
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
-              color: AppTheme.textPrimary,
+              color:  GarageGuruTheme.textPrimary,
             ),
           ),
           const SizedBox(height: 16),
@@ -363,15 +363,15 @@ class HomeScreen extends StatelessWidget {
             width: 56,
             height: 56,
             decoration: BoxDecoration(
-              color: AppTheme.primaryBlue.withOpacity(0.1),
+              color:  GarageGuruTheme.primaryBlue.withOpacity(0.1),
               borderRadius: BorderRadius.circular(12),
             ),
-            child: Icon(icon, color: AppTheme.primaryBlue, size: 28),
+            child: Icon(icon, color:  GarageGuruTheme.primaryBlue, size: 28),
           ),
           const SizedBox(height: 8),
           Text(
             label,
-            style: const TextStyle(fontSize: 12, color: AppTheme.textSecondary),
+            style: const TextStyle(fontSize: 12, color:  GarageGuruTheme.textSecondary),
           ),
         ],
       ),
@@ -391,7 +391,7 @@ class HomeScreen extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
-                  color: AppTheme.textPrimary,
+                  color:  GarageGuruTheme.textPrimary,
                 ),
               ),
               TextButton(
@@ -458,7 +458,7 @@ class HomeScreen extends StatelessWidget {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: AppTheme.dividerColor),
+          border: Border.all(color:  GarageGuruTheme.dividerColor),
         ),
         child: Row(
           children: [
@@ -474,8 +474,8 @@ class HomeScreen extends StatelessWidget {
                   return Container(
                     width: 60,
                     height: 60,
-                    color: AppTheme.dividerColor,
-                    child: const Icon(Icons.garage, color: AppTheme.iconGray),
+                    color:  GarageGuruTheme.dividerColor,
+                    child: const Icon(Icons.garage, color:  GarageGuruTheme.iconGray),
                   );
                 },
               ),
@@ -492,7 +492,7 @@ class HomeScreen extends StatelessWidget {
                     style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
-                      color: AppTheme.textPrimary,
+                      color:  GarageGuruTheme.textPrimary,
                     ),
                   ),
                   const SizedBox(height: 4),
@@ -502,7 +502,7 @@ class HomeScreen extends StatelessWidget {
                         distance,
                         style: const TextStyle(
                           fontSize: 12,
-                          color: AppTheme.textSecondary,
+                          color:  GarageGuruTheme.textSecondary,
                         ),
                       ),
                       const SizedBox(width: 8),
@@ -510,7 +510,7 @@ class HomeScreen extends StatelessWidget {
                         '~${distance.replaceAll('km', '')}0.${distance.replaceAll('km', '')}km',
                         style: const TextStyle(
                           fontSize: 12,
-                          color: AppTheme.textSecondary,
+                          color:  GarageGuruTheme.textSecondary,
                         ),
                       ),
                       const SizedBox(width: 8),
@@ -522,7 +522,7 @@ class HomeScreen extends StatelessWidget {
                             size: 14,
                             color: index < rating
                                 ? Colors.amber
-                                : AppTheme.dividerColor,
+                                :  GarageGuruTheme.dividerColor,
                           ),
                         ),
                       ),
@@ -538,7 +538,7 @@ class HomeScreen extends StatelessWidget {
                 IconButton(
                   icon: Icon(
                     isFavorite ? Icons.favorite : Icons.favorite_border,
-                    color: isFavorite ? AppTheme.errorRed : AppTheme.iconGray,
+                    color: isFavorite ?  GarageGuruTheme.errorRed :  GarageGuruTheme.iconGray,
                   ),
                   onPressed: () {
                     ScaffoldMessenger.of(context).showSnackBar(
@@ -572,7 +572,7 @@ class HomeScreen extends StatelessWidget {
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
-              color: AppTheme.textPrimary,
+              color:  GarageGuruTheme.textPrimary,
             ),
           ),
           const SizedBox(height: 12),
@@ -581,7 +581,7 @@ class HomeScreen extends StatelessWidget {
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: AppTheme.dividerColor),
+              border: Border.all(color:  GarageGuruTheme.dividerColor),
             ),
             child: Row(
               children: [
@@ -589,12 +589,12 @@ class HomeScreen extends StatelessWidget {
                   width: 48,
                   height: 48,
                   decoration: BoxDecoration(
-                    color: AppTheme.infoBlue.withOpacity(0.1),
+                    color:  GarageGuruTheme.infoBlue.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: const Icon(
                     Icons.oil_barrel,
-                    color: AppTheme.infoBlue,
+                    color:  GarageGuruTheme.infoBlue,
                     size: 24,
                   ),
                 ),
@@ -608,7 +608,7 @@ class HomeScreen extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
-                          color: AppTheme.textPrimary,
+                          color:  GarageGuruTheme.textPrimary,
                         ),
                       ),
                       const SizedBox(height: 4),
@@ -616,7 +616,7 @@ class HomeScreen extends StatelessWidget {
                         'Toyota Camry • RAC 881C',
                         style: TextStyle(
                           fontSize: 13,
-                          color: AppTheme.textSecondary,
+                          color:  GarageGuruTheme.textSecondary,
                         ),
                       ),
                       const SizedBox(height: 2),
@@ -624,7 +624,7 @@ class HomeScreen extends StatelessWidget {
                         'Due in 2 days or 300km',
                         style: TextStyle(
                           fontSize: 12,
-                          color: AppTheme.warningYellow,
+                          color:  GarageGuruTheme.warningYellow,
                         ),
                       ),
                     ],
