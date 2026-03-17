@@ -3,6 +3,10 @@ import 'package:garage_guru/core/theme/app_theme.dart';
 import 'package:garage_guru/data/mock_data.dart';
 import 'package:garage_guru/widgets/widgets.dart';
 import 'package:garage_guru/screens/auth/login_screen.dart';
+import 'package:garage_guru/screens/customer/my_vehicles_screen.dart';
+import 'package:garage_guru/screens/customer/notifications_screen.dart';
+import 'package:garage_guru/screens/customer/edit_profile_screen.dart';
+import 'package:garage_guru/screens/customer/account_settings_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -12,212 +16,211 @@ class ProfileScreen extends StatelessWidget {
     final user = MockData.currentUser;
 
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        title: Text('Profile', style: AppTextStyles.heading3.copyWith(color: Colors.white)),
-        backgroundColor: AppColors.primary,
-        foregroundColor: AppColors.textOnPrimary,
-        automaticallyImplyLeading: false,
+        title: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(AppSpacing.xs),
+              decoration: BoxDecoration(
+                color: AppColors.primary,
+                borderRadius: BorderRadius.circular(AppRadius.sm),
+              ),
+              child: const Text(
+                'G',
+                style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18),
+              ),
+            ),
+            const SizedBox(width: AppSpacing.sm),
+            Text(
+              'GarageGuru',
+              style: AppTextStyles.subtitle.copyWith(
+                fontWeight: FontWeight.bold,
+                color: AppColors.textPrimary,
+              ),
+            ),
+          ],
+        ),
+        backgroundColor: Colors.white,
         elevation: 0,
         actions: [
           IconButton(
-            icon: const Icon(Icons.settings_outlined),
-            onPressed: () {},
+            icon: Stack(
+              children: [
+                const Icon(Icons.notifications_outlined, color: AppColors.textSecondary),
+                Positioned(
+                  right: 2,
+                  top: 2,
+                  child: Container(
+                    width: 10,
+                    height: 10,
+                    decoration: const BoxDecoration(
+                      color: AppColors.error,
+                      shape: BoxShape.circle,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const NotificationsScreen()),
+              );
+            },
           ),
         ],
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(1),
+          child: Container(color: AppColors.divider, height: 1),
+        ),
       ),
       body: SingleChildScrollView(
         child: Column(
           children: [
             Container(
               width: double.infinity,
-              padding: const EdgeInsets.all(AppSpacing.xxl),
-              decoration: BoxDecoration(
-                gradient: AppColors.heroGradient,
-                borderRadius: const BorderRadius.vertical(
-                  bottom: Radius.circular(AppRadius.xxl),
-                ),
+              padding: const EdgeInsets.symmetric(vertical: 40),
+              decoration: const BoxDecoration(
+                color: AppColors.primary,
               ),
               child: Column(
                 children: [
-                  UserAvatar(
-                    imageUrl: user.profileImageUrl,
-                    name: user.fullName,
-                    radius: 44,
-                    showBadge: true,
-                    badgeColor: AppColors.success,
+                  Stack(
+                    alignment: Alignment.bottomRight,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(4),
+                        decoration: const BoxDecoration(
+                          color: Colors.white,
+                          shape: BoxShape.circle,
+                        ),
+                        child: CircleAvatar(
+                          radius: 50,
+                          backgroundImage: NetworkImage(user.profileImageUrl ?? 'https://i.pravatar.cc/150?img=1'),
+                        ),
+                      ),
+                      Container(
+                        padding: const EdgeInsets.all(6),
+                        decoration: const BoxDecoration(
+                          color: Colors.white,
+                          shape: BoxShape.circle,
+                          boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 4)],
+                        ),
+                        child: Icon(Icons.camera_alt_outlined, color: AppColors.primary, size: 20),
+                      ),
+                    ],
                   ),
                   const SizedBox(height: AppSpacing.md),
                   Text(
                     user.fullName,
-                    style: AppTextStyles.heading3.copyWith(color: Colors.white),
+                    style: AppTextStyles.heading2.copyWith(color: Colors.white),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     user.email,
                     style: AppTextStyles.bodySmall.copyWith(color: Colors.white70),
                   ),
-                  const SizedBox(height: AppSpacing.lg),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      _buildStat('Bookings', '${MockData.bookings.length}'),
-                      Container(width: 1, height: 30, color: Colors.white24),
-                      _buildStat('Reviews', '12'),
-                      Container(width: 1, height: 30, color: Colors.white24),
-                      _buildStat('Saved', '4'),
-                    ],
+                  const SizedBox(height: AppSpacing.md),
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(builder: (_) => const EditProfileScreen()),
+                      );
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: 6),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.2),
+                        borderRadius: BorderRadius.circular(AppRadius.pill),
+                        border: Border.all(color: Colors.white30),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(Icons.edit_note_rounded, color: Colors.white, size: 18),
+                          const SizedBox(width: 4),
+                          Text(
+                            'Edit Profile',
+                            style: AppTextStyles.caption.copyWith(color: Colors.white, fontWeight: FontWeight.w600),
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
                 ],
               ),
             ),
             const SizedBox(height: AppSpacing.lg),
+            _buildProfileMenuItem(
+              icon: Icons.directions_car_outlined,
+              title: 'My Vehicles',
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => const MyVehiclesScreen()),
+                );
+              },
+            ),
+            _buildProfileMenuItem(
+              icon: Icons.notifications_none_rounded,
+              title: 'Notifications',
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => const NotificationsScreen()),
+                );
+              },
+            ),
+            _buildProfileMenuItem(
+              icon: Icons.person_outline_rounded,
+              title: 'Account Settings',
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => const AccountSettingsScreen()),
+                );
+              },
+            ),
+            _buildLogoutItem(context),
+            const SizedBox(height: AppSpacing.xl),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
-              child: Column(
-                children: [
-                  _buildMenuItem(
-                    context,
-                    Icons.person_outline,
-                    'Edit Profile',
-                    'Update your personal information',
-                    onTap: () {},
-                  ),
-                  _buildMenuItem(
-                    context,
-                    Icons.directions_car_outlined,
-                    'My Vehicles',
-                    'Manage your registered vehicles',
-                    onTap: () {},
-                  ),
-                  _buildMenuItem(
-                    context,
-                    Icons.favorite_outline,
-                    'Saved Garages',
-                    'Your favorite garages',
-                    onTap: () {},
-                  ),
-                  _buildMenuItem(
-                    context,
-                    Icons.payment,
-                    'Payment Methods',
-                    'Manage cards and payment options',
-                    onTap: () {},
-                  ),
-                  _buildMenuItem(
-                    context,
-                    Icons.notifications_outlined,
-                    'Notifications',
-                    'Configure your notification preferences',
-                    badge: '3',
-                    onTap: () {},
-                  ),
-                  _buildMenuItem(
-                    context,
-                    Icons.help_outline,
-                    'Help & Support',
-                    'FAQs, contact us, and feedback',
-                    onTap: () {},
-                  ),
-                  _buildMenuItem(
-                    context,
-                    Icons.info_outline,
-                    'About',
-                    'App version, terms, and privacy',
-                    onTap: () {},
-                  ),
-                  const SizedBox(height: AppSpacing.lg),
-                  GgButton(
-                    label: 'Sign Out',
-                    color: AppColors.error,
-                    icon: Icons.logout,
-                    onPressed: () {
-                      Navigator.of(context).pushAndRemoveUntil(
-                        MaterialPageRoute(builder: (_) => const LoginScreen()),
-                        (route) => false,
-                      );
-                    },
-                  ),
-                  const SizedBox(height: AppSpacing.xxxl),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildStat(String label, String value) {
-    return Column(
-      children: [
-        Text(
-          value,
-          style: AppTextStyles.heading3.copyWith(color: Colors.white),
-        ),
-        Text(
-          label,
-          style: AppTextStyles.caption.copyWith(color: Colors.white70),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildMenuItem(
-    BuildContext context,
-    IconData icon,
-    String title,
-    String subtitle, {
-    String? badge,
-    VoidCallback? onTap,
-  }) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        margin: const EdgeInsets.only(bottom: AppSpacing.sm),
-        padding: const EdgeInsets.all(AppSpacing.lg),
-        decoration: BoxDecoration(
-          color: AppColors.cardBackground,
-          borderRadius: BorderRadius.circular(AppRadius.lg),
-          border: Border.all(color: AppColors.divider.withOpacity(0.3)),
-        ),
-        child: Row(
-          children: [
-            Container(
-              width: 44,
-              height: 44,
-              decoration: BoxDecoration(
-                color: AppColors.primary.withOpacity(0.08),
-                borderRadius: BorderRadius.circular(AppRadius.md),
-              ),
-              child: Icon(icon, color: AppColors.primary, size: 22),
-            ),
-            const SizedBox(width: AppSpacing.md),
-            Expanded(
+              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(title, style: AppTextStyles.subtitle.copyWith(fontSize: 15)),
-                  Text(subtitle, style: AppTextStyles.caption),
+                  Text('App Information', style: AppTextStyles.subtitle.copyWith(fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 8),
+                  Text('Version: 1.0.0', style: AppTextStyles.bodySmall.copyWith(color: AppColors.textSecondary)),
+                  Text('© 2026 GarageGuru', style: AppTextStyles.bodySmall.copyWith(color: AppColors.textSecondary)),
                 ],
               ),
             ),
-            if (badge != null)
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                decoration: BoxDecoration(
-                  color: AppColors.error,
-                  borderRadius: BorderRadius.circular(AppRadius.pill),
-                ),
-                child: Text(
-                  badge,
-                  style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.w600),
-                ),
-              ),
-            const SizedBox(width: AppSpacing.sm),
-            const Icon(Icons.chevron_right_rounded, color: AppColors.textSecondary, size: 20),
+            const SizedBox(height: AppSpacing.xxxl),
           ],
         ),
       ),
     );
   }
-}
+
+  Widget _buildProfileMenuItem({required IconData icon, required String title, required VoidCallback onTap}) {
+    return ListTile(
+      onTap: onTap,
+      leading: Icon(icon, color: AppColors.primary),
+      title: Text(title, style: AppTextStyles.body.copyWith(fontWeight: FontWeight.w500)),
+      trailing: const Icon(Icons.chevron_right, color: AppColors.textSecondary, size: 20),
+      contentPadding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
+      shape: const Border(bottom: BorderSide(color: Color(0xFFEEEEEE), width: 1)),
+    );
+  }
+
+  Widget _buildLogoutItem(BuildContext context) {
+    return ListTile(
+      onTap: () {
+        Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (_) => const LoginScreen()),
+          (route) => false,
+        );
+      },
+      leading: const Icon(Icons.logout_rounded, color: Colors.redAccent),
+      title: Text('Logout', style: AppTextStyles.body.copyWith(color: Colors.redAccent, fontWeight: FontWeight.w500)),
+      contentPadding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
+    );
+  }
+}

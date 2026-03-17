@@ -24,6 +24,7 @@ dependencies:
   url_launcher: ^6.2.4
   smooth_page_indicator: ^1.1.0
   font_awesome_flutter: ^10.7.0
+  google_fonts: ^6.1.0
 
 dev_dependencies:
   flutter_test:
@@ -49,3 +50,6 @@ flutter:
   #         weight: 600
   #       - asset: assets/fonts/Poppins-Bold.ttf
   #         weight: 700
+  assets:
+    - assets/images/
+    - assets/icons/
