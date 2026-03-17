@@ -440,8 +440,7 @@ class _FeedbackOption extends StatelessWidget {
                 fontFamily: 'Poppins',
                 fontSize: 13,
                 color: isSelected ? AppColors.textPrimary : AppColors.textSecondary,
-                fontWeight:
-                    isSelected ? FontWeight.w600 : FontWeight.w400,
+                fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
               ),
             ),
           ],
