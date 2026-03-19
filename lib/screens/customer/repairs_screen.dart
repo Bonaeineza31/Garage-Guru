@@ -74,6 +74,12 @@ class _RepairsScreenState extends State<RepairsScreen>
     ),
   ];
 
+  void switchTab(int index) {
+    if (mounted) {
+      _tabController.animateTo(index);
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -197,7 +203,9 @@ class _RepairsScreenState extends State<RepairsScreen>
               controller: _tabController,
               children: [
                 _buildCurrentTab(),
-                const RepairsHistoryScreen(),
+                RepairsHistoryScreen(
+                  onSwitchTab: () => switchTab(0),
+                ),
               ],
             ),
           ),
@@ -213,13 +221,16 @@ class _RepairsScreenState extends State<RepairsScreen>
       separatorBuilder: (_, __) => const SizedBox(height: 12),
       itemBuilder: (context, index) => _RepairCard(
         repair: _currentRepairs[index],
-        onViewDetails: () {
-          Navigator.push(
+        onViewDetails: () async {
+          final result = await Navigator.push(
             context,
             MaterialPageRoute(
               builder: (_) => RepairDetailScreen(repair: _currentRepairs[index]),
             ),
           );
+          if (result == 'tab_history') {
+            switchTab(1);
+          }
         },
         onCancel: () => _showCancelDialog(context, _currentRepairs[index]),
       ),
