@@ -61,7 +61,7 @@ class GgTextField extends StatelessWidget {
                 : null,
             suffixIcon: suffix,
             filled: true,
-            fillColor: AppColors.background,
+            fillColor: Theme.of(context).scaffoldBackgroundColor,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(AppRadius.md),
               borderSide: BorderSide.none,
@@ -110,7 +110,7 @@ class GgSearchBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(AppRadius.lg),
         boxShadow: AppShadows.elevated,
       ),

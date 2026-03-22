@@ -42,7 +42,6 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
       appBar: AppBar(
         backgroundColor: AppColors.primary,
         foregroundColor: Colors.white,
@@ -62,159 +61,201 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // BASIC INFORMATION
-            _buildSectionHeader(Icons.person_outline, 'Basic Information'),
-            const SizedBox(height: AppSpacing.md),
-            GgTextField(label: 'Full Name *', controller: _fullNameCtrl),
-            const SizedBox(height: AppSpacing.lg),
-            GgTextField(
-              label: 'Nickname',
-              hint: 'Displayed to others',
-              controller: _nicknameCtrl,
-            ),
-            const SizedBox(height: AppSpacing.lg),
-
-            // Gender
-            Text('Gender', style: AppTextStyles.label.copyWith(fontWeight: FontWeight.w600)),
-            const SizedBox(height: AppSpacing.sm),
-            Row(
-              children: ['Female', 'Male', 'Other'].map((g) {
-                return Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Radio<String>(
-                      value: g,
-                      groupValue: _selectedGender,
-                      onChanged: (v) => setState(() => _selectedGender = v!),
-                      activeColor: AppColors.primary,
+            _buildCard(
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildSectionHeader(Icons.person_outline, 'Basic Information'),
+                  const SizedBox(height: AppSpacing.md),
+                  GgTextField(label: 'Full Name *', controller: _fullNameCtrl),
+                  const SizedBox(height: AppSpacing.lg),
+                  GgTextField(
+                    label: 'Nickname',
+                    hint: 'Displayed to others',
+                    controller: _nicknameCtrl,
+                  ),
+                  const SizedBox(height: AppSpacing.lg),
+      
+                  // Gender
+                  Text('Gender', style: AppTextStyles.label.copyWith(fontWeight: FontWeight.w600)),
+                  const SizedBox(height: AppSpacing.sm),
+                  Row(
+                    children: ['Female', 'Male', 'Other'].map((g) {
+                      return Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Radio<String>(
+                            value: g,
+                            groupValue: _selectedGender,
+                            onChanged: (v) => setState(() => _selectedGender = v!),
+                            activeColor: AppColors.primary,
+                          ),
+                          Text(g, style: AppTextStyles.body),
+                          const SizedBox(width: 8),
+                        ],
+                      );
+                    }).toList(),
+                  ),
+                  const SizedBox(height: AppSpacing.lg),
+      
+                  // Date of Birth
+                  Text('Date of Birth', style: AppTextStyles.label.copyWith(fontWeight: FontWeight.w600)),
+                  const SizedBox(height: AppSpacing.sm),
+                  Row(
+                    children: [
+                      Expanded(child: _buildDropdown('Day', ['5', '10', '15', '20', '25'], '5')),
+                      const SizedBox(width: AppSpacing.sm),
+                      Expanded(flex: 2, child: _buildDropdown('Month', ['January', 'June', 'July'], 'June')),
+                      const SizedBox(width: AppSpacing.sm),
+                      Expanded(child: _buildDropdown('Year', ['1990', '1995', '2000'], '1990')),
+                    ],
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    'Your birthday will not be shown publicly',
+                    style: AppTextStyles.caption.copyWith(
+                      color: Theme.of(context).textTheme.bodySmall?.color ?? AppColors.textSecondary,
                     ),
-                    Text(g, style: AppTextStyles.body),
-                    const SizedBox(width: 8),
-                  ],
-                );
-              }).toList(),
-            ),
-            const SizedBox(height: AppSpacing.lg),
-
-            // Date of Birth
-            Text('Date of Birth', style: AppTextStyles.label.copyWith(fontWeight: FontWeight.w600)),
-            const SizedBox(height: AppSpacing.sm),
-            Row(
-              children: [
-                Expanded(child: _buildDropdown('Day', ['5', '10', '15', '20', '25'], '5')),
-                const SizedBox(width: AppSpacing.sm),
-                Expanded(flex: 2, child: _buildDropdown('Month', ['January', 'June', 'July'], 'June')),
-                const SizedBox(width: AppSpacing.sm),
-                Expanded(child: _buildDropdown('Year', ['1990', '1995', '2000'], '1990')),
-              ],
-            ),
-            const SizedBox(height: 4),
-            Text(
-              'Your birthday will not be shown publicly',
-              style: AppTextStyles.caption.copyWith(color: AppColors.textSecondary),
-            ),
-            const SizedBox(height: AppSpacing.lg),
-
-            GgTextField(
-              label: 'Bio',
-              hint: 'Brief description about yourself',
-              controller: _bioCtrl,
-              maxLines: 4,
+                  ),
+                  const SizedBox(height: AppSpacing.lg),
+      
+                  GgTextField(
+                    label: 'Bio',
+                    hint: 'Brief description about yourself',
+                    controller: _bioCtrl,
+                    maxLines: 4,
+                  ),
+                ],
+              ),
             ),
             const SizedBox(height: AppSpacing.xl),
 
             // CONTACT INFORMATION
-            _buildSectionHeader(Icons.alternate_email, 'Contact Information'),
-            const SizedBox(height: AppSpacing.md),
-            GgTextField(
-              label: 'Email Address *',
-              controller: _emailCtrl,
-              keyboardType: TextInputType.emailAddress,
-            ),
-            const SizedBox(height: 4),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'Primary email for notifications',
-                  style: AppTextStyles.caption.copyWith(color: AppColors.textSecondary),
-                ),
-                TextButton(
-                  onPressed: () {},
-                  style: TextButton.styleFrom(padding: EdgeInsets.zero, tapTargetSize: MaterialTapTargetSize.shrinkWrap),
-                  child: const Text('Manage emails', style: TextStyle(fontSize: 11)),
-                ),
-              ],
-            ),
-            const SizedBox(height: AppSpacing.md),
-
-            // Phone row with country code
-            Text('Phone Number', style: AppTextStyles.label.copyWith(fontWeight: FontWeight.w600)),
-            const SizedBox(height: AppSpacing.sm),
-            Row(
-              children: [
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: 16),
-                  decoration: BoxDecoration(
-                    color: AppColors.background,
-                    borderRadius: BorderRadius.circular(AppRadius.md),
+            _buildCard(
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildSectionHeader(Icons.alternate_email, 'Contact Information'),
+                  const SizedBox(height: AppSpacing.md),
+                  GgTextField(
+                    label: 'Email Address *',
+                    controller: _emailCtrl,
+                    keyboardType: TextInputType.emailAddress,
                   ),
-                  child: Row(
+                  const SizedBox(height: 4),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text('+250 ', style: AppTextStyles.body),
-                      const Icon(Icons.keyboard_arrow_down, size: 18, color: AppColors.textHint),
+                      Text(
+                        'Primary email for notifications',
+                        style: AppTextStyles.caption.copyWith(
+                          color: Theme.of(context).textTheme.bodySmall?.color ?? AppColors.textSecondary,
+                        ),
+                      ),
+                      TextButton(
+                        onPressed: () {},
+                        style: TextButton.styleFrom(padding: EdgeInsets.zero, tapTargetSize: MaterialTapTargetSize.shrinkWrap),
+                        child: const Text('Manage emails', style: TextStyle(fontSize: 11)),
+                      ),
                     ],
                   ),
-                ),
-                const SizedBox(width: AppSpacing.sm),
-                Expanded(child: GgTextField(label: '', hint: '78 123 4567', controller: _phoneCtrl, keyboardType: TextInputType.phone)),
-              ],
+                  const SizedBox(height: AppSpacing.md),
+      
+                  // Phone row with country code
+                  Text('Phone Number', style: AppTextStyles.label.copyWith(fontWeight: FontWeight.w600)),
+                  const SizedBox(height: AppSpacing.sm),
+                  Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: 16),
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).scaffoldBackgroundColor,
+                          borderRadius: BorderRadius.circular(AppRadius.md),
+                        ),
+                        child: Row(
+                          children: [
+                            Text('+250 ', style: AppTextStyles.body),
+                            const Icon(Icons.keyboard_arrow_down, size: 18, color: AppColors.textHint),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: AppSpacing.sm),
+                      Expanded(child: GgTextField(label: '', hint: '78 123 4567', controller: _phoneCtrl, keyboardType: TextInputType.phone)),
+                    ],
+                  ),
+                  const SizedBox(height: 4),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Used for account recovery', 
+                        style: AppTextStyles.caption.copyWith(
+                          color: Theme.of(context).textTheme.bodySmall?.color ?? AppColors.textSecondary,
+                        ),
+                      ),
+                      TextButton(
+                        onPressed: () {},
+                        style: TextButton.styleFrom(padding: EdgeInsets.zero, tapTargetSize: MaterialTapTargetSize.shrinkWrap),
+                        child: const Text('Verify', style: TextStyle(fontSize: 11)),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: AppSpacing.md),
+                  GgTextField(label: 'Alternative Email', hint: 'Add alternative email', controller: _altEmailCtrl, keyboardType: TextInputType.emailAddress),
+                  const SizedBox(height: AppSpacing.md),
+                  GgTextField(label: 'Emergency Contact', hint: 'Name and phone number', controller: _emergencyCtrl),
+                  const SizedBox(height: 4),
+                  Text(
+                    'Only used in case of emergencies', 
+                    style: AppTextStyles.caption.copyWith(
+                      color: Theme.of(context).textTheme.bodySmall?.color ?? AppColors.textSecondary,
+                    ),
+                  ),
+                ],
+              ),
             ),
-            const SizedBox(height: 4),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text('Used for account recovery', style: AppTextStyles.caption.copyWith(color: AppColors.textSecondary)),
-                TextButton(
-                  onPressed: () {},
-                  style: TextButton.styleFrom(padding: EdgeInsets.zero, tapTargetSize: MaterialTapTargetSize.shrinkWrap),
-                  child: const Text('Verify', style: TextStyle(fontSize: 11)),
-                ),
-              ],
-            ),
-            const SizedBox(height: AppSpacing.md),
-            GgTextField(label: 'Alternative Email', hint: 'Add alternative email', controller: _altEmailCtrl, keyboardType: TextInputType.emailAddress),
-            const SizedBox(height: AppSpacing.md),
-            GgTextField(label: 'Emergency Contact', hint: 'Name and phone number', controller: _emergencyCtrl),
-            const SizedBox(height: 4),
-            Text('Only used in case of emergencies', style: AppTextStyles.caption.copyWith(color: AppColors.textSecondary)),
             const SizedBox(height: AppSpacing.xl),
 
             // LOCATION INFORMATION
-            _buildSectionHeader(Icons.location_on_outlined, 'Location Information'),
-            const SizedBox(height: AppSpacing.md),
-            GgTextField(label: 'Country/Region', hint: 'Rwanda', controller: _countryCtrl),
-            const SizedBox(height: AppSpacing.md),
-            GgTextField(label: 'City', hint: 'City', controller: _cityCtrl),
-            const SizedBox(height: AppSpacing.md),
-            GgTextField(label: 'Address', hint: 'Street address', controller: _addressCtrl),
-            const SizedBox(height: AppSpacing.md),
-            GgTextField(label: 'Postal/ZIP Code', hint: 'Postal code', controller: _postalCtrl),
+            _buildCard(
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildSectionHeader(Icons.location_on_outlined, 'Location Information'),
+                  const SizedBox(height: AppSpacing.md),
+                  GgTextField(label: 'Country/Region', hint: 'Rwanda', controller: _countryCtrl),
+                  const SizedBox(height: AppSpacing.md),
+                  GgTextField(label: 'City', hint: 'City', controller: _cityCtrl),
+                  const SizedBox(height: AppSpacing.md),
+                  GgTextField(label: 'Address', hint: 'Street address', controller: _addressCtrl),
+                  const SizedBox(height: AppSpacing.md),
+                  GgTextField(label: 'Postal/ZIP Code', hint: 'Postal code', controller: _postalCtrl),
+                ],
+              ),
+            ),
             const SizedBox(height: AppSpacing.xl),
 
             // SOCIAL PROFILES
-            _buildSectionHeader(Icons.people_outline, 'Social Profiles'),
-            const SizedBox(height: AppSpacing.md),
-            GgTextField(label: 'Website', hint: 'https://yourwebsite.com', controller: _websiteCtrl),
-            const SizedBox(height: AppSpacing.md),
-            GgTextField(label: 'LinkedIn', hint: 'LinkedIn profile URL', controller: _linkedInCtrl),
-            const SizedBox(height: AppSpacing.md),
-            GgTextField(label: 'Twitter/X', hint: 'Twitter/X username', controller: _twitterCtrl),
-            const SizedBox(height: AppSpacing.md),
-            GgTextField(label: 'Instagram', hint: 'Instagram username', controller: _instagramCtrl),
-            const SizedBox(height: AppSpacing.md),
-            TextButton(
-              onPressed: () {},
-              child: const Text('+ Add More Social Profiles'),
+            _buildCard(
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildSectionHeader(Icons.people_outline, 'Social Profiles'),
+                  const SizedBox(height: AppSpacing.md),
+                  GgTextField(label: 'Website', hint: 'https://yourwebsite.com', controller: _websiteCtrl),
+                  const SizedBox(height: AppSpacing.md),
+                  GgTextField(label: 'LinkedIn', hint: 'LinkedIn profile URL', controller: _linkedInCtrl),
+                  const SizedBox(height: AppSpacing.md),
+                  GgTextField(label: 'Twitter/X', hint: 'Twitter/X username', controller: _twitterCtrl),
+                  const SizedBox(height: AppSpacing.md),
+                  GgTextField(label: 'Instagram', hint: 'Instagram username', controller: _instagramCtrl),
+                  const SizedBox(height: AppSpacing.md),
+                  TextButton(
+                    onPressed: () {},
+                    child: const Text('+ Add More Social Profiles'),
+                  ),
+                ],
+              ),
             ),
             const SizedBox(height: AppSpacing.xxxl),
 
@@ -252,12 +293,31 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
     );
   }
 
+  Widget _buildCard(Widget child) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(AppSpacing.lg),
+      decoration: BoxDecoration(
+        color: Theme.of(context).cardColor,
+        borderRadius: BorderRadius.circular(AppRadius.lg),
+        boxShadow: AppShadows.card,
+      ),
+      child: child,
+    );
+  }
+
   Widget _buildSectionHeader(IconData icon, String title) {
     return Row(
       children: [
-        Icon(icon, color: AppColors.textPrimary, size: 20),
+        Icon(icon, color: Theme.of(context).colorScheme.primary, size: 20),
         const SizedBox(width: AppSpacing.sm),
-        Text(title, style: AppTextStyles.subtitle.copyWith(fontWeight: FontWeight.bold)),
+        Text(
+          title, 
+          style: AppTextStyles.subtitle.copyWith(
+            fontWeight: FontWeight.bold,
+            color: Theme.of(context).textTheme.titleMedium?.color,
+          ),
+        ),
       ],
     );
   }
@@ -266,7 +326,7 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
       decoration: BoxDecoration(
-        color: AppColors.background,
+        color: Theme.of(context).scaffoldBackgroundColor,
         borderRadius: BorderRadius.circular(AppRadius.md),
       ),
       child: DropdownButton<String>(

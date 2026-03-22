@@ -25,7 +25,6 @@ class _EmergencyRepairScreenState extends State<EmergencyRepairScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.scaffoldBackground,
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
@@ -68,12 +67,12 @@ class _EmergencyRepairScreenState extends State<EmergencyRepairScreen> {
             const SizedBox(height: 24),
 
             // Your Location section
-            const Text(
+            Text(
               'Your Location',
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
-                color: AppTheme.textPrimary,
+                color: Theme.of(context).textTheme.titleMedium?.color ?? AppColors.textPrimary,
               ),
             ),
             const SizedBox(height: 12),
@@ -124,12 +123,12 @@ class _EmergencyRepairScreenState extends State<EmergencyRepairScreen> {
             const SizedBox(height: 24),
 
             // Describe the Issue section
-            const Text(
+            Text(
               'Describe the Issue',
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
-                color: AppTheme.textPrimary,
+                color: Theme.of(context).textTheme.titleMedium?.color ?? AppColors.textPrimary,
               ),
             ),
             const SizedBox(height: 12),
@@ -174,12 +173,12 @@ class _EmergencyRepairScreenState extends State<EmergencyRepairScreen> {
             const SizedBox(height: 24),
 
             // Emergency Contact section
-            const Text(
+            Text(
               'Emergency Contact',
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
-                color: AppTheme.textPrimary,
+                color: Theme.of(context).textTheme.titleMedium?.color ?? AppColors.textPrimary,
               ),
             ),
             const SizedBox(height: 12),
@@ -220,9 +219,9 @@ class _EmergencyRepairScreenState extends State<EmergencyRepairScreen> {
       child: Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: Theme.of(context).cardColor,
           borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: AppTheme.dividerColor),
+          border: Border.all(color: AppTheme.dividerColor.withOpacity(0.5)),
         ),
         child: Row(
           children: [
@@ -242,19 +241,19 @@ class _EmergencyRepairScreenState extends State<EmergencyRepairScreen> {
                 children: [
                   Text(
                     title,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 14,
+                      color: Theme.of(context).textTheme.titleSmall?.color ?? AppColors.textPrimary,
                       fontWeight: FontWeight.w600,
-                      color: AppTheme.textPrimary,
                     ),
                   ),
                   if (subtitle != null) ...[
                     const SizedBox(height: 2),
                     Text(
                       subtitle,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 12,
-                        color: AppTheme.textSecondary,
+                        color: Theme.of(context).textTheme.bodySmall?.color ?? AppColors.textSecondary,
                       ),
                     ),
                   ],

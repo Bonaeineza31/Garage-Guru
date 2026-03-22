@@ -39,7 +39,7 @@ class _SendFeedbackScreenState extends State<SendFeedbackScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
+      // Removed hardcoded background for app-wide dark mode support,
       appBar: AppBar(
         backgroundColor: AppColors.info,
         elevation: 0,
@@ -224,7 +224,7 @@ class _SendFeedbackScreenState extends State<SendFeedbackScreen> {
                         Container(
                           padding: const EdgeInsets.all(12),
                           decoration: BoxDecoration(
-                            color: AppColors.background,
+                            color: Theme.of(context).scaffoldBackgroundColor,
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: const Icon(Icons.image_outlined,
@@ -460,7 +460,7 @@ class _FeedbackCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: AppColors.background,
+        color: Theme.of(context).scaffoldBackgroundColor,
         borderRadius: BorderRadius.circular(10),
         border: Border.all(color: AppColors.divider),
       ),

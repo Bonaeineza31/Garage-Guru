@@ -17,7 +17,7 @@ class RepairDetailScreen extends StatelessWidget {
     final bool isInProgress = repair.status == RepairStatus.inProgress;
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      // Removed hardcoded background for app-wide dark mode support,
       appBar: AppBar(
         backgroundColor: AppColors.info,
         elevation: 0,

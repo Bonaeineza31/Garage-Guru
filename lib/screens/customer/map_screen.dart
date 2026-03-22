@@ -41,7 +41,7 @@ class _MapScreenState extends State<MapScreen> {
             child: FloatingActionButton.small(
               heroTag: 'location',
               onPressed: () {},
-              backgroundColor: AppColors.surface,
+              backgroundColor: Theme.of(context).cardColor,
               elevation: 4,
               child: const Icon(Icons.my_location_rounded, color: AppColors.primary),
             ),

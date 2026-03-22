@@ -131,7 +131,7 @@ class GgChipButton extends StatelessWidget {
         ),
         decoration: BoxDecoration(
           gradient: isSelected ? AppColors.primaryGradient : null,
-          color: isSelected ? null : AppColors.surface,
+          color: isSelected ? null : Theme.of(context).cardColor,
           borderRadius: BorderRadius.circular(AppRadius.pill),
           border: Border.all(
             color: isSelected ? Colors.transparent : AppColors.divider,

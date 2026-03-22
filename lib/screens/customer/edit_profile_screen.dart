@@ -11,7 +11,7 @@ class EditProfileScreen extends StatelessWidget {
     final user = MockData.currentUser;
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      
       appBar: GgAppBar(
         title: 'Edit Profile',
       ),

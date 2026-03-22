@@ -12,7 +12,7 @@ class ReviewCard extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: AppSpacing.md),
       padding: const EdgeInsets.all(AppSpacing.lg),
       decoration: BoxDecoration(
-        color: AppColors.cardBackground,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(AppRadius.xl),
         border: Border.all(color: AppColors.divider.withOpacity(0.3)),
         boxShadow: AppShadows.card,
@@ -105,7 +105,7 @@ class ReviewCard extends StatelessWidget {
                       errorBuilder: (_, __, ___) => Container(
                         width: 80,
                         height: 80,
-                        color: AppColors.background,
+                        color: Theme.of(context).scaffoldBackgroundColor,
                         child: const Icon(Icons.image, color: AppColors.textHint),
                       ),
                     ),

@@ -16,7 +16,6 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.scaffoldBackground,
       body: SafeArea(
         child: Column(
           children: [
@@ -31,7 +30,7 @@ class HomeScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // Search bar
-                    _buildSearchBar(),
+                    _buildSearchBar(context),
 
                     // Map section
                     _buildMapSection(context),
@@ -60,7 +59,7 @@ class HomeScreen extends StatelessWidget {
   Widget _buildHeader(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      color: Colors.white,
+      color: Theme.of(context).cardColor,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -77,12 +76,12 @@ class HomeScreen extends StatelessWidget {
                 child: const Icon(Icons.build, color: Colors.white, size: 20),
               ),
               const SizedBox(width: 10),
-              const Text(
+              Text(
                 'GarageGuru',
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
-                  color: AppTheme.textPrimary,
+                  color: Theme.of(context).textTheme.titleLarge?.color,
                 ),
               ),
             ],
@@ -93,7 +92,7 @@ class HomeScreen extends StatelessWidget {
             children: [
               IconButton(
                 icon: const Icon(Icons.notifications_outlined),
-                color: AppTheme.iconGray,
+                color: Theme.of(context).iconTheme.color?.withOpacity(0.7) ?? AppTheme.iconGray,
                 onPressed: () {
                   Navigator.of(context).push(
                     MaterialPageRoute(
@@ -122,15 +121,15 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildSearchBar() {
+  Widget _buildSearchBar(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(16),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: Theme.of(context).cardColor,
           borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: AppTheme.dividerColor),
+          border: Border.all(color: Theme.of(context).dividerColor.withOpacity(0.5)),
         ),
         child: Row(
           children: [
@@ -142,7 +141,10 @@ class HomeScreen extends StatelessWidget {
             const SizedBox(width: 12),
             Text(
               'Find nearby repair shops',
-            style: TextStyle(color: AppTheme.textHint, fontSize: 14),
+              style: TextStyle(
+                color: Theme.of(context).textTheme.bodySmall?.color ?? AppColors.textHint, 
+                fontSize: 14,
+              ),
             ),
           ],
         ),
@@ -163,7 +165,7 @@ class HomeScreen extends StatelessWidget {
           height: 280,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: AppTheme.dividerColor),
+            border: Border.all(color: Theme.of(context).dividerColor.withOpacity(0.5)),
             image: const DecorationImage(
               image: NetworkImage(
                 'https://api.mapbox.com/styles/v1/mapbox/streets-v11/static/-0.1276,51.5074,11/600x400@2x?access_token=pk.eyJ1IjoiZXhhbXBsZSIsImEiOiJja2x2ZGFuYW8wMDFjMm5xbzFxZGc4Ym0yIn0.example',
@@ -183,7 +185,7 @@ class HomeScreen extends StatelessWidget {
                     vertical: 4,
                   ),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: Theme.of(context).cardColor,
                     borderRadius: BorderRadius.circular(4),
                   ),
                   child: const Text(
@@ -306,12 +308,12 @@ class HomeScreen extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+          Text(
             'Quick Services',
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
-              color: AppTheme.textPrimary,
+              color: Theme.of(context).textTheme.titleLarge?.color,
             ),
           ),
           const SizedBox(height: 16),
@@ -396,7 +398,10 @@ class HomeScreen extends StatelessWidget {
           const SizedBox(height: 8),
           Text(
             label,
-            style: const TextStyle(fontSize: 12, color: AppTheme.textSecondary),
+            style: TextStyle(
+              fontSize: 12, 
+              color: Theme.of(context).textTheme.bodySmall?.color ?? AppColors.textSecondary,
+            ),
           ),
         ],
       ),
@@ -411,12 +416,12 @@ class HomeScreen extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
+              Text(
                 'Nearby Garages',
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
-                  color: AppTheme.textPrimary,
+                  color: Theme.of(context).textTheme.titleLarge?.color,
                 ),
               ),
               TextButton(
@@ -485,7 +490,7 @@ class HomeScreen extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: Theme.of(context).cardColor,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(color: AppTheme.dividerColor),
         ),
@@ -524,7 +529,6 @@ class HomeScreen extends StatelessWidget {
                     style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
-                      color: AppTheme.textPrimary,
                     ),
                   ),
                   const SizedBox(height: 4),
@@ -599,19 +603,19 @@ class HomeScreen extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+          Text(
             'Upcoming Maintenance',
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
-              color: AppTheme.textPrimary,
+              color: Theme.of(context).textTheme.titleLarge?.color,
             ),
           ),
           const SizedBox(height: 12),
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: Theme.of(context).cardColor,
               borderRadius: BorderRadius.circular(12),
               border: Border.all(color: AppTheme.dividerColor),
             ),
@@ -640,7 +644,6 @@ class HomeScreen extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
-                          color: AppTheme.textPrimary,
                         ),
                       ),
                       const SizedBox(height: 4),

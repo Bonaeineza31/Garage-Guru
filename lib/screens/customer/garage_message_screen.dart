@@ -10,7 +10,7 @@ class GarageMessageScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
+      // Removed hardcoded background for app-wide dark mode support,
       appBar: AppBar(
         backgroundColor: AppColors.primary,
         titleSpacing: 0,
@@ -56,7 +56,7 @@ class GarageMessageScreen extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.sm),
             decoration: BoxDecoration(
-              color: AppColors.surface,
+              color: Theme.of(context).cardColor,
               boxShadow: AppShadows.bottomNav,
             ),
             child: SafeArea(
@@ -71,7 +71,7 @@ class GarageMessageScreen extends StatelessWidget {
                       decoration: InputDecoration(
                         hintText: 'Type a message...',
                         filled: true,
-                        fillColor: AppColors.background,
+                        fillColor: Theme.of(context).scaffoldBackgroundColor,
                         contentPadding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: AppSpacing.sm),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(AppRadius.pill),

@@ -43,7 +43,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
             Container(
               padding: const EdgeInsets.all(AppSpacing.lg),
               decoration: BoxDecoration(
-                color: AppColors.cardBackground,
+                color: Theme.of(context).cardColor,
                 borderRadius: BorderRadius.circular(AppRadius.lg),
                 boxShadow: AppShadows.card,
               ),
@@ -167,7 +167,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
       bottomNavigationBar: Container(
         padding: const EdgeInsets.all(AppSpacing.lg),
         decoration: BoxDecoration(
-          color: AppColors.surface,
+          color: Theme.of(context).cardColor,
           boxShadow: AppShadows.bottomNav,
         ),
         child: SafeArea(
@@ -205,7 +205,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
               width: 44,
               height: 44,
               decoration: BoxDecoration(
-                color: isSelected ? AppColors.primary.withOpacity(0.15) : AppColors.background,
+                color: isSelected ? AppColors.primary.withOpacity(0.15) : Theme.of(context).scaffoldBackgroundColor,
                 borderRadius: BorderRadius.circular(AppRadius.sm),
               ),
               child: Icon(icon, color: isSelected ? AppColors.primary : AppColors.textSecondary),

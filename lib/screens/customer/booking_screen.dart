@@ -31,11 +31,10 @@ class _BookingScreenState extends State<BookingScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
       appBar: AppBar(
         title: const Text('Book Appointment'),
-        backgroundColor: AppColors.surface,
-        foregroundColor: AppColors.textPrimary,
+        backgroundColor: Theme.of(context).cardColor,
+        foregroundColor: Theme.of(context).textTheme.titleLarge?.color,
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
@@ -70,8 +69,8 @@ class _BookingScreenState extends State<BookingScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(widget.garage.name, style: AppTextStyles.subtitle),
-                      Text(widget.garage.address.split(',').last.trim(), style: AppTextStyles.caption),
+                      Text(widget.garage.name, style: AppTextStyles.subtitle.copyWith(color: Theme.of(context).textTheme.titleMedium?.color)),
+                      Text(widget.garage.address.split(',').last.trim(), style: AppTextStyles.caption.copyWith(color: Theme.of(context).textTheme.bodySmall?.color)),
                     ],
                   ),
                 ),
@@ -79,14 +78,14 @@ class _BookingScreenState extends State<BookingScreen> {
             ),
             const SizedBox(height: AppSpacing.xl),
             
-            Text('Select Service', style: AppTextStyles.heading3),
+            Text('Select Service', style: AppTextStyles.heading3.copyWith(color: Theme.of(context).textTheme.titleLarge?.color)),
             const SizedBox(height: AppSpacing.md),
             DropdownButtonFormField<String>(
               value: _selectedService,
               hint: const Text('Choose a service'),
               decoration: InputDecoration(
                 filled: true,
-                fillColor: AppColors.surface,
+                fillColor: Theme.of(context).cardColor,
                 contentPadding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: AppSpacing.md),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(AppRadius.md),
@@ -106,7 +105,7 @@ class _BookingScreenState extends State<BookingScreen> {
             ),
             
             const SizedBox(height: AppSpacing.xl),
-            Text('Choose Date', style: AppTextStyles.heading3),
+            Text('Choose Date', style: AppTextStyles.heading3.copyWith(color: Theme.of(context).textTheme.titleLarge?.color)),
             const SizedBox(height: AppSpacing.md),
             SizedBox(
               height: 70,
@@ -122,7 +121,7 @@ class _BookingScreenState extends State<BookingScreen> {
                       width: 60,
                       margin: const EdgeInsets.only(right: AppSpacing.sm),
                       decoration: BoxDecoration(
-                        color: isSelected ? AppColors.primary : AppColors.surface,
+                        color: isSelected ? AppColors.primary : Theme.of(context).cardColor,
                         borderRadius: BorderRadius.circular(AppRadius.md),
                         border: Border.all(
                           color: isSelected ? AppColors.primary : AppColors.divider,
@@ -134,14 +133,14 @@ class _BookingScreenState extends State<BookingScreen> {
                           Text(
                             split[0],
                             style: AppTextStyles.caption.copyWith(
-                              color: isSelected ? Colors.white70 : AppColors.textSecondary,
+                              color: isSelected ? Colors.white70 : Theme.of(context).textTheme.bodySmall?.color,
                             ),
                           ),
                           const SizedBox(height: 4),
                           Text(
                             split[1],
                             style: AppTextStyles.subtitle.copyWith(
-                              color: isSelected ? Colors.white : AppColors.textPrimary,
+                              color: isSelected ? Colors.white : Theme.of(context).textTheme.titleLarge?.color,
                             ),
                           ),
                         ],
@@ -153,7 +152,7 @@ class _BookingScreenState extends State<BookingScreen> {
             ),
             
             const SizedBox(height: AppSpacing.xl),
-            Text('Choose Time', style: AppTextStyles.heading3),
+            Text('Choose Time', style: AppTextStyles.heading3.copyWith(color: Theme.of(context).textTheme.titleLarge?.color)),
             const SizedBox(height: AppSpacing.md),
             Wrap(
               spacing: AppSpacing.sm,
@@ -165,7 +164,7 @@ class _BookingScreenState extends State<BookingScreen> {
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: AppSpacing.sm),
                     decoration: BoxDecoration(
-                      color: isSelected ? AppColors.primaryLight.withOpacity(0.3) : AppColors.surface,
+                      color: isSelected ? AppColors.primaryLight.withOpacity(0.3) : Theme.of(context).cardColor,
                       borderRadius: BorderRadius.circular(AppRadius.pill),
                       border: Border.all(
                         color: isSelected ? AppColors.primary : AppColors.divider,
@@ -174,7 +173,7 @@ class _BookingScreenState extends State<BookingScreen> {
                     child: Text(
                       _times[index],
                       style: AppTextStyles.bodySmall.copyWith(
-                        color: isSelected ? AppColors.primaryDark : AppColors.textPrimary,
+                        color: isSelected ? AppColors.primaryDark : Theme.of(context).textTheme.bodyLarge?.color,
                         fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
                       ),
                     ),
@@ -184,14 +183,14 @@ class _BookingScreenState extends State<BookingScreen> {
             ),
             
             const SizedBox(height: AppSpacing.xl),
-            Text('Add Notes', style: AppTextStyles.heading3),
+            Text('Add Notes', style: AppTextStyles.heading3.copyWith(color: Theme.of(context).textTheme.titleLarge?.color)),
             const SizedBox(height: AppSpacing.md),
             TextField(
               maxLines: 4,
               decoration: InputDecoration(
                 hintText: 'Any specific issues or requests...',
                 filled: true,
-                fillColor: AppColors.surface,
+                fillColor: Theme.of(context).cardColor,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(AppRadius.md),
                   borderSide: const BorderSide(color: AppColors.divider),
@@ -208,8 +207,8 @@ class _BookingScreenState extends State<BookingScreen> {
       ),
       bottomSheet: Container(
         padding: const EdgeInsets.all(AppSpacing.lg),
-        decoration: const BoxDecoration(
-          color: AppColors.surface,
+        decoration: BoxDecoration(
+          color: Theme.of(context).cardColor,
           boxShadow: [
             BoxShadow(
               color: Colors.black12,
@@ -227,7 +226,7 @@ class _BookingScreenState extends State<BookingScreen> {
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Total Estimate', style: AppTextStyles.caption),
+                    Text('Total Estimate', style: AppTextStyles.caption.copyWith(color: Theme.of(context).textTheme.bodySmall?.color)),
                     Text('--', style: AppTextStyles.heading3.copyWith(color: AppColors.primary)),
                   ],
                 ),

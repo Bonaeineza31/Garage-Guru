@@ -90,7 +90,7 @@ class _RepairsScreenState extends State<RepairsScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
+      // Removed hardcoded background for app-wide dark mode support,
       appBar: AppBar(
         backgroundColor: AppColors.primary,
         elevation: 0,
@@ -251,7 +251,7 @@ class _RepairCard extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(12),
         boxShadow: AppShadows.card,
       ),
@@ -269,7 +269,7 @@ class _RepairCard extends StatelessWidget {
                       width: 52,
                       height: 52,
                       decoration: BoxDecoration(
-                        color: AppColors.background,
+                        color: Theme.of(context).scaffoldBackgroundColor,
                         shape: BoxShape.circle,
                         border: Border.all(color: AppColors.divider),
                       ),
@@ -287,7 +287,7 @@ class _RepairCard extends StatelessWidget {
                               fontFamily: 'Poppins',
                               fontWeight: FontWeight.w700,
                               fontSize: 15,
-                              color: AppColors.textPrimary,
+                              
                             ),
                           ),
                           const SizedBox(height: 2),
@@ -296,7 +296,7 @@ class _RepairCard extends StatelessWidget {
                             style: const TextStyle(
                               fontFamily: 'Poppins',
                               fontSize: 12,
-                              color: AppColors.textSecondary,
+                              
                             ),
                           ),
                           const SizedBox(height: 4),
@@ -336,7 +336,7 @@ class _RepairCard extends StatelessWidget {
                       style: TextStyle(
                         fontFamily: 'Poppins',
                         fontSize: 12,
-                        color: AppColors.textSecondary,
+                        
                       ),
                     ),
                     Text(
@@ -345,7 +345,7 @@ class _RepairCard extends StatelessWidget {
                         fontFamily: 'Poppins',
                         fontSize: 12,
                         fontWeight: FontWeight.w600,
-                        color: AppColors.textPrimary,
+                        
                       ),
                     ),
                   ],
@@ -372,7 +372,7 @@ class _RepairCard extends StatelessWidget {
                           style: TextStyle(
                             fontFamily: 'Poppins',
                             fontSize: 12,
-                            color: AppColors.textSecondary,
+                            
                           ),
                         ),
                         Text(
@@ -381,7 +381,7 @@ class _RepairCard extends StatelessWidget {
                             fontFamily: 'Poppins',
                             fontSize: 13,
                             fontWeight: FontWeight.w600,
-                            color: AppColors.textPrimary,
+                            
                           ),
                         ),
                       ],
@@ -407,14 +407,14 @@ class _RepairCard extends StatelessWidget {
                   const SizedBox(height: 8),
                   Row(
                     children: const [
-                      Icon(Icons.access_time, size: 14, color: AppColors.textSecondary),
+                      Icon(Icons.access_time, size: 14, ),
                       SizedBox(width: 4),
                       Text(
                         'Estimated completion: 2 hours',
                         style: TextStyle(
                           fontFamily: 'Poppins',
                           fontSize: 12,
-                          color: AppColors.textSecondary,
+                          
                         ),
                       ),
                     ],
@@ -429,7 +429,7 @@ class _RepairCard extends StatelessWidget {
               child: Container(
                 height: 140,
                 width: double.infinity,
-                color: AppColors.background,
+                color: Theme.of(context).scaffoldBackgroundColor,
                 child: const Icon(Icons.garage_rounded,
                     color: AppColors.primary, size: 60),
               ),
@@ -531,7 +531,7 @@ class _CancelRepairDialogState extends State<_CancelRepairDialog> {
   Widget build(BuildContext context) {
     return Dialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).cardColor,
       child: Padding(
         padding: const EdgeInsets.all(24),
         child: Column(
@@ -556,7 +556,7 @@ class _CancelRepairDialogState extends State<_CancelRepairDialog> {
                     fontFamily: 'Poppins',
                     fontWeight: FontWeight.w700,
                     fontSize: 16,
-                    color: AppColors.textPrimary,
+                    
                   ),
                 ),
               ],
@@ -567,7 +567,7 @@ class _CancelRepairDialogState extends State<_CancelRepairDialog> {
               style: TextStyle(
                 fontFamily: 'Poppins',
                 fontSize: 13,
-                color: AppColors.textSecondary,
+                
                 height: 1.5,
               ),
             ),
@@ -578,7 +578,7 @@ class _CancelRepairDialogState extends State<_CancelRepairDialog> {
                 fontFamily: 'Poppins',
                 fontSize: 13,
                 fontWeight: FontWeight.w500,
-                color: AppColors.textPrimary,
+                
               ),
             ),
             const SizedBox(height: 8),
@@ -626,7 +626,7 @@ class _CancelRepairDialogState extends State<_CancelRepairDialog> {
                         fontFamily: 'Poppins',
                         fontWeight: FontWeight.w600,
                         fontSize: 14,
-                        color: AppColors.textPrimary,
+                        
                       ),
                     ),
                   ),

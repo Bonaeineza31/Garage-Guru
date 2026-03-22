@@ -23,7 +23,7 @@ class ServiceCard extends StatelessWidget {
         margin: const EdgeInsets.only(bottom: AppSpacing.sm),
         padding: const EdgeInsets.all(AppSpacing.lg),
         decoration: BoxDecoration(
-          color: isSelected ? AppColors.primary.withOpacity(0.04) : AppColors.cardBackground,
+          color: isSelected ? AppColors.primary.withOpacity(0.04) : Theme.of(context).cardColor,
           borderRadius: BorderRadius.circular(AppRadius.lg),
           border: Border.all(
             color: isSelected ? AppColors.primary : AppColors.divider.withOpacity(0.5),
@@ -40,7 +40,7 @@ class ServiceCard extends StatelessWidget {
                 gradient: isSelected
                     ? AppColors.primaryGradient
                     : null,
-                color: isSelected ? null : AppColors.background,
+                color: isSelected ? null : Theme.of(context).scaffoldBackgroundColor,
                 borderRadius: BorderRadius.circular(AppRadius.md),
               ),
               child: Icon(
@@ -57,13 +57,19 @@ class ServiceCard extends StatelessWidget {
                   Text(
                     service.name,
                     style: AppTextStyles.subtitle.copyWith(
-                      color: isSelected ? AppColors.primary : AppColors.textPrimary,
+                      color: isSelected 
+                        ? (Theme.of(context).brightness == Brightness.dark ? Colors.white : AppColors.primary)
+                        : (Theme.of(context).textTheme.titleMedium?.color ?? AppColors.textPrimary),
                     ),
                   ),
                   const SizedBox(height: 2),
                   Text(
                     service.description,
-                    style: AppTextStyles.bodySmall,
+                    style: AppTextStyles.bodySmall.copyWith(
+                      color: isSelected && Theme.of(context).brightness == Brightness.dark
+                        ? Colors.white70
+                        : Theme.of(context).textTheme.bodySmall?.color ?? AppColors.textSecondary,
+                    ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -86,7 +92,7 @@ class ServiceCard extends StatelessWidget {
                   service.formattedPrice,
                   style: AppTextStyles.price.copyWith(
                     fontSize: 16,
-                    color: isSelected ? AppColors.accent : AppColors.textPrimary,
+                    color: isSelected ? AppColors.accent : (Theme.of(context).textTheme.titleMedium?.color ?? AppColors.textPrimary),
                   ),
                 ),
                 const SizedBox(height: AppSpacing.sm),
@@ -154,7 +160,7 @@ class ServiceTag extends StatelessWidget {
         vertical: AppSpacing.sm,
       ),
       decoration: BoxDecoration(
-        color: AppColors.background,
+        color: Theme.of(context).scaffoldBackgroundColor,
         borderRadius: BorderRadius.circular(AppRadius.pill),
         border: Border.all(color: AppColors.divider.withOpacity(0.5)),
       ),

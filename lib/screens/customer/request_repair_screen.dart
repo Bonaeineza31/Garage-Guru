@@ -31,7 +31,7 @@ class _RequestRepairScreenState extends State<RequestRepairScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.scaffoldBackground,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
@@ -45,12 +45,12 @@ class _RequestRepairScreenState extends State<RequestRepairScreen> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             // Repair Type dropdown
-            const Text(
+            Text(
               'Repair Type',
               style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
-                color: AppTheme.textPrimary,
+                color: Theme.of(context).textTheme.titleMedium?.color,
               ),
             ),
             const SizedBox(height: 8),
@@ -94,12 +94,12 @@ class _RequestRepairScreenState extends State<RequestRepairScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
+                      Text(
                         'Date',
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w600,
-                          color: AppTheme.textPrimary,
+                          color: Theme.of(context).textTheme.titleMedium?.color,
                         ),
                       ),
                       const SizedBox(height: 8),
@@ -133,12 +133,12 @@ class _RequestRepairScreenState extends State<RequestRepairScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
+                      Text(
                         'Time',
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w600,
-                          color: AppTheme.textPrimary,
+                          color: Theme.of(context).textTheme.titleMedium?.color,
                         ),
                       ),
                       const SizedBox(height: 8),
@@ -168,12 +168,12 @@ class _RequestRepairScreenState extends State<RequestRepairScreen> {
             const SizedBox(height: 20),
 
             // Location section
-            const Text(
+            Text(
               'Location',
               style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
-                color: AppTheme.textPrimary,
+                color: Theme.of(context).textTheme.titleMedium?.color,
               ),
             ),
             const SizedBox(height: 8),
@@ -189,12 +189,12 @@ class _RequestRepairScreenState extends State<RequestRepairScreen> {
             const SizedBox(height: 20),
 
             // Vehicle dropdown
-            const Text(
+            Text(
               'Vehicle',
               style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
-                color: AppTheme.textPrimary,
+                color: Theme.of(context).textTheme.titleMedium?.color,
               ),
             ),
             const SizedBox(height: 8),
@@ -225,12 +225,12 @@ class _RequestRepairScreenState extends State<RequestRepairScreen> {
             const SizedBox(height: 20),
 
             // Issue Description
-            const Text(
+            Text(
               'Issue Description',
               style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
-                color: AppTheme.textPrimary,
+                color: Theme.of(context).textTheme.titleMedium?.color,
               ),
             ),
             const SizedBox(height: 8),

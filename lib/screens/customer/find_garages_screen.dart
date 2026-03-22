@@ -19,10 +19,10 @@ class _FindGaragesScreenState extends State<FindGaragesScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
+      // Removed hardcoded background for app-wide dark mode support,
       appBar: AppBar(
         title: const Text('Find Garages'),
-        backgroundColor: AppColors.surface,
+        backgroundColor: Theme.of(context).cardColor,
         foregroundColor: AppColors.textPrimary,
         elevation: 0,
         actions: [
@@ -46,7 +46,7 @@ class _FindGaragesScreenState extends State<FindGaragesScreen> {
                 hintText: 'Search garage or service...',
                 prefixIcon: const Icon(Icons.search, color: AppColors.textHint),
                 filled: true,
-                fillColor: AppColors.surface,
+                fillColor: Theme.of(context).cardColor,
                 contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: AppSpacing.lg),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(AppRadius.pill),
@@ -79,7 +79,7 @@ class _FindGaragesScreenState extends State<FindGaragesScreen> {
                     onSelected: (selected) {
                       if (selected) setState(() => _activeFilter = filter);
                     },
-                    backgroundColor: AppColors.surface,
+                    backgroundColor: Theme.of(context).cardColor,
                     selectedColor: AppColors.primary,
                     labelStyle: AppTextStyles.bodySmall.copyWith(
                       color: isActive ? Colors.white : AppColors.textPrimary,

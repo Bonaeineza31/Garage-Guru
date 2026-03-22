@@ -30,7 +30,7 @@ class _TireServiceScreenState extends State<TireServiceScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.scaffoldBackground,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
@@ -47,9 +47,9 @@ class _TireServiceScreenState extends State<TireServiceScreen> {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: Theme.of(context).cardColor,
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: AppTheme.dividerColor),
+                border: Border.all(color: Theme.of(context).dividerColor),
               ),
               child: Row(
                 children: [
@@ -67,7 +67,7 @@ class _TireServiceScreenState extends State<TireServiceScreen> {
                     ),
                   ),
                   const SizedBox(width: 12),
-                  const Expanded(
+                  Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -76,7 +76,7 @@ class _TireServiceScreenState extends State<TireServiceScreen> {
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
-                            color: AppTheme.textPrimary,
+                            color: Theme.of(context).textTheme.titleMedium?.color,
                           ),
                         ),
                         SizedBox(height: 4),
@@ -84,7 +84,7 @@ class _TireServiceScreenState extends State<TireServiceScreen> {
                           'Professional tire care for your vehicle',
                           style: TextStyle(
                             fontSize: 13,
-                            color: AppTheme.textSecondary,
+                            color: Theme.of(context).textTheme.bodySmall?.color,
                           ),
                         ),
                       ],
@@ -101,6 +101,7 @@ class _TireServiceScreenState extends State<TireServiceScreen> {
               children: [
                 Expanded(
                   child: _buildServiceOption(
+                    context,
                     title: 'Tire Replacement',
                     price: 'From Frw 20,000',
                   ),
@@ -108,6 +109,7 @@ class _TireServiceScreenState extends State<TireServiceScreen> {
                 const SizedBox(width: 12),
                 Expanded(
                   child: _buildServiceOption(
+                    context,
                     title: 'Tire Rotation',
                     price: 'From Frw 15,000',
                   ),
@@ -121,6 +123,7 @@ class _TireServiceScreenState extends State<TireServiceScreen> {
               children: [
                 Expanded(
                   child: _buildServiceOption(
+                    context,
                     title: 'Wheel Alignment',
                     price: 'From Frw 25,000',
                   ),
@@ -128,6 +131,7 @@ class _TireServiceScreenState extends State<TireServiceScreen> {
                 const SizedBox(width: 12),
                 Expanded(
                   child: _buildServiceOption(
+                    context,
                     title: 'Tire Pressure',
                     price: 'From Frw 5,000',
                   ),
@@ -138,24 +142,24 @@ class _TireServiceScreenState extends State<TireServiceScreen> {
             const SizedBox(height: 32),
 
             // Book Battery Service section
-            const Text(
+            Text(
               'Book Battery Service',
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
-                color: AppTheme.textPrimary,
+                color: Theme.of(context).textTheme.titleLarge?.color,
               ),
             ),
 
             const SizedBox(height: 16),
 
             // Service Type dropdown
-            const Text(
+            Text(
               'Service Type',
               style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
-                color: AppTheme.textPrimary,
+                color: Theme.of(context).textTheme.titleMedium?.color,
               ),
             ),
             const SizedBox(height: 8),
@@ -193,12 +197,12 @@ class _TireServiceScreenState extends State<TireServiceScreen> {
             const SizedBox(height: 20),
 
             // Garage dropdown
-            const Text(
+            Text(
               'Garage',
               style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
-                color: AppTheme.textPrimary,
+                color: Theme.of(context).textTheme.titleMedium?.color,
               ),
             ),
             const SizedBox(height: 8),
@@ -232,12 +236,12 @@ class _TireServiceScreenState extends State<TireServiceScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
+                      Text(
                         'Date',
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w600,
-                          color: AppTheme.textPrimary,
+                          color: Theme.of(context).textTheme.titleMedium?.color,
                         ),
                       ),
                       const SizedBox(height: 8),
@@ -271,12 +275,12 @@ class _TireServiceScreenState extends State<TireServiceScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
+                      Text(
                         'Time',
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w600,
-                          color: AppTheme.textPrimary,
+                          color: Theme.of(context).textTheme.titleMedium?.color,
                         ),
                       ),
                       const SizedBox(height: 8),
@@ -306,12 +310,12 @@ class _TireServiceScreenState extends State<TireServiceScreen> {
             const SizedBox(height: 20),
 
             // Location
-            const Text(
+            Text(
               'Location',
               style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
-                color: AppTheme.textPrimary,
+                color: Theme.of(context).textTheme.titleMedium?.color,
               ),
             ),
             const SizedBox(height: 8),
@@ -327,12 +331,12 @@ class _TireServiceScreenState extends State<TireServiceScreen> {
             const SizedBox(height: 20),
 
             // Vehicle dropdown
-            const Text(
+            Text(
               'Vehicle',
               style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
-                color: AppTheme.textPrimary,
+                color: Theme.of(context).textTheme.titleMedium?.color,
               ),
             ),
             const SizedBox(height: 8),
@@ -379,29 +383,32 @@ class _TireServiceScreenState extends State<TireServiceScreen> {
     );
   }
 
-  Widget _buildServiceOption({required String title, required String price}) {
+  Widget _buildServiceOption(BuildContext context, {required String title, required String price}) {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: AppTheme.scaffoldBackground,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: AppTheme.dividerColor),
+        border: Border.all(color: Theme.of(context).dividerColor),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             title,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 13,
               fontWeight: FontWeight.w600,
-              color: AppTheme.textPrimary,
+              color: Theme.of(context).textTheme.titleMedium?.color,
             ),
           ),
           const SizedBox(height: 4),
           Text(
             price,
-            style: const TextStyle(fontSize: 11, color: AppTheme.textSecondary),
+            style: TextStyle(
+              fontSize: 11, 
+              color: Theme.of(context).textTheme.bodySmall?.color,
+            ),
           ),
         ],
       ),

@@ -18,7 +18,7 @@ class BookingCard extends StatelessWidget {
       child: Container(
         margin: const EdgeInsets.only(bottom: AppSpacing.md),
         decoration: BoxDecoration(
-          color: AppColors.cardBackground,
+          color: Theme.of(context).cardColor,
           borderRadius: BorderRadius.circular(AppRadius.xl),
           border: Border.all(color: AppColors.divider.withOpacity(0.3)),
           boxShadow: AppShadows.card,

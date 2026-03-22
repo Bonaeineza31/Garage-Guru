@@ -16,7 +16,6 @@ class ProfileScreen extends StatelessWidget {
     final user = MockData.currentUser;
 
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: AppBar(
         title: Row(
           children: [
@@ -36,18 +35,21 @@ class ProfileScreen extends StatelessWidget {
               'GarageGuru',
               style: AppTextStyles.subtitle.copyWith(
                 fontWeight: FontWeight.bold,
-                color: AppColors.textPrimary,
+                color: Theme.of(context).textTheme.titleLarge?.color,
               ),
             ),
           ],
         ),
-        backgroundColor: Colors.white,
+        backgroundColor: Theme.of(context).appBarTheme.backgroundColor ?? Theme.of(context).scaffoldBackgroundColor,
         elevation: 0,
         actions: [
           IconButton(
             icon: Stack(
               children: [
-                const Icon(Icons.notifications_outlined, color: AppColors.textSecondary),
+                Icon(
+                  Icons.notifications_outlined, 
+                  color: Theme.of(context).textTheme.bodySmall?.color ?? AppColors.textSecondary,
+                ),
                 Positioned(
                   right: 2,
                   top: 2,
@@ -71,7 +73,7 @@ class ProfileScreen extends StatelessWidget {
         ],
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1),
-          child: Container(color: AppColors.divider, height: 1),
+          child: Container(color: Theme.of(context).dividerColor, height: 1),
         ),
       ),
       body: SingleChildScrollView(
@@ -151,34 +153,54 @@ class ProfileScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: AppSpacing.lg),
-            _buildProfileMenuItem(
-              icon: Icons.directions_car_outlined,
-              title: 'My Vehicles',
-              onTap: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(builder: (_) => const MyVehiclesScreen()),
-                );
-              },
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
+              child: Card(
+                elevation: 0,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(AppRadius.lg),
+                  side: BorderSide(color: Theme.of(context).dividerColor.withOpacity(0.5)),
+                ),
+                child: Column(
+                  children: [
+                    _buildProfileMenuItem(
+                      context,
+                      icon: Icons.directions_car_outlined,
+                      title: 'My Vehicles',
+                      onTap: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(builder: (_) => const MyVehiclesScreen()),
+                        );
+                      },
+                      showDivider: true,
+                    ),
+                    _buildProfileMenuItem(
+                      context,
+                      icon: Icons.notifications_none_rounded,
+                      title: 'Notifications',
+                      onTap: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(builder: (_) => const NotificationsScreen()),
+                        );
+                      },
+                      showDivider: true,
+                    ),
+                    _buildProfileMenuItem(
+                      context,
+                      icon: Icons.person_outline_rounded,
+                      title: 'Account Settings',
+                      onTap: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(builder: (_) => const AccountSettingsScreen()),
+                        );
+                      },
+                      showDivider: true,
+                    ),
+                    _buildLogoutItem(context),
+                  ],
+                ),
+              ),
             ),
-            _buildProfileMenuItem(
-              icon: Icons.notifications_none_rounded,
-              title: 'Notifications',
-              onTap: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(builder: (_) => const NotificationsScreen()),
-                );
-              },
-            ),
-            _buildProfileMenuItem(
-              icon: Icons.person_outline_rounded,
-              title: 'Account Settings',
-              onTap: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(builder: (_) => const AccountSettingsScreen()),
-                );
-              },
-            ),
-            _buildLogoutItem(context),
             const SizedBox(height: AppSpacing.xl),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
@@ -187,8 +209,18 @@ class ProfileScreen extends StatelessWidget {
                 children: [
                   Text('App Information', style: AppTextStyles.subtitle.copyWith(fontWeight: FontWeight.bold)),
                   const SizedBox(height: 8),
-                  Text('Version: 1.0.0', style: AppTextStyles.bodySmall.copyWith(color: AppColors.textSecondary)),
-                  Text('© 2026 GarageGuru', style: AppTextStyles.bodySmall.copyWith(color: AppColors.textSecondary)),
+                  Text(
+                    'Version: 1.0.0', 
+                    style: AppTextStyles.bodySmall.copyWith(
+                      color: Theme.of(context).textTheme.bodySmall?.color ?? AppColors.textSecondary,
+                    ),
+                  ),
+                  Text(
+                    '© 2026 GarageGuru', 
+                    style: AppTextStyles.bodySmall.copyWith(
+                      color: Theme.of(context).textTheme.bodySmall?.color ?? AppColors.textSecondary,
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -199,14 +231,34 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildProfileMenuItem({required IconData icon, required String title, required VoidCallback onTap}) {
-    return ListTile(
-      onTap: onTap,
-      leading: Icon(icon, color: AppColors.primary),
-      title: Text(title, style: AppTextStyles.body.copyWith(fontWeight: FontWeight.w500)),
-      trailing: const Icon(Icons.chevron_right, color: AppColors.textSecondary, size: 20),
-      contentPadding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
-      shape: const Border(bottom: BorderSide(color: Color(0xFFEEEEEE), width: 1)),
+  Widget _buildProfileMenuItem(BuildContext context, {
+    required IconData icon, 
+    required String title, 
+    required VoidCallback onTap,
+    bool showDivider = false,
+  }) {
+    return Column(
+      children: [
+        ListTile(
+          onTap: onTap,
+          leading: Icon(icon, color: AppColors.primary, size: 22),
+          title: Text(
+            title, 
+            style: AppTextStyles.body.copyWith(
+              fontWeight: FontWeight.w500,
+              color: Theme.of(context).textTheme.bodyLarge?.color,
+            ),
+          ),
+          trailing: Icon(
+            Icons.chevron_right, 
+            color: Theme.of(context).textTheme.bodySmall?.color ?? AppColors.textSecondary, 
+            size: 18,
+          ),
+          contentPadding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: 4),
+        ),
+        if (showDivider)
+          Divider(color: Theme.of(context).dividerColor.withOpacity(0.5), height: 1, indent: 56),
+      ],
     );
   }
 
@@ -218,9 +270,15 @@ class ProfileScreen extends StatelessWidget {
           (route) => false,
         );
       },
-      leading: const Icon(Icons.logout_rounded, color: Colors.redAccent),
-      title: Text('Logout', style: AppTextStyles.body.copyWith(color: Colors.redAccent, fontWeight: FontWeight.w500)),
-      contentPadding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
+      leading: Icon(Icons.logout_rounded, color: Theme.of(context).colorScheme.error, size: 22),
+      title: Text(
+        'Logout', 
+        style: AppTextStyles.body.copyWith(
+          color: Theme.of(context).colorScheme.error, 
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+      contentPadding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: 4),
     );
   }
-}
+}

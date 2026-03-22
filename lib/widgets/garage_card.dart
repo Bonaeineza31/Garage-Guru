@@ -15,17 +15,17 @@ class GarageCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (isCompact) return _buildCompactCard();
-    return _buildFullCard();
+    if (isCompact) return _buildCompactCard(context);
+    return _buildFullCard(context);
   }
 
-  Widget _buildFullCard() {
+  Widget _buildFullCard(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
         margin: const EdgeInsets.only(bottom: AppSpacing.lg),
         decoration: BoxDecoration(
-          color: AppColors.cardBackground,
+          color: Theme.of(context).cardColor,
           borderRadius: BorderRadius.circular(AppRadius.lg),
           boxShadow: AppShadows.card,
           border: Border.all(color: AppColors.divider.withOpacity(0.3)),
@@ -65,7 +65,7 @@ class GarageCard extends StatelessWidget {
                         vertical: 6,
                       ),
                       decoration: BoxDecoration(
-                        color: AppColors.surface,
+                        color: Theme.of(context).cardColor,
                         borderRadius: BorderRadius.circular(AppRadius.pill),
                       ),
                       child: Text(
@@ -189,14 +189,14 @@ class GarageCard extends StatelessWidget {
     );
   }
 
-  Widget _buildCompactCard() {
+  Widget _buildCompactCard(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
         margin: const EdgeInsets.only(bottom: AppSpacing.sm),
         padding: const EdgeInsets.all(AppSpacing.md),
         decoration: BoxDecoration(
-          color: AppColors.cardBackground,
+          color: Theme.of(context).cardColor,
           borderRadius: BorderRadius.circular(AppRadius.lg),
           boxShadow: AppShadows.card,
           border: Border.all(color: AppColors.divider.withOpacity(0.3)),
@@ -290,7 +290,7 @@ class GarageMapCard extends StatelessWidget {
         width: 280,
         margin: const EdgeInsets.only(right: AppSpacing.md),
         decoration: BoxDecoration(
-          color: AppColors.cardBackground,
+          color: Theme.of(context).cardColor,
           borderRadius: BorderRadius.circular(AppRadius.lg),
           boxShadow: AppShadows.elevated,
           border: Border.all(color: AppColors.divider.withOpacity(0.3)),

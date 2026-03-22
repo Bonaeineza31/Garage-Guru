@@ -35,7 +35,6 @@ class ServiceHistoryScreen extends StatelessWidget {
     ];
 
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: GgAppBar(
         title: 'Service History',
       ),

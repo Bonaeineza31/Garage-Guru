@@ -36,7 +36,7 @@ class _GarageDetailScreenState extends State<GarageDetailScreen>
     final garage = widget.garage;
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      // Removed hardcoded background for app-wide dark mode support,
       appBar: AppBar(
         backgroundColor: AppColors.primary,
         foregroundColor: Colors.white,
@@ -57,7 +57,7 @@ class _GarageDetailScreenState extends State<GarageDetailScreen>
               TabBar(
                 controller: _tabController,
                 labelColor: AppColors.primary,
-                unselectedLabelColor: AppColors.textSecondary,
+                unselectedLabelColor: Theme.of(context).textTheme.bodySmall?.color ?? AppColors.textSecondary,
                 indicatorColor: AppColors.primary,
                 indicatorWeight: 3,
                 labelStyle: AppTextStyles.subtitle.copyWith(fontSize: 14),
@@ -84,7 +84,7 @@ class _GarageDetailScreenState extends State<GarageDetailScreen>
 
   Widget _buildHeader(BuildContext context, GarageModel garage) {
     return Container(
-      color: AppColors.surface,
+      color: Theme.of(context).cardColor,
       padding: const EdgeInsets.all(AppSpacing.lg),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -157,7 +157,7 @@ class _GarageDetailScreenState extends State<GarageDetailScreen>
                     ),
                     foregroundColor: AppColors.primary,
                     side: const BorderSide(color: AppColors.primary, width: 1.5),
-                    backgroundColor: Colors.white,
+                    backgroundColor: Theme.of(context).cardColor,
                   ),
                 ),
               ),
@@ -179,7 +179,7 @@ class _GarageDetailScreenState extends State<GarageDetailScreen>
                     ),
                     foregroundColor: AppColors.primary,
                     side: const BorderSide(color: AppColors.primary, width: 1.5),
-                    backgroundColor: Colors.white,
+                    backgroundColor: Theme.of(context).cardColor,
                   ),
                 ),
               ),
@@ -267,7 +267,7 @@ class _AboutTab extends StatelessWidget {
                     garage.galleryImages[index],
                     fit: BoxFit.cover,
                     errorBuilder: (_, __, ___) => Container(
-                      color: AppColors.background,
+                      color: Theme.of(context).scaffoldBackgroundColor,
                       child: const Icon(Icons.image, color: AppColors.textHint, size: 32),
                     ),
                   ),
@@ -315,7 +315,7 @@ class _ServicesTab extends StatelessWidget {
           padding: const EdgeInsets.only(bottom: AppSpacing.md),
           child: Container(
             decoration: BoxDecoration(
-              color: AppColors.surface,
+              color: Theme.of(context).cardColor,
               borderRadius: BorderRadius.circular(AppRadius.lg),
               border: Border.all(color: AppColors.divider.withOpacity(0.5)),
             ),
@@ -380,7 +380,7 @@ class _TabBarDelegate extends SliverPersistentHeaderDelegate {
   @override
   Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
     return Container(
-      color: AppColors.surface,
+      color: Theme.of(context).cardColor,
       child: Column(
         children: [
           tabBar,

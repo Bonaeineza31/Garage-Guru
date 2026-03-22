@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:garage_guru/core/theme/theme_provider.dart';
 import 'package:garage_guru/core/theme/app_theme.dart';
 import 'package:garage_guru/data/mock_data.dart';
 import 'package:garage_guru/screens/auth/login_screen.dart';
@@ -25,7 +27,6 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
     final user = MockData.currentUser;
 
     return Scaffold(
-      backgroundColor: AppColors.background,
       appBar: AppBar(
         backgroundColor: AppColors.primary,
         foregroundColor: Colors.white,
@@ -44,7 +45,7 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
           children: [
             // User header card
             Container(
-              color: Colors.white,
+              color: Theme.of(context).cardColor,
               padding: const EdgeInsets.all(AppSpacing.lg),
               child: Row(
                 children: [
@@ -66,11 +67,15 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
                         const SizedBox(height: 2),
                         Text(
                           user.email,
-                          style: AppTextStyles.bodySmall.copyWith(color: AppColors.textSecondary),
+                          style: AppTextStyles.bodySmall.copyWith(
+                            color: Theme.of(context).textTheme.bodySmall?.color ?? AppColors.textSecondary,
+                          ),
                         ),
                         Text(
                           user.phone,
-                          style: AppTextStyles.bodySmall.copyWith(color: AppColors.textSecondary),
+                          style: AppTextStyles.bodySmall.copyWith(
+                            color: Theme.of(context).textTheme.bodySmall?.color ?? AppColors.textSecondary,
+                          ),
                         ),
                       ],
                     ),
@@ -79,7 +84,7 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
               ),
             ),
             Container(
-              color: Colors.white,
+              color: Theme.of(context).cardColor,
               padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: AppSpacing.sm),
               child: OutlinedButton(
                 onPressed: () {
@@ -121,15 +126,15 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
                 MaterialPageRoute(builder: (_) => const NotificationsScreen()),
               ),
             ),
-            _buildToggleItem(
-              icon: Icons.dark_mode_outlined,
-              title: 'Dark Mode',
-              value: _darkModeEnabled,
-              onChanged: (v) {
-                // Dark mode will be implemented later
-                setState(() => _darkModeEnabled = v);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Dark mode will be available in a future update')),
+            Consumer<ThemeProvider>(
+              builder: (context, themeProvider, _) {
+                return _buildToggleItem(
+                  icon: Icons.dark_mode_outlined,
+                  title: 'Dark Mode',
+                  value: themeProvider.isDarkMode,
+                  onChanged: (v) {
+                    themeProvider.toggleTheme(v);
+                  },
                 );
               },
             ),
@@ -166,7 +171,7 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
 
             // Log Out button
             Container(
-              color: Colors.white,
+              color: Theme.of(context).cardColor,
               child: ListTile(
                 onTap: () {
                   showDialog(
@@ -213,9 +218,9 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
       child: Text(
         title,
         style: AppTextStyles.label.copyWith(
-          color: AppColors.textSecondary,
+          color: Theme.of(context).colorScheme.primary,
           fontWeight: FontWeight.w600,
-          fontSize: 11,
+          fontSize: 12,
         ),
       ),
     );
@@ -223,13 +228,13 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
 
   Widget _buildNavItem({required IconData icon, required String title, required VoidCallback onTap}) {
     return Container(
-      color: Colors.white,
+      color: Theme.of(context).cardColor,
       child: ListTile(
         onTap: onTap,
-        leading: Icon(icon, color: AppColors.textSecondary, size: 22),
+        leading: Icon(icon, color: Theme.of(context).colorScheme.primary.withOpacity(0.7), size: 22),
         title: Text(title, style: AppTextStyles.body.copyWith(fontWeight: FontWeight.w500)),
-        trailing: const Icon(Icons.chevron_right, color: AppColors.textSecondary, size: 20),
-        shape: Border(bottom: BorderSide(color: AppColors.divider.withOpacity(0.5))),
+        trailing: Icon(Icons.chevron_right, color: Theme.of(context).textTheme.bodySmall?.color ?? AppColors.textSecondary, size: 20),
+        shape: Border(bottom: BorderSide(color: AppColors.divider.withOpacity(0.2))),
       ),
     );
   }
@@ -241,7 +246,7 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
     required ValueChanged<bool> onChanged,
   }) {
     return Container(
-      color: Colors.white,
+      color: Theme.of(context).cardColor,
       child: ListTile(
         leading: Icon(icon, color: AppColors.textSecondary, size: 22),
         title: Text(title, style: AppTextStyles.body.copyWith(fontWeight: FontWeight.w500)),

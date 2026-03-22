@@ -37,7 +37,7 @@ class RepairsHistoryScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: AppColors.background,
+      color: Theme.of(context).scaffoldBackgroundColor,
       child: ListView.separated(
         padding: const EdgeInsets.all(16),
         itemCount: _history.length,

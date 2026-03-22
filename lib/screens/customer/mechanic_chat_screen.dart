@@ -71,7 +71,7 @@ class _MechanicChatScreenState extends State<MechanicChatScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
+      // Removed hardcoded background for app-wide dark mode support,
       appBar: AppBar(
         backgroundColor: AppColors.info,
         elevation: 0,
@@ -156,8 +156,8 @@ class _MechanicChatScreenState extends State<MechanicChatScreen> {
   Widget _buildInputBar() {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-      decoration: const BoxDecoration(
-        color: Colors.white,
+      decoration: BoxDecoration(
+        color: Theme.of(context).cardColor,
         border: Border(top: BorderSide(color: AppColors.divider)),
       ),
       child: SafeArea(
@@ -291,7 +291,7 @@ class _ChatBubble extends StatelessWidget {
               margin: const EdgeInsets.only(bottom: 12, right: 60),
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: Theme.of(context).cardColor,
                 borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(16),
                   topRight: Radius.circular(16),

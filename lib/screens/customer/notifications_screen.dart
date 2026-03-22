@@ -40,7 +40,6 @@ class NotificationsScreen extends StatelessWidget {
     ];
 
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: GgAppBar(
         title: 'Notifications',
       ),
@@ -53,7 +52,7 @@ class NotificationsScreen extends StatelessWidget {
             margin: const EdgeInsets.only(bottom: AppSpacing.md),
             padding: const EdgeInsets.all(AppSpacing.lg),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: Theme.of(context).cardColor,
               borderRadius: BorderRadius.circular(AppRadius.lg),
               border: Border.all(color: AppColors.divider.withOpacity(0.5)),
             ),

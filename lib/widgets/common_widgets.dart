@@ -219,7 +219,7 @@ class UserAvatar extends StatelessWidget {
               decoration: BoxDecoration(
                 color: badgeColor ?? AppColors.success,
                 shape: BoxShape.circle,
-                border: Border.all(color: AppColors.surface, width: 2),
+                border: Border.all(color: Theme.of(context).cardColor, width: 2),
               ),
             ),
           ),
@@ -278,7 +278,7 @@ class InfoRow extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(4),
                 decoration: BoxDecoration(
-                  color: AppColors.background,
+                  color: Theme.of(context).scaffoldBackgroundColor,
                   borderRadius: BorderRadius.circular(AppRadius.sm),
                 ),
                 child: const Icon(Icons.chevron_right, color: AppColors.textSecondary, size: 18),
@@ -312,7 +312,7 @@ class StatCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(AppSpacing.lg),
       decoration: BoxDecoration(
-        color: AppColors.cardBackground,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(AppRadius.lg),
         boxShadow: AppShadows.card,
         border: Border.all(color: AppColors.divider.withOpacity(0.5)),
