@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:garage_guru/core/theme/app_theme.dart';
 import 'package:garage_guru/data/mock_data.dart';
 import 'package:garage_guru/widgets/widgets.dart';
@@ -7,12 +9,32 @@ import 'package:garage_guru/screens/auth/login_screen.dart';
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
 
+  Future<Map<String, dynamic>?> _fetchUserProfile() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      final doc = await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
+      return doc.data();
+    }
+    return null;
+  }
+
   @override
   Widget build(BuildContext context) {
-    final user = MockData.currentUser;
+    return FutureBuilder<Map<String, dynamic>?>(
+      future: _fetchUserProfile(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Scaffold(body: Center(child: CircularProgressIndicator()));
+        }
 
-    return Scaffold(
-      appBar: AppBar(
+        final authUser = FirebaseAuth.instance.currentUser;
+        final userData = snapshot.data;
+        final name = userData?['name'] ?? authUser?.displayName ?? 'New User';
+        final email = userData?['email'] ?? authUser?.email ?? 'No email connected';
+        final profileImageUrl = userData?['profileImageUrl'] ?? 'https://i.pravatar.cc/150?img=12';
+
+        return Scaffold(
+          appBar: AppBar(
         title: Text('Profile', style: AppTextStyles.heading3.copyWith(color: Colors.white)),
         backgroundColor: AppColors.primary,
         foregroundColor: AppColors.textOnPrimary,
@@ -40,20 +62,20 @@ class ProfileScreen extends StatelessWidget {
               child: Column(
                 children: [
                   UserAvatar(
-                    imageUrl: user.profileImageUrl,
-                    name: user.fullName,
+                    imageUrl: profileImageUrl,
+                    name: name,
                     radius: 44,
                     showBadge: true,
                     badgeColor: AppColors.success,
                   ),
                   const SizedBox(height: AppSpacing.md),
                   Text(
-                    user.fullName,
+                    name,
                     style: AppTextStyles.heading3.copyWith(color: Colors.white),
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    user.email,
+                    email,
                     style: AppTextStyles.bodySmall.copyWith(color: Colors.white70),
                   ),
                   const SizedBox(height: AppSpacing.lg),
@@ -130,7 +152,9 @@ class ProfileScreen extends StatelessWidget {
                     label: 'Sign Out',
                     color: AppColors.error,
                     icon: Icons.logout,
-                    onPressed: () {
+                    onPressed: () async {
+                      await FirebaseAuth.instance.signOut();
+                      if (!context.mounted) return;
                       Navigator.of(context).pushAndRemoveUntil(
                         MaterialPageRoute(builder: (_) => const LoginScreen()),
                         (route) => false,
@@ -144,6 +168,8 @@ class ProfileScreen extends StatelessWidget {
           ],
         ),
       ),
+    );
+      },
     );
   }
 

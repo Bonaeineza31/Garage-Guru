@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:garage_guru/core/theme/app_theme.dart';
 import 'package:garage_guru/data/mock_data.dart';
+import 'package:garage_guru/models/models.dart';
 import 'package:garage_guru/widgets/widgets.dart';
 import 'package:garage_guru/screens/customer/garage_detail_screen.dart';
 
@@ -14,6 +17,15 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   final _searchController = TextEditingController();
   String _selectedCategory = 'All';
+
+  Future<Map<String, dynamic>?> _fetchUserProfile() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      final doc = await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
+      return doc.data();
+    }
+    return null;
+  }
 
   final List<Map<String, dynamic>> _categories = [
     {'label': 'All', 'icon': Icons.apps_rounded},
@@ -35,10 +47,18 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: CustomScrollView(
-          slivers: [
-            SliverToBoxAdapter(
-              child: Container(
+        child: StreamBuilder<QuerySnapshot>(
+          stream: FirebaseFirestore.instance.collection('garages').snapshots(),
+          builder: (context, garageSnapshot) {
+            final garages = garageSnapshot.data?.docs
+                    .map((doc) => GarageModel.fromMap(doc.data() as Map<String, dynamic>, doc.id))
+                    .toList() ??
+                [];
+            
+            return CustomScrollView(
+              slivers: [
+                SliverToBoxAdapter(
+                  child: Container(
                 padding: const EdgeInsets.all(AppSpacing.lg),
                 decoration: BoxDecoration(
                   gradient: AppColors.heroGradient,
@@ -49,44 +69,53 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(
-                      children: [
-                        const UserAvatar(
-                          imageUrl: 'https://i.pravatar.cc/150?img=12',
-                          name: 'Alex',
-                          radius: 22,
-                        ),
-                        const SizedBox(width: AppSpacing.md),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Hello, Alex!',
-                                style: AppTextStyles.bodySmall.copyWith(
-                                  color: Colors.white70,
-                                ),
+                    FutureBuilder<Map<String, dynamic>?>(
+                      future: _fetchUserProfile(),
+                      builder: (context, snapshot) {
+                        final authUser = FirebaseAuth.instance.currentUser;
+                        final name = snapshot.data?['name'] ?? authUser?.displayName ?? 'New User';
+                        final imageUrl = snapshot.data?['profileImageUrl'] ?? 'https://i.pravatar.cc/150?img=12';
+                        
+                        return Row(
+                          children: [
+                            UserAvatar(
+                              imageUrl: imageUrl,
+                              name: name,
+                              radius: 22,
+                            ),
+                            const SizedBox(width: AppSpacing.md),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Hello, $name!',
+                                    style: AppTextStyles.bodySmall.copyWith(
+                                      color: Colors.white70,
+                                    ),
+                                  ),
+                                  Text(
+                                    'Find a garage near you',
+                                    style: AppTextStyles.heading3.copyWith(
+                                      color: AppColors.textOnPrimary,
+                                    ),
+                                  ),
+                                ],
                               ),
-                              Text(
-                                'Find a garage near you',
-                                style: AppTextStyles.heading3.copyWith(
-                                  color: AppColors.textOnPrimary,
-                                ),
+                            ),
+                            Container(
+                              decoration: BoxDecoration(
+                                color: Colors.white.withOpacity(0.15),
+                                borderRadius: BorderRadius.circular(AppRadius.md),
                               ),
-                            ],
-                          ),
-                        ),
-                        Container(
-                          decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.15),
-                            borderRadius: BorderRadius.circular(AppRadius.md),
-                          ),
-                          child: IconButton(
-                            icon: const Icon(Icons.notifications_none_rounded, color: Colors.white),
-                            onPressed: () {},
-                          ),
-                        ),
-                      ],
+                              child: IconButton(
+                                icon: const Icon(Icons.notifications_none_rounded, color: Colors.white),
+                                onPressed: () {},
+                              ),
+                            ),
+                          ],
+                        );
+                      }
                     ),
                     const SizedBox(height: AppSpacing.lg),
                     GgSearchBar(
@@ -134,12 +163,12 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: ListView.separated(
                   scrollDirection: Axis.horizontal,
                   padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
-                  itemCount: MockData.garages.length,
+                  itemCount: garages.length,
                   separatorBuilder: (_, __) => const SizedBox(width: AppSpacing.md),
                   itemBuilder: (context, index) {
                     return GarageMapCard(
-                      garage: MockData.garages[index],
-                      onTap: () => _navigateToGarage(index),
+                      garage: garages[index],
+                      onTap: () => _navigateToGarage(garages[index]),
                     );
                   },
                 ),
@@ -158,25 +187,27 @@ class _HomeScreenState extends State<HomeScreen> {
                 delegate: SliverChildBuilderDelegate(
                   (context, index) {
                     return GarageCard(
-                      garage: MockData.garages[index],
-                      onTap: () => _navigateToGarage(index),
+                      garage: garages[index],
+                      onTap: () => _navigateToGarage(garages[index]),
                     );
                   },
-                  childCount: MockData.garages.length,
+                  childCount: garages.length,
                 ),
               ),
             ),
             const SliverToBoxAdapter(child: SizedBox(height: AppSpacing.xxl)),
           ],
-        ),
+        );
+        },
+      ),
       ),
     );
   }
 
-  void _navigateToGarage(int index) {
+  void _navigateToGarage(GarageModel garage) {
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (_) => GarageDetailScreen(garage: MockData.garages[index]),
+        builder: (_) => GarageDetailScreen(garage: garage),
       ),
     );
   }

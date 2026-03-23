@@ -41,6 +41,25 @@ class GarageModel {
     this.distanceKm = 0.0,
   });
 
+  factory GarageModel.fromMap(Map<String, dynamic> map, String docId) {
+    return GarageModel(
+      id: docId,
+      ownerId: map['ownerId'] ?? '',
+      name: map['name'] ?? '',
+      description: map['description'] ?? '',
+      address: map['address'] ?? '',
+      latitude: (map['latitude'] ?? 0.0).toDouble(),
+      longitude: (map['longitude'] ?? 0.0).toDouble(),
+      phone: map['phone'] ?? '',
+      email: map['email'],
+      website: map['website'],
+      coverImageUrl: map['coverImageUrl'] ?? 'https://images.unsplash.com/photo-1625047509248-ec889cbff17f?w=800',
+      rating: (map['rating'] ?? 0.0).toDouble(),
+      reviewCount: map['reviewCount'] ?? 0,
+      isVerified: map['isVerified'] ?? false,
+    );
+  }
+
   bool get isOpen {
     final now = DateTime.now();
     final dayNames = [

@@ -25,6 +25,9 @@ dependencies:
   smooth_page_indicator: ^1.1.0
   font_awesome_flutter: ^10.7.0
   google_fonts: ^6.1.0
+  firebase_core: ^4.6.0
+  firebase_auth: ^6.3.0
+  cloud_firestore: ^6.2.0
 
 dev_dependencies:
   flutter_test:
