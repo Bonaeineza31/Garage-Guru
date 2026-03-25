@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:garage_guru/core/theme/theme_data.dart';
+import 'package:garage_guru/screens/auth/landing_screen.dart';
+import 'package:garage_guru/core/theme/app_theme.dart';
 import 'package:garage_guru/screens/auth/login_screen.dart';
 
 void main() {
@@ -29,6 +31,8 @@ class GarageGuruApp extends StatelessWidget {
       title: 'GarageGuru',
       debugShowCheckedModeBanner: false,
       theme: GarageGuruTheme.lightTheme,
+      home: const LandingScreen(),
+      theme: AppTheme.lightTheme,
       home: const LoginScreen(),
     );
   }
