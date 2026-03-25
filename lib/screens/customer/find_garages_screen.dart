@@ -41,8 +41,9 @@ class _FindGaragesScreenState extends State<FindGaragesScreen> {
     // Apply filter
     if (_activeFilter == 'Top Rated') {
       garages.sort((a, b) => b.rating.compareTo(a.rating));
+    } else if (_activeFilter == 'Closest') {
+      garages.sort((a, b) => a.distanceKm.compareTo(b.distanceKm));
     }
-    // Closest filter would requires location data
 
     return garages;
   }
