@@ -238,12 +238,37 @@ class MockData {
     ),
   ];
 
+  static final List<VehicleModel> vehicles = [
+    VehicleModel(
+      id: 'v1',
+      userId: 'c1',
+      make: 'Toyota',
+      model: 'Camry',
+      year: '2020',
+      plateNumber: 'RAH234H',
+      color: 'Silver',
+      imageUrl: 'https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?w=400',
+      nextServiceDate: DateTime(2025, 5, 25),
+    ),
+    VehicleModel(
+      id: 'v2',
+      userId: 'c1',
+      make: 'Honda',
+      model: 'Civic',
+      year: '2018',
+      plateNumber: 'RAA567K',
+      color: 'Blue',
+      imageUrl: 'https://images.unsplash.com/photo-1599912027806-cfec9f5944b6?w=400',
+      nextServiceDate: DateTime(2025, 6, 10),
+    ),
+  ];
+
   static final currentUser = UserModel(
     id: 'c1',
-    fullName: 'Alex Thompson',
-    email: 'alex@example.com',
+    fullName: 'Kelly',
+    email: 'Kellyineza@gmail.com',
     phone: '+1 (555) 000-1234',
-    profileImageUrl: 'https://i.pravatar.cc/150?img=12',
+    profileImageUrl: 'https://i.pravatar.cc/150?img=32',
     role: UserRole.customer,
     address: '100 Customer Lane, City',
     createdAt: DateTime(2025, 1, 15),

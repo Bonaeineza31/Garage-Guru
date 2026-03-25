@@ -3,6 +3,7 @@ import 'package:garage_guru/core/theme/app_theme.dart';
 import 'package:garage_guru/models/repair_model.dart';
 import 'package:garage_guru/screens/customer/repair_detail_screen.dart';
 import 'package:garage_guru/screens/customer/repairs_history_screen.dart';
+import 'package:garage_guru/screens/customer/notifications_screen.dart';
 
 
 class RepairsScreen extends StatefulWidget {
@@ -127,9 +128,17 @@ class _RepairsScreenState extends State<RepairsScreen>
           Stack(
             children: [
               IconButton(
-                icon: const Icon(Icons.notifications_none_rounded,
-                    color: Colors.white),
-                onPressed: () {},
+                icon: const Icon(
+                  Icons.notifications_none_rounded,
+                  color: Colors.white,
+                ),
+                onPressed: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => const NotificationsScreen(),
+                    ),
+                  );
+                },
               ),
               Positioned(
                 right: 12,

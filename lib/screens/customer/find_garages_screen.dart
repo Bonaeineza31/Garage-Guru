@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:garage_guru/core/theme/app_theme.dart';
 import 'package:garage_guru/data/mock_data.dart';
 import 'package:garage_guru/widgets/garage_card.dart';
+import 'package:garage_guru/screens/customer/notifications_screen.dart';
 import 'package:garage_guru/screens/customer/garage_detail_screen.dart';
 
 class FindGaragesScreen extends StatefulWidget {
@@ -27,7 +28,11 @@ class _FindGaragesScreenState extends State<FindGaragesScreen> {
         actions: [
           IconButton(
             icon: const Icon(Icons.notifications_none_rounded),
-            onPressed: () {},
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const NotificationsScreen()),
+              );
+            },
           ),
         ],
       ),

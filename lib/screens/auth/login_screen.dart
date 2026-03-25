@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:garage_guru/core/theme/app_theme.dart';
-import 'package:garage_guru/widgets/widgets.dart';
+import 'package:garage_guru/screens/auth/auth_ui.dart';
 import 'package:garage_guru/screens/auth/register_screen.dart';
+import 'package:garage_guru/screens/auth/reset_password_screen.dart';
 import 'package:garage_guru/screens/customer/customer_shell.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -62,159 +62,124 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
       ),
     );
     return Scaffold(
+      backgroundColor: AuthUi.bg,
       body: SafeArea(
         child: FadeTransition(
           opacity: _fadeAnimation,
           child: SingleChildScrollView(
-            padding: const EdgeInsets.all(AppSpacing.xxl),
+            padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 24),
             child: Form(
               key: _formKey,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  const SizedBox(height: AppSpacing.xxxl),
-                  Center(
+                  AuthCard(
                     child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        Container(
-                          width: 88,
-                          height: 88,
-                          decoration: BoxDecoration(
-                            gradient: AppColors.primaryGradient,
-                            borderRadius: BorderRadius.circular(24),
-                            boxShadow: [
-                              BoxShadow(
-                                color: AppColors.primary.withOpacity(0.3),
-                                blurRadius: 24,
-                                offset: const Offset(0, 8),
+                        AuthBackButton(onPressed: () => Navigator.of(context).pop()),
+                        const SizedBox(height: 8),
+                        const Text(
+                          'Login into Account',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w700,
+                            color: AuthUi.textPrimary,
+                          ),
+                        ),
+                        const SizedBox(height: 6),
+                        const Text(
+                          'Join GarageGuru for reliable car repair services',
+                          style: TextStyle(fontSize: 13, color: AuthUi.textMuted, height: 1.4),
+                        ),
+                        const SizedBox(height: 12),
+                        const AuthSocialRow(),
+                        const SizedBox(height: 12),
+                        const AuthDivider(),
+                        const SizedBox(height: 12),
+                        AuthTextField(
+                          label: 'Email address',
+                          placeholder: 'Email address',
+                          controller: _emailController,
+                          keyboardType: TextInputType.emailAddress,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) return 'Email is required';
+                            if (!value.contains('@')) return 'Enter a valid email';
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: 12),
+                        AuthTextField(
+                          label: 'Password',
+                          placeholder: 'Password',
+                          controller: _passwordController,
+                          obscureText: _obscurePassword,
+                          suffix: IconButton(
+                            icon: Icon(
+                              _obscurePassword
+                                  ? Icons.visibility_off_rounded
+                                  : Icons.visibility_rounded,
+                              size: 20,
+                              color: const Color(0xFF7B8794),
+                            ),
+                            onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
+                          ),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) return 'Password is required';
+                            if (value.length < 6) return 'Password must be at least 6 characters';
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: 8),
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: TextButton(
+                            onPressed: () {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(builder: (_) => const ResetPasswordScreen()),
+                              );
+                            },
+                            style: TextButton.styleFrom(
+                              foregroundColor: AuthUi.blue,
+                              padding: EdgeInsets.zero,
+                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                              minimumSize: const Size(0, 0),
+                            ),
+                            child: const Text('Forgot Password?'),
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        AuthPrimaryButton(
+                          label: 'Sign In',
+                          onPressed: _isLoading ? null : _handleLogin,
+                          isLoading: _isLoading,
+                        ),
+                        const SizedBox(height: 10),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Text(
+                              'Don’t have an account? ',
+                              style: TextStyle(color: AuthUi.textMuted),
+                            ),
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(builder: (_) => const RegisterScreen()),
+                                );
+                              },
+                              style: TextButton.styleFrom(
+                                foregroundColor: AuthUi.blue,
+                                padding: EdgeInsets.zero,
+                                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                minimumSize: const Size(0, 0),
                               ),
-                            ],
-                          ),
-                          child: const Icon(
-                            Icons.car_repair_rounded,
-                            color: Colors.white,
-                            size: 46,
-                          ),
-                        ),
-                        const SizedBox(height: AppSpacing.xl),
-                        Text(
-                          'GarageGuru',
-                          style: AppTextStyles.heading1.copyWith(
-                            color: AppColors.primary,
-                            fontSize: 30,
-                            letterSpacing: -0.5,
-                          ),
-                        ),
-                        const SizedBox(height: AppSpacing.xs),
-                        Text(
-                          'Find trusted garages near you',
-                          style: AppTextStyles.body.copyWith(color: AppColors.textSecondary),
+                              child: const Text('Sign up'),
+                            ),
+                          ],
                         ),
                       ],
                     ),
-                  ),
-                  const SizedBox(height: AppSpacing.xxxl * 1.5),
-                  GgTextField(
-                    label: 'Email',
-                    hint: 'Enter your email',
-                    controller: _emailController,
-                    keyboardType: TextInputType.emailAddress,
-                    prefixIcon: Icons.email_outlined,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) return 'Email is required';
-                      if (!value.contains('@')) return 'Enter a valid email';
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: AppSpacing.lg),
-                  GgTextField(
-                    label: 'Password',
-                    hint: 'Enter your password',
-                    controller: _passwordController,
-                    obscureText: _obscurePassword,
-                    prefixIcon: Icons.lock_outline_rounded,
-                    suffix: IconButton(
-                      icon: Icon(
-                        _obscurePassword ? Icons.visibility_off_rounded : Icons.visibility_rounded,
-                        color: AppColors.textSecondary,
-                        size: 20,
-                      ),
-                      onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
-                    ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) return 'Password is required';
-                      if (value.length < 6) return 'Password must be at least 6 characters';
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: AppSpacing.xs),
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: TextButton(
-                      onPressed: () {},
-                      style: TextButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
-                      ),
-                      child: Text(
-                        'Forgot Password?',
-                        style: AppTextStyles.bodySmall.copyWith(
-                          color: AppColors.accent,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: AppSpacing.xl),
-                  GgButton(
-                    label: 'Sign In',
-                    onPressed: _handleLogin,
-                    isLoading: _isLoading,
-                    useGradient: true,
-                  ),
-                  const SizedBox(height: AppSpacing.xxl),
-                  Row(
-                    children: [
-                      Expanded(child: Divider(color: AppColors.divider.withOpacity(0.5))),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
-                        child: Text(
-                          'OR',
-                          style: AppTextStyles.caption.copyWith(
-                            fontWeight: FontWeight.w600,
-                            letterSpacing: 1.5,
-                          ),
-                        ),
-                      ),
-                      Expanded(child: Divider(color: AppColors.divider.withOpacity(0.5))),
-                    ],
-                  ),
-                  const SizedBox(height: AppSpacing.xxl),
-                  GgButton(
-                    label: 'Continue with Google',
-                    icon: Icons.g_mobiledata,
-                    isOutlined: true,
-                    onPressed: () {},
-                  ),
-                  const SizedBox(height: AppSpacing.xxxl),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text('Don\'t have an account? ', style: AppTextStyles.body),
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(builder: (_) => const RegisterScreen()),
-                          );
-                        },
-                        child: Text(
-                          'Sign Up',
-                          style: AppTextStyles.body.copyWith(
-                            color: AppColors.accent,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                      ),
-                    ],
                   ),
                 ],
               ),

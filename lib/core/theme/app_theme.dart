@@ -204,3 +204,89 @@ class AppShadows {
         ),
       ];
 }
+
+/// Compatibility alias so legacy screens using AppTheme.xxx still compile.
+/// All values map to AppColors equivalents.
+class AppTheme {
+  AppTheme._();
+
+  // Primary brand colors
+  static const Color primaryBlue      = AppColors.primary;
+  static const Color scheduleBlue     = Color(0xFF0284C7);
+  static const Color emergencyOrange  = AppColors.accent;
+  static const Color repairGreen      = AppColors.success;
+
+  // UI / background colors
+  static const Color scaffoldBackground = AppColors.background;
+  static const Color cardBackground     = AppColors.cardBackground;
+  static const Color dividerColor       = AppColors.divider;
+  static const Color iconGray           = AppColors.textSecondary;
+  static const Color textHint           = AppColors.textHint;
+
+  // Text colors
+  static const Color textPrimary   = AppColors.textPrimary;
+  static const Color textSecondary = AppColors.textSecondary;
+
+  // Status colors
+  static const Color errorRed       = AppColors.error;
+  static const Color successGreen   = AppColors.success;
+  static const Color warningYellow  = AppColors.warning;
+  static const Color infoBlue       = AppColors.info;
+
+  /// Flutter ThemeData — kept for main.dart compatibility
+  static ThemeData get lightTheme {
+    return ThemeData(
+      useMaterial3: true,
+      fontFamily: 'Poppins',
+      scaffoldBackgroundColor: AppColors.background,
+      colorScheme: const ColorScheme.light(
+        primary: AppColors.primary,
+        secondary: AppColors.accent,
+        surface: AppColors.surface,
+        error: AppColors.error,
+      ),
+      appBarTheme: const AppBarTheme(
+        backgroundColor: AppColors.primary,
+        foregroundColor: Color(0xFFFFFFFF),
+        elevation: 0,
+        centerTitle: false,
+        titleTextStyle: TextStyle(
+          color: Color(0xFFFFFFFF),
+          fontSize: 18,
+          fontWeight: FontWeight.w600,
+          fontFamily: 'Poppins',
+        ),
+      ),
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: AppColors.primary,
+          foregroundColor: const Color(0xFFFFFFFF),
+          elevation: 0,
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+        ),
+      ),
+      inputDecorationTheme: InputDecorationTheme(
+        filled: true,
+        fillColor: AppColors.surface,
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: const BorderSide(color: AppColors.divider),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: const BorderSide(color: AppColors.divider),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: const BorderSide(color: AppColors.primary, width: 2),
+        ),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: const BorderSide(color: AppColors.error),
+        ),
+      ),
+    );
+  }
+}
