@@ -3,6 +3,7 @@ import 'package:garage_guru/core/theme/app_theme.dart';
 import 'package:garage_guru/data/mock_data.dart';
 import 'package:garage_guru/models/models.dart';
 import 'package:garage_guru/widgets/widgets.dart';
+import 'package:garage_guru/screens/owner/add_garage_screen.dart';
 
 class OwnerDashboardScreen extends StatelessWidget {
   const OwnerDashboardScreen({super.key});
@@ -10,6 +11,16 @@ class OwnerDashboardScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () {
+          Navigator.of(context).push(
+            MaterialPageRoute(builder: (_) => const AddGarageScreen()),
+          );
+        },
+        backgroundColor: AppColors.primary,
+        icon: const Icon(Icons.add_business_rounded, color: Colors.white),
+        label: const Text('Add Garage', style: TextStyle(color: Colors.white)),
+      ),
       body: SafeArea(
         child: CustomScrollView(
           slivers: [

@@ -4,7 +4,6 @@ import 'package:garage_guru/data/mock_data.dart';
 import 'package:garage_guru/models/models.dart';
 import 'package:garage_guru/widgets/widgets.dart';
 import 'package:garage_guru/screens/customer/booking_screen.dart';
-import 'package:garage_guru/screens/customer/garage_message_screen.dart';
 
 class GarageDetailScreen extends StatefulWidget {
   final GarageModel garage;
@@ -36,20 +35,140 @@ class _GarageDetailScreenState extends State<GarageDetailScreen>
     final garage = widget.garage;
 
     return Scaffold(
-      backgroundColor: AppColors.background,
-      appBar: AppBar(
-        backgroundColor: AppColors.primary,
-        foregroundColor: Colors.white,
-        title: const Text('Garage Details'),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.pop(context),
-        ),
-      ),
       body: NestedScrollView(
         headerSliverBuilder: (context, innerBoxIsScrolled) => [
-          SliverToBoxAdapter(
-            child: _buildHeader(context, garage),
+          SliverAppBar(
+            expandedHeight: 240,
+            pinned: true,
+            backgroundColor: AppColors.primary,
+            leading: IconButton(
+              icon: Container(
+                padding: const EdgeInsets.all(6),
+                decoration: BoxDecoration(
+                  color: Colors.black26,
+                  borderRadius: BorderRadius.circular(AppRadius.md),
+                ),
+                child: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white, size: 18),
+              ),
+              onPressed: () => Navigator.pop(context),
+            ),
+            actions: [
+              IconButton(
+                icon: Container(
+                  padding: const EdgeInsets.all(6),
+                  decoration: BoxDecoration(
+                    color: Colors.black26,
+                    borderRadius: BorderRadius.circular(AppRadius.md),
+                  ),
+                  child: const Icon(Icons.favorite_border_rounded, color: Colors.white, size: 18),
+                ),
+                onPressed: () {},
+              ),
+              IconButton(
+                icon: Container(
+                  padding: const EdgeInsets.all(6),
+                  decoration: BoxDecoration(
+                    color: Colors.black26,
+                    borderRadius: BorderRadius.circular(AppRadius.md),
+                  ),
+                  child: const Icon(Icons.share_rounded, color: Colors.white, size: 18),
+                ),
+                onPressed: () {},
+              ),
+            ],
+            flexibleSpace: FlexibleSpaceBar(
+              background: Stack(
+                fit: StackFit.expand,
+                children: [
+                  Image.network(
+                    garage.coverImageUrl,
+                    fit: BoxFit.cover,
+                    errorBuilder: (_, __, ___) => Container(
+                      decoration: const BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [Color(0xFF1E3A5F), Color(0xFF2B5C8A)],
+                        ),
+                      ),
+                      child: const Icon(Icons.garage_rounded, size: 64, color: Colors.white38),
+                    ),
+                  ),
+                  const DecoratedBox(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [Colors.transparent, Colors.black54],
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                    bottom: AppSpacing.lg,
+                    left: AppSpacing.lg,
+                    right: AppSpacing.lg,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                garage.name,
+                                style: AppTextStyles.heading2.copyWith(color: Colors.white),
+                              ),
+                            ),
+                            if (garage.isVerified)
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: AppSpacing.sm,
+                                  vertical: 2,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: AppColors.primary,
+                                  borderRadius: BorderRadius.circular(AppRadius.pill),
+                                ),
+                                child: const Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(Icons.verified, color: Colors.white, size: 14),
+                                    SizedBox(width: 2),
+                                    Text(
+                                      'Verified',
+                                      style: TextStyle(color: Colors.white, fontSize: 11),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                          ],
+                        ),
+                        const SizedBox(height: 4),
+                        Row(
+                          children: [
+                            const Icon(Icons.star_rounded, color: AppColors.starFilled, size: 16),
+                            const SizedBox(width: 4),
+                            Text(
+                              '${garage.rating} (${garage.reviewCount} reviews)',
+                              style: AppTextStyles.bodySmall.copyWith(color: Colors.white70),
+                            ),
+                            const SizedBox(width: AppSpacing.md),
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                              decoration: BoxDecoration(
+                                color: garage.isOpen ? AppColors.success : AppColors.error,
+                                borderRadius: BorderRadius.circular(AppRadius.pill),
+                              ),
+                              child: Text(
+                                garage.isOpen ? 'Open' : 'Closed',
+                                style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.w600),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ),
           SliverPersistentHeader(
             pinned: true,
@@ -59,12 +178,12 @@ class _GarageDetailScreenState extends State<GarageDetailScreen>
                 labelColor: AppColors.primary,
                 unselectedLabelColor: AppColors.textSecondary,
                 indicatorColor: AppColors.primary,
-                indicatorWeight: 3,
+                indicatorWeight: 2.5,
                 labelStyle: AppTextStyles.subtitle.copyWith(fontSize: 14),
                 tabs: const [
+                  Tab(text: 'About'),
                   Tab(text: 'Services'),
                   Tab(text: 'Reviews'),
-                  Tab(text: 'Info'),
                 ],
               ),
             ),
@@ -73,142 +192,63 @@ class _GarageDetailScreenState extends State<GarageDetailScreen>
         body: TabBarView(
           controller: _tabController,
           children: [
+            _AboutTab(garage: garage),
             _ServicesTab(garage: garage),
             _ReviewsTab(garage: garage),
-            _AboutTab(garage: garage),
           ],
         ),
       ),
-    );
-  }
-
-  Widget _buildHeader(BuildContext context, GarageModel garage) {
-    return Container(
-      color: AppColors.surface,
-      padding: const EdgeInsets.all(AppSpacing.lg),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
+      bottomNavigationBar: Container(
+        padding: const EdgeInsets.all(AppSpacing.lg),
+        decoration: BoxDecoration(
+          color: AppColors.surface,
+          boxShadow: AppShadows.bottomNav,
+        ),
+        child: SafeArea(
+          child: Row(
             children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(AppRadius.md),
-                child: Image.network(
-                  garage.coverImageUrl,
-                  width: 60,
-                  height: 60,
-                  fit: BoxFit.cover,
-                  errorBuilder: (_, __, ___) => Container(
-                    width: 60,
-                    height: 60,
-                    color: AppColors.primaryLight,
-                    child: const Icon(Icons.garage, color: AppColors.primary),
-                  ),
+              Container(
+                decoration: BoxDecoration(
+                  border: Border.all(color: AppColors.primary.withOpacity(0.4)),
+                  borderRadius: BorderRadius.circular(AppRadius.lg),
+                ),
+                child: IconButton(
+                  icon: const Icon(Icons.phone_rounded, color: AppColors.primary),
+                  onPressed: () {},
+                ),
+              ),
+              const SizedBox(width: AppSpacing.md),
+              Container(
+                decoration: BoxDecoration(
+                  border: Border.all(color: AppColors.primary.withOpacity(0.4)),
+                  borderRadius: BorderRadius.circular(AppRadius.lg),
+                ),
+                child: IconButton(
+                  icon: const Icon(Icons.chat_bubble_outline_rounded, color: AppColors.primary),
+                  onPressed: () {},
                 ),
               ),
               const SizedBox(width: AppSpacing.md),
               Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      garage.name,
-                      style: AppTextStyles.heading3,
-                    ),
-                    const SizedBox(height: 4),
-                    Row(
-                      children: [
-                        const Icon(Icons.star_rounded, color: AppColors.starFilled, size: 16),
-                        const SizedBox(width: 4),
-                        Text(
-                          '${garage.rating} (${garage.reviewCount} reviews)',
-                          style: AppTextStyles.caption.copyWith(fontWeight: FontWeight.w600),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 2),
-                    Row(
-                      children: [
-                        const Icon(Icons.location_on_outlined, size: 14, color: AppColors.textSecondary),
-                        const SizedBox(width: 4),
-                        Text(
-                          '${garage.distanceKm.toStringAsFixed(1)}km away • ${garage.address.split(',').last.trim()}',
-                          style: AppTextStyles.caption,
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: AppSpacing.lg),
-          Row(
-            children: [
-              Expanded(
-                child: OutlinedButton.icon(
-                  onPressed: () {},
-                  icon: const Icon(Icons.phone_outlined, size: 16),
-                  label: const Text('Call'),
-                  style: OutlinedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(
-                      vertical: AppSpacing.sm,
-                      horizontal: 0,
-                    ),
-                    foregroundColor: AppColors.primary,
-                    side: const BorderSide(color: AppColors.primary, width: 1.5),
-                    backgroundColor: Colors.white,
-                  ),
-                ),
-              ),
-              const SizedBox(width: AppSpacing.sm),
-              Expanded(
-                child: OutlinedButton.icon(
+                child: GgButton(
+                  label: 'Book Now',
+                  useGradient: true,
                   onPressed: () {
-                     Navigator.push(
-                       context,
-                       MaterialPageRoute(builder: (_) => GarageMessageScreen(garage: garage)),
-                     );
-                  },
-                  icon: const Icon(Icons.chat_bubble_outline_rounded, size: 16),
-                  label: const Text('Message'),
-                  style: OutlinedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(
-                      vertical: AppSpacing.sm,
-                      horizontal: 0,
-                    ),
-                    foregroundColor: AppColors.primary,
-                    side: const BorderSide(color: AppColors.primary, width: 1.5),
-                    backgroundColor: Colors.white,
-                  ),
-                ),
-              ),
-              const SizedBox(width: AppSpacing.sm),
-              Expanded(
-                child: ElevatedButton.icon(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (_) => BookingScreen(garage: garage)),
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => BookingScreen(garage: garage),
+                      ),
                     );
                   },
-                  icon: const Icon(Icons.calendar_today_rounded, size: 16),
-                  label: const Text('Book'),
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm, horizontal: 0),
-                    backgroundColor: AppColors.primary,
-                    foregroundColor: Colors.white,
-                  ),
                 ),
               ),
             ],
           ),
-        ],
+        ),
       ),
     );
   }
 }
-
 class _AboutTab extends StatelessWidget {
   final GarageModel garage;
   const _AboutTab({required this.garage});
@@ -224,64 +264,121 @@ class _AboutTab extends StatelessWidget {
           const SizedBox(height: AppSpacing.sm),
           Text(garage.description, style: AppTextStyles.body),
           const SizedBox(height: AppSpacing.xxl),
-          Text('Contact & Location', style: AppTextStyles.heading3),
+          Text('Contact Information', style: AppTextStyles.heading3),
           const SizedBox(height: AppSpacing.md),
           InfoRow(
             icon: Icons.location_on_rounded,
             label: 'Address',
             value: garage.address,
-            iconColor: AppColors.textSecondary,
+            iconColor: AppColors.error,
             onTap: () {},
           ),
           InfoRow(
             icon: Icons.phone_rounded,
             label: 'Phone',
             value: garage.phone,
-            iconColor: AppColors.textSecondary,
+            iconColor: AppColors.success,
             onTap: () {},
           ),
-          InfoRow(
-            icon: Icons.access_time_rounded,
-            label: 'Hours',
-            value: 'Mon-Sat: 8:00 AM - 6:00 PM',
-            iconColor: AppColors.textSecondary,
-            onTap: () {},
-          ),
+          if (garage.email != null)
+            InfoRow(
+              icon: Icons.email_rounded,
+              label: 'Email',
+              value: garage.email!,
+              iconColor: AppColors.info,
+              onTap: () {},
+            ),
+          if (garage.website != null)
+            InfoRow(
+              icon: Icons.language_rounded,
+              label: 'Website',
+              value: garage.website!,
+              iconColor: AppColors.accent,
+              onTap: () {},
+            ),
+          const SizedBox(height: AppSpacing.xxl),
+          Text('Working Hours', style: AppTextStyles.heading3),
+          const SizedBox(height: AppSpacing.md),
+          ...garage.workingHours.entries.map((entry) {
+            return Padding(
+              padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+              child: Row(
+                children: [
+                  SizedBox(
+                    width: 100,
+                    child: Text(
+                      _capitalize(entry.key),
+                      style: AppTextStyles.body.copyWith(fontWeight: FontWeight.w500),
+                    ),
+                  ),
+                  Expanded(
+                    child: Text(
+                      entry.value.isClosed
+                          ? 'Closed'
+                          : '${entry.value.open} - ${entry.value.close}',
+                      style: AppTextStyles.body.copyWith(
+                        color: entry.value.isClosed ? AppColors.error : AppColors.textPrimary,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }),
           const SizedBox(height: AppSpacing.xxl),
           if (garage.galleryImages.isNotEmpty) ...[
             Text('Gallery', style: AppTextStyles.heading3),
             const SizedBox(height: AppSpacing.md),
-            GridView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 3,
-                crossAxisSpacing: AppSpacing.sm,
-                mainAxisSpacing: AppSpacing.sm,
-              ),
-              itemCount: garage.galleryImages.length,
-              itemBuilder: (context, index) {
-                return ClipRRect(
-                  borderRadius: BorderRadius.circular(AppRadius.md),
-                  child: Image.network(
-                    garage.galleryImages[index],
-                    fit: BoxFit.cover,
-                    errorBuilder: (_, __, ___) => Container(
-                      color: AppColors.background,
-                      child: const Icon(Icons.image, color: AppColors.textHint, size: 32),
+            SizedBox(
+              height: 120,
+              child: ListView.separated(
+                scrollDirection: Axis.horizontal,
+                itemCount: garage.galleryImages.length,
+                separatorBuilder: (_, __) => const SizedBox(width: AppSpacing.sm),
+                itemBuilder: (context, index) {
+                  return ClipRRect(
+                    borderRadius: BorderRadius.circular(AppRadius.md),
+                    child: Image.network(
+                      garage.galleryImages[index],
+                      width: 160,
+                      height: 120,
+                      fit: BoxFit.cover,
+                      errorBuilder: (_, __, ___) => Container(
+                        width: 160,
+                        color: AppColors.background,
+                        child: const Icon(Icons.image, color: AppColors.textHint, size: 32),
+                      ),
                     ),
-                  ),
-                );
-              },
+                  );
+                },
+              ),
             ),
           ],
+          const SizedBox(height: AppSpacing.xxl),
+          Text('Specializations', style: AppTextStyles.heading3),
+          const SizedBox(height: AppSpacing.md),
+          Wrap(
+            spacing: AppSpacing.sm,
+            runSpacing: AppSpacing.sm,
+            children: garage.specializations
+                .map((s) => Chip(
+                      label: Text(s),
+                      backgroundColor: AppColors.primaryLight.withOpacity(0.5),
+                      labelStyle: AppTextStyles.bodySmall.copyWith(
+                        color: AppColors.primaryDark,
+                      ),
+                    ))
+                .toList(),
+          ),
           const SizedBox(height: AppSpacing.xxxl),
         ],
       ),
     );
   }
-}
 
+  String _capitalize(String s) =>
+      s.isEmpty ? s : '${s[0].toUpperCase()}${s.substring(1)}';
+}
 class _ServicesTab extends StatelessWidget {
   final GarageModel garage;
   const _ServicesTab({required this.garage});
@@ -304,37 +401,30 @@ class _ServicesTab extends StatelessWidget {
       categories.putIfAbsent(service.category, () => []).add(service);
     }
 
-    return ListView.builder(
+    return SingleChildScrollView(
       padding: const EdgeInsets.all(AppSpacing.lg),
-      itemCount: categories.keys.length,
-      itemBuilder: (context, index) {
-        final category = categories.keys.elementAt(index);
-        final categoryServices = categories[category]!;
-        
-        return Padding(
-          padding: const EdgeInsets.only(bottom: AppSpacing.md),
-          child: Container(
-            decoration: BoxDecoration(
-              color: AppColors.surface,
-              borderRadius: BorderRadius.circular(AppRadius.lg),
-              border: Border.all(color: AppColors.divider.withOpacity(0.5)),
-            ),
-            child: ExpansionTile(
-              title: Text(category, style: AppTextStyles.subtitle),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.lg)),
-              childrenPadding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.sm),
-              children: categoryServices.map((service) => Padding(
-                padding: const EdgeInsets.only(bottom: AppSpacing.sm),
-                child: ServiceCard(service: service),
-              )).toList(),
-            ),
-          ),
-        );
-      },
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          ...categories.entries.map((entry) {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  entry.key,
+                  style: AppTextStyles.subtitle.copyWith(color: AppColors.textSecondary),
+                ),
+                const SizedBox(height: AppSpacing.sm),
+                ...entry.value.map((service) => ServiceCard(service: service)),
+                const SizedBox(height: AppSpacing.md),
+              ],
+            );
+          }),
+        ],
+      ),
     );
   }
 }
-
 class _ReviewsTab extends StatelessWidget {
   final GarageModel garage;
   const _ReviewsTab({required this.garage});
@@ -355,6 +445,13 @@ class _ReviewsTab extends StatelessWidget {
             totalReviews: garage.reviewCount,
           ),
           const SizedBox(height: AppSpacing.xxl),
+          GgButton(
+            label: 'Write a Review',
+            icon: Icons.rate_review_rounded,
+            isOutlined: true,
+            onPressed: () {},
+          ),
+          const SizedBox(height: AppSpacing.xxl),
           ...reviews.map((review) => ReviewCard(review: review)),
           if (reviews.isEmpty)
             const EmptyState(
@@ -367,26 +464,20 @@ class _ReviewsTab extends StatelessWidget {
     );
   }
 }
-
 class _TabBarDelegate extends SliverPersistentHeaderDelegate {
   final TabBar tabBar;
   const _TabBarDelegate(this.tabBar);
 
   @override
-  double get minExtent => tabBar.preferredSize.height + 1; // plus border
+  double get minExtent => tabBar.preferredSize.height;
   @override
-  double get maxExtent => tabBar.preferredSize.height + 1;
+  double get maxExtent => tabBar.preferredSize.height;
 
   @override
   Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
     return Container(
       color: AppColors.surface,
-      child: Column(
-        children: [
-          tabBar,
-          const Divider(height: 1),
-        ],
-      ),
+      child: tabBar,
     );
   }
 

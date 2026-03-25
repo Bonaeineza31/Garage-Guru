@@ -3,8 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'app_theme.dart';
 
-class AppTheme {
-  AppTheme._();
+class GarageGuruTheme {
+  GarageGuruTheme._();
 
   static ThemeData get lightTheme {
     return ThemeData(

@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:garage_guru/screens/auth/auth_ui.dart';
-import 'package:garage_guru/screens/auth/login_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:garage_guru/core/theme/app_theme.dart';
+import 'package:garage_guru/widgets/widgets.dart';
 import 'package:garage_guru/screens/customer/customer_shell.dart';
+import 'package:garage_guru/screens/owner/owner_shell.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -20,7 +23,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   bool _obscurePassword = true;
   bool _obscureConfirm = true;
   bool _isLoading = false;
-  bool _acceptedTerms = false;
+  String _selectedRole = 'customer';
 
   @override
   void dispose() {
@@ -32,212 +35,177 @@ class _RegisterScreenState extends State<RegisterScreen> {
     super.dispose();
   }
 
-  void _handleRegister() {
+  Future<void> _handleRegister() async {
     if (!_formKey.currentState!.validate()) return;
-    if (!_acceptedTerms) return;
     setState(() => _isLoading = true);
 
-    Future.delayed(const Duration(seconds: 1), () {
-      if (!mounted) return;
-      setState(() => _isLoading = false);
-      Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(builder: (_) => const CustomerShell()),
-        (route) => false,
+    try {
+      final userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: _emailController.text.trim(),
+        password: _passwordController.text,
       );
-    });
+
+      final user = userCredential.user;
+      if (user != null) {
+        await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
+          'name': _nameController.text.trim(),
+          'email': _emailController.text.trim(),
+          'phone': _phoneController.text.trim(),
+          'role': _selectedRole,
+          'createdAt': FieldValue.serverTimestamp(),
+        });
+
+        if (!mounted) return;
+        final destination = _selectedRole == 'garage_owner'
+            ? const OwnerShell()
+            : const CustomerShell();
+        Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (_) => destination),
+          (route) => false,
+        );
+      }
+    } on FirebaseAuthException catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.message ?? 'Registration failed')),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      print('Register Error: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: $e')),
+      );
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AuthUi.bg,
+      appBar: const GgAppBar(title: 'Create Account'),
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 24),
+          padding: const EdgeInsets.all(AppSpacing.xxl),
           child: Form(
             key: _formKey,
-            child: AuthCard(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  AuthBackButton(onPressed: () => Navigator.of(context).pop()),
-                  const SizedBox(height: 8),
-                  const Text(
-                    'Create an account',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w700,
-                      color: AuthUi.textPrimary,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Text('I am a:', style: AppTextStyles.label.copyWith(fontWeight: FontWeight.w700)),
+                const SizedBox(height: AppSpacing.md),
+                Row(
+                  children: [
+                    Expanded(
+                      child: GgChipButton(
+                        label: 'Customer',
+                        icon: Icons.person_rounded,
+                        isSelected: _selectedRole == 'customer',
+                        onTap: () => setState(() => _selectedRole = 'customer'),
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 6),
-                  const Text(
-                    'Join GarageGuru for reliable car repair services',
-                    style: TextStyle(fontSize: 13, color: AuthUi.textMuted, height: 1.4),
-                  ),
-                  const SizedBox(height: 12),
-                  const AuthSocialRow(),
-                  const SizedBox(height: 12),
-                  const AuthDivider(),
-                  const SizedBox(height: 12),
-                  AuthTextField(
-                    label: 'Full Name',
-                    placeholder: 'Full Name',
-                    controller: _nameController,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) return 'Name is required';
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 12),
-                  AuthTextField(
-                    label: 'Email address',
-                    placeholder: 'Email address',
-                    controller: _emailController,
-                    keyboardType: TextInputType.emailAddress,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) return 'Email is required';
-                      if (!value.contains('@')) return 'Enter a valid email';
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 12),
-                  AuthTextField(
-                    label: 'Phone number',
-                    placeholder: 'Phone number',
-                    controller: _phoneController,
-                    keyboardType: TextInputType.phone,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) return 'Phone is required';
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 12),
-                  AuthTextField(
-                    label: 'Password',
-                    placeholder: 'Password',
-                    controller: _passwordController,
-                    obscureText: _obscurePassword,
-                    suffix: IconButton(
-                      icon: Icon(
-                        _obscurePassword ? Icons.visibility_off_rounded : Icons.visibility_rounded,
-                        size: 20,
-                        color: const Color(0xFF7B8794),
+                    const SizedBox(width: AppSpacing.md),
+                    Expanded(
+                      child: GgChipButton(
+                        label: 'Garage Owner',
+                        icon: Icons.garage_rounded,
+                        isSelected: _selectedRole == 'garage_owner',
+                        onTap: () => setState(() => _selectedRole = 'garage_owner'),
                       ),
-                      onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
                     ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) return 'Password is required';
-                      if (value.length < 6) return 'Password must be at least 6 characters';
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 12),
-                  AuthTextField(
-                    label: 'Confirm Password',
-                    placeholder: 'Confirm Password',
-                    controller: _confirmPasswordController,
-                    obscureText: _obscureConfirm,
-                    suffix: IconButton(
-                      icon: Icon(
-                        _obscureConfirm ? Icons.visibility_off_rounded : Icons.visibility_rounded,
-                        size: 20,
-                        color: const Color(0xFF7B8794),
-                      ),
-                      onPressed: () => setState(() => _obscureConfirm = !_obscureConfirm),
+                  ],
+                ),
+                const SizedBox(height: AppSpacing.xxl),
+                GgTextField(
+                  label: 'Full Name',
+                  hint: 'Enter your full name',
+                  controller: _nameController,
+                  prefixIcon: Icons.person_outline_rounded,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) return 'Name is required';
+                    return null;
+                  },
+                ),
+                const SizedBox(height: AppSpacing.lg),
+                GgTextField(
+                  label: 'Email',
+                  hint: 'Enter your email',
+                  controller: _emailController,
+                  keyboardType: TextInputType.emailAddress,
+                  prefixIcon: Icons.email_outlined,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) return 'Email is required';
+                    if (!value.contains('@')) return 'Enter a valid email';
+                    return null;
+                  },
+                ),
+                const SizedBox(height: AppSpacing.lg),
+                GgTextField(
+                  label: 'Phone Number',
+                  hint: 'Enter your phone number',
+                  controller: _phoneController,
+                  keyboardType: TextInputType.phone,
+                  prefixIcon: Icons.phone_outlined,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) return 'Phone is required';
+                    return null;
+                  },
+                ),
+                const SizedBox(height: AppSpacing.lg),
+                GgTextField(
+                  label: 'Password',
+                  hint: 'Create a password',
+                  controller: _passwordController,
+                  obscureText: _obscurePassword,
+                  prefixIcon: Icons.lock_outline_rounded,
+                  suffix: IconButton(
+                    icon: Icon(
+                      _obscurePassword ? Icons.visibility_off_rounded : Icons.visibility_rounded,
+                      color: AppColors.textSecondary,
+                      size: 20,
                     ),
-                    validator: (value) {
-                      if (value != _passwordController.text) return 'Passwords don\'t match';
-                      return null;
-                    },
+                    onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
                   ),
-                  const SizedBox(height: 10),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Checkbox(
-                        value: _acceptedTerms,
-                        onChanged: (v) => setState(() => _acceptedTerms = v ?? false),
-                        activeColor: AuthUi.blue,
-                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                      ),
-                      const SizedBox(width: 6),
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.only(top: 10),
-                          child: Wrap(
-                            spacing: 4,
-                            runSpacing: 2,
-                            children: [
-                              const Text(
-                                'I agree to the ',
-                                style: TextStyle(fontSize: 12, color: AuthUi.textMuted, height: 1.35),
-                              ),
-                              Text(
-                                'Terms of service',
-                                style: const TextStyle(
-                                  fontSize: 12,
-                                  color: AuthUi.blue,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                              const Text(
-                                ' and ',
-                                style: TextStyle(fontSize: 12, color: AuthUi.textMuted, height: 1.35),
-                              ),
-                              Text(
-                                'Privacy Policy',
-                                style: const TextStyle(
-                                  fontSize: 12,
-                                  color: AuthUi.blue,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
+                  validator: (value) {
+                    if (value == null || value.isEmpty) return 'Password is required';
+                    if (value.length < 6) return 'Password must be at least 6 characters';
+                    return null;
+                  },
+                ),
+                const SizedBox(height: AppSpacing.lg),
+                GgTextField(
+                  label: 'Confirm Password',
+                  hint: 'Re-enter your password',
+                  controller: _confirmPasswordController,
+                  obscureText: _obscureConfirm,
+                  prefixIcon: Icons.lock_outline_rounded,
+                  suffix: IconButton(
+                    icon: Icon(
+                      _obscureConfirm ? Icons.visibility_off_rounded : Icons.visibility_rounded,
+                      color: AppColors.textSecondary,
+                      size: 20,
+                    ),
+                    onPressed: () => setState(() => _obscureConfirm = !_obscureConfirm),
                   ),
-                  const SizedBox(height: 6),
-                  AuthPrimaryButton(
-                    label: 'Create account',
-                    onPressed: _isLoading
-                        ? null
-                        : () {
-                            if (!_acceptedTerms) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(content: Text('Please accept the terms to continue.')),
-                              );
-                              return;
-                            }
-                            _handleRegister();
-                          },
-                    isLoading: _isLoading,
-                  ),
-                  const SizedBox(height: 10),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Text('Already have an account? ', style: TextStyle(color: AuthUi.textMuted)),
-                      TextButton(
-                        onPressed: () {
-                          Navigator.of(context).pushReplacement(
-                            MaterialPageRoute(builder: (_) => const LoginScreen()),
-                          );
-                        },
-                        style: TextButton.styleFrom(
-                          foregroundColor: AuthUi.blue,
-                          padding: EdgeInsets.zero,
-                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                          minimumSize: const Size(0, 0),
-                        ),
-                        child: const Text('Sign in'),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
+                  validator: (value) {
+                    if (value != _passwordController.text) return 'Passwords don\'t match';
+                    return null;
+                  },
+                ),
+                const SizedBox(height: AppSpacing.xxl),
+                GgButton(
+                  label: 'Create Account',
+                  onPressed: _handleRegister,
+                  isLoading: _isLoading,
+                  useGradient: true,
+                ),
+                const SizedBox(height: AppSpacing.xl),
+                Text(
+                  'By creating an account, you agree to our Terms of Service and Privacy Policy',
+                  style: AppTextStyles.caption.copyWith(height: 1.5),
+                  textAlign: TextAlign.center,
+                ),
+              ],
             ),
           ),
         ),

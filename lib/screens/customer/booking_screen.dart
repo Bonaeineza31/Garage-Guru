@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:garage_guru/core/theme/app_theme.dart';
+import 'package:garage_guru/data/mock_data.dart';
 import 'package:garage_guru/models/models.dart';
 import 'package:garage_guru/widgets/widgets.dart';
+import 'package:garage_guru/screens/customer/payment_screen.dart';
 
 class BookingScreen extends StatefulWidget {
   final GarageModel garage;
@@ -13,255 +15,439 @@ class BookingScreen extends StatefulWidget {
 }
 
 class _BookingScreenState extends State<BookingScreen> {
-  String? _selectedService;
-  int _selectedDateIndex = 1;
-  int _selectedTimeIndex = 2;
-  
-  final List<String> _services = [
-    'General Maintenance',
-    'Tire Replacement',
-    'Oil Change',
-    'Engine Diagnostics',
-    'Brake Repair'
+  int _currentStep = 0;
+  final _selectedServices = <ServiceModel>{};
+  DateTime _selectedDate = DateTime.now().add(const Duration(days: 1));
+  String? _selectedTime;
+  final _vehicleMakeController = TextEditingController();
+  final _vehicleModelController = TextEditingController();
+  final _vehicleYearController = TextEditingController();
+  final _vehiclePlateController = TextEditingController();
+  final _notesController = TextEditingController();
+
+  final _timeSlots = [
+    '8:00 AM', '9:00 AM', '10:00 AM', '11:00 AM',
+    '12:00 PM', '1:00 PM', '2:00 PM', '3:00 PM',
+    '4:00 PM', '5:00 PM',
   ];
 
-  final List<String> _dates = ['Mon 12', 'Tue 13', 'Wed 14', 'Thu 15', 'Fri 16'];
-  final List<String> _times = ['09:00 AM', '10:00 AM', '11:00 AM', '01:00 PM', '02:00 PM', '04:00 PM'];
+  double get _totalPrice =>
+      _selectedServices.fold(0.0, (sum, s) => sum + s.price);
+
+  @override
+  void dispose() {
+    _vehicleMakeController.dispose();
+    _vehicleModelController.dispose();
+    _vehicleYearController.dispose();
+    _vehiclePlateController.dispose();
+    _notesController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
-      appBar: AppBar(
-        title: const Text('Book Appointment'),
-        backgroundColor: AppColors.surface,
-        foregroundColor: AppColors.textPrimary,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.pop(context),
-        ),
+      appBar: GgAppBar(
+        title: 'Book Service',
+        actions: [
+          Center(
+            child: Padding(
+              padding: const EdgeInsets.only(right: AppSpacing.lg),
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.15),
+                  borderRadius: BorderRadius.circular(AppRadius.pill),
+                ),
+                child: Text(
+                  'Step ${_currentStep + 1}/3',
+                  style: AppTextStyles.caption.copyWith(color: Colors.white70),
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(AppSpacing.lg),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Garage info quick summary
-            Row(
+      body: Column(
+        children: [
+          _buildProgressBar(),
+          Expanded(
+            child: IndexedStack(
+              index: _currentStep,
               children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(AppRadius.md),
-                  child: Image.network(
-                    widget.garage.coverImageUrl,
-                    width: 50,
-                    height: 50,
-                    fit: BoxFit.cover,
-                    errorBuilder: (_, __, ___) => Container(
-                      width: 50,
-                      height: 50,
-                      color: AppColors.primaryLight,
-                      child: const Icon(Icons.garage_rounded, color: AppColors.primary),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: AppSpacing.md),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(widget.garage.name, style: AppTextStyles.subtitle),
-                      Text(widget.garage.address.split(',').last.trim(), style: AppTextStyles.caption),
-                    ],
-                  ),
-                ),
+                _buildServiceSelection(),
+                _buildDateTimeSelection(),
+                _buildVehicleDetails(),
               ],
             ),
-            const SizedBox(height: AppSpacing.xl),
-            
-            Text('Select Service', style: AppTextStyles.heading3),
-            const SizedBox(height: AppSpacing.md),
-            DropdownButtonFormField<String>(
-              value: _selectedService,
-              hint: const Text('Choose a service'),
-              decoration: InputDecoration(
-                filled: true,
-                fillColor: AppColors.surface,
-                contentPadding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: AppSpacing.md),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(AppRadius.md),
-                  borderSide: const BorderSide(color: AppColors.divider),
+          ),
+          _buildBottomBar(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildProgressBar() {
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.xxl,
+        vertical: AppSpacing.md,
+      ),
+      color: AppColors.surface,
+      child: Row(
+        children: List.generate(3, (index) {
+          final isCompleted = index < _currentStep;
+          final isCurrent = index == _currentStep;
+          return Expanded(
+            child: Row(
+              children: [
+                Container(
+                  width: 28,
+                  height: 28,
+                  decoration: BoxDecoration(
+                    color: isCompleted
+                        ? AppColors.success
+                        : isCurrent
+                            ? AppColors.primary
+                            : AppColors.divider,
+                    shape: BoxShape.circle,
+                    boxShadow: isCurrent ? [
+                      BoxShadow(
+                        color: AppColors.primary.withOpacity(0.3),
+                        blurRadius: 8,
+                      ),
+                    ] : null,
+                  ),
+                  child: Center(
+                    child: isCompleted
+                        ? const Icon(Icons.check_rounded, color: Colors.white, size: 16)
+                        : Text(
+                            '${index + 1}',
+                            style: TextStyle(
+                              color: isCurrent ? Colors.white : AppColors.textSecondary,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 13,
+                            ),
+                          ),
+                  ),
                 ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(AppRadius.md),
-                  borderSide: const BorderSide(color: AppColors.divider),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(AppRadius.md),
-                  borderSide: const BorderSide(color: AppColors.primary),
-                ),
-              ),
-              items: _services.map((s) => DropdownMenuItem(value: s, child: Text(s))).toList(),
-              onChanged: (val) => setState(() => _selectedService = val),
-            ),
-            
-            const SizedBox(height: AppSpacing.xl),
-            Text('Choose Date', style: AppTextStyles.heading3),
-            const SizedBox(height: AppSpacing.md),
-            SizedBox(
-              height: 70,
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: _dates.length,
-                itemBuilder: (context, index) {
-                  final isSelected = _selectedDateIndex == index;
-                  final split = _dates[index].split(' ');
-                  return GestureDetector(
-                    onTap: () => setState(() => _selectedDateIndex = index),
+                if (index < 2)
+                  Expanded(
                     child: Container(
-                      width: 60,
-                      margin: const EdgeInsets.only(right: AppSpacing.sm),
-                      decoration: BoxDecoration(
-                        color: isSelected ? AppColors.primary : AppColors.surface,
-                        borderRadius: BorderRadius.circular(AppRadius.md),
-                        border: Border.all(
-                          color: isSelected ? AppColors.primary : AppColors.divider,
-                        ),
-                      ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            split[0],
-                            style: AppTextStyles.caption.copyWith(
-                              color: isSelected ? Colors.white70 : AppColors.textSecondary,
-                            ),
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            split[1],
-                            style: AppTextStyles.subtitle.copyWith(
-                              color: isSelected ? Colors.white : AppColors.textPrimary,
-                            ),
-                          ),
-                        ],
-                      ),
+                      height: 2,
+                      color: isCompleted ? AppColors.success : AppColors.divider,
                     ),
-                  );
-                },
-              ),
+                  ),
+              ],
             ),
-            
-            const SizedBox(height: AppSpacing.xl),
-            Text('Choose Time', style: AppTextStyles.heading3),
-            const SizedBox(height: AppSpacing.md),
-            Wrap(
-              spacing: AppSpacing.sm,
-              runSpacing: AppSpacing.sm,
-              children: List.generate(_times.length, (index) {
-                final isSelected = _selectedTimeIndex == index;
+          );
+        }),
+      ),
+    );
+  }
+
+  Widget _buildServiceSelection() {
+    final services = MockData.services
+        .where((s) => s.garageId == widget.garage.id)
+        .toList();
+
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(AppSpacing.lg),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('Select Services', style: AppTextStyles.heading3),
+          const SizedBox(height: AppSpacing.xs),
+          Text(
+            'Choose one or more services you need',
+            style: AppTextStyles.bodySmall,
+          ),
+          const SizedBox(height: AppSpacing.lg),
+          ...services.map((service) {
+            final isSelected = _selectedServices.contains(service);
+            return ServiceCard(
+              service: service,
+              isSelected: isSelected,
+              onTap: () {
+                setState(() {
+                  if (isSelected) {
+                    _selectedServices.remove(service);
+                  } else {
+                    _selectedServices.add(service);
+                  }
+                });
+              },
+            );
+          }),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDateTimeSelection() {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(AppSpacing.lg),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('Select Date & Time', style: AppTextStyles.heading3),
+          const SizedBox(height: AppSpacing.xs),
+          Text(
+            'Pick a convenient date and time slot',
+            style: AppTextStyles.bodySmall,
+          ),
+          const SizedBox(height: AppSpacing.xxl),
+          Text('Select Date', style: AppTextStyles.subtitle),
+          const SizedBox(height: AppSpacing.md),
+          SizedBox(
+            height: 80,
+            child: ListView.separated(
+              scrollDirection: Axis.horizontal,
+              itemCount: 14,
+              separatorBuilder: (_, __) => const SizedBox(width: AppSpacing.sm),
+              itemBuilder: (context, index) {
+                final date = DateTime.now().add(Duration(days: index + 1));
+                final isSelected = date.day == _selectedDate.day &&
+                    date.month == _selectedDate.month;
+                final dayNames = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+
                 return GestureDetector(
-                  onTap: () => setState(() => _selectedTimeIndex = index),
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: AppSpacing.sm),
+                  onTap: () => setState(() => _selectedDate = date),
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
+                    width: 60,
                     decoration: BoxDecoration(
-                      color: isSelected ? AppColors.primaryLight.withOpacity(0.3) : AppColors.surface,
-                      borderRadius: BorderRadius.circular(AppRadius.pill),
+                      color: isSelected ? AppColors.primary : AppColors.surface,
+                      borderRadius: BorderRadius.circular(AppRadius.md),
                       border: Border.all(
                         color: isSelected ? AppColors.primary : AppColors.divider,
                       ),
                     ),
-                    child: Text(
-                      _times[index],
-                      style: AppTextStyles.bodySmall.copyWith(
-                        color: isSelected ? AppColors.primaryDark : AppColors.textPrimary,
-                        fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
-                      ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          dayNames[date.weekday - 1],
+                          style: AppTextStyles.caption.copyWith(
+                            color: isSelected ? Colors.white70 : AppColors.textSecondary,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          '${date.day}',
+                          style: AppTextStyles.heading3.copyWith(
+                            color: isSelected ? Colors.white : AppColors.textPrimary,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 );
-              }),
+              },
             ),
-            
-            const SizedBox(height: AppSpacing.xl),
-            Text('Add Notes', style: AppTextStyles.heading3),
-            const SizedBox(height: AppSpacing.md),
-            TextField(
-              maxLines: 4,
-              decoration: InputDecoration(
-                hintText: 'Any specific issues or requests...',
-                filled: true,
-                fillColor: AppColors.surface,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(AppRadius.md),
-                  borderSide: const BorderSide(color: AppColors.divider),
+          ),
+          const SizedBox(height: AppSpacing.xxl),
+          Text('Select Time', style: AppTextStyles.subtitle),
+          const SizedBox(height: AppSpacing.md),
+          Wrap(
+            spacing: AppSpacing.sm,
+            runSpacing: AppSpacing.sm,
+            children: _timeSlots.map((time) {
+              final isSelected = time == _selectedTime;
+              return GestureDetector(
+                onTap: () => setState(() => _selectedTime = time),
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 200),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppSpacing.lg,
+                    vertical: AppSpacing.md,
+                  ),
+                  decoration: BoxDecoration(
+                    color: isSelected ? AppColors.primary : AppColors.surface,
+                    borderRadius: BorderRadius.circular(AppRadius.md),
+                    border: Border.all(
+                      color: isSelected ? AppColors.primary : AppColors.divider,
+                    ),
+                  ),
+                  child: Text(
+                    time,
+                    style: AppTextStyles.body.copyWith(
+                      color: isSelected ? Colors.white : AppColors.textPrimary,
+                      fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
+                    ),
+                  ),
                 ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(AppRadius.md),
-                  borderSide: const BorderSide(color: AppColors.divider),
-                ),
-              ),
-            ),
-            const SizedBox(height: 100), // spacing for bottom sheet
-          ],
-        ),
+              );
+            }).toList(),
+          ),
+        ],
       ),
-      bottomSheet: Container(
-        padding: const EdgeInsets.all(AppSpacing.lg),
-        decoration: const BoxDecoration(
-          color: AppColors.surface,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black12,
-              blurRadius: 10,
-              offset: Offset(0, -5),
-            )
-          ],
-          borderRadius: BorderRadius.vertical(top: Radius.circular(AppRadius.xl)),
-        ),
-        child: SafeArea(
-          child: Row(
+    );
+  }
+
+  Widget _buildVehicleDetails() {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(AppSpacing.lg),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('Vehicle Details', style: AppTextStyles.heading3),
+          const SizedBox(height: AppSpacing.xs),
+          Text(
+            'Provide your vehicle information',
+            style: AppTextStyles.bodySmall,
+          ),
+          const SizedBox(height: AppSpacing.xxl),
+          Row(
             children: [
               Expanded(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('Total Estimate', style: AppTextStyles.caption),
-                    Text('--', style: AppTextStyles.heading3.copyWith(color: AppColors.primary)),
-                  ],
+                child: GgTextField(
+                  label: 'Make',
+                  hint: 'e.g. Toyota',
+                  controller: _vehicleMakeController,
+                  prefixIcon: Icons.directions_car,
                 ),
               ),
+              const SizedBox(width: AppSpacing.md),
               Expanded(
-                flex: 2,
-                child: GgButton(
-                  label: 'Confirm Booking',
-                  useGradient: true,
-                  onPressed: () {
-                    showDialog(
-                      context: context,
-                      builder: (context) => AlertDialog(
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.xl)),
-                        title: const Text('Booking Confirmed!'),
-                        content: const Text('Your appointment has been successfully booked.'),
-                        actions: [
-                          TextButton(
-                            onPressed: () {
-                              Navigator.pop(context); // close dialog
-                              Navigator.pop(context); // close booking screen
-                            },
-                            child: const Text('Done'),
-                          )
-                        ],
-                      ),
-                    );
-                  },
+                child: GgTextField(
+                  label: 'Model',
+                  hint: 'e.g. Camry',
+                  controller: _vehicleModelController,
                 ),
               ),
             ],
           ),
+          const SizedBox(height: AppSpacing.lg),
+          Row(
+            children: [
+              Expanded(
+                child: GgTextField(
+                  label: 'Year',
+                  hint: 'e.g. 2022',
+                  controller: _vehicleYearController,
+                  keyboardType: TextInputType.number,
+                ),
+              ),
+              const SizedBox(width: AppSpacing.md),
+              Expanded(
+                child: GgTextField(
+                  label: 'License Plate',
+                  hint: 'e.g. ABC 1234',
+                  controller: _vehiclePlateController,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: AppSpacing.lg),
+          GgTextField(
+            label: 'Additional Notes',
+            hint: 'Any specific issues or requests...',
+            controller: _notesController,
+            maxLines: 4,
+          ),
+          const SizedBox(height: AppSpacing.xxl),
+          Container(
+            padding: const EdgeInsets.all(AppSpacing.lg),
+            decoration: BoxDecoration(
+              color: AppColors.background,
+              borderRadius: BorderRadius.circular(AppRadius.md),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('Booking Summary', style: AppTextStyles.subtitle),
+                const SizedBox(height: AppSpacing.md),
+                ..._selectedServices.map((s) => Padding(
+                  padding: const EdgeInsets.only(bottom: 4),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(s.name, style: AppTextStyles.body),
+                      Text(s.formattedPrice, style: AppTextStyles.body),
+                    ],
+                  ),
+                )),
+                const Divider(height: AppSpacing.xxl),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text('Total', style: AppTextStyles.heading3),
+                    Text(
+                      '\$${_totalPrice.toStringAsFixed(2)}',
+                      style: AppTextStyles.price.copyWith(fontSize: 20),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildBottomBar() {
+    return Container(
+      padding: const EdgeInsets.all(AppSpacing.lg),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        boxShadow: AppShadows.bottomNav,
+      ),
+      child: SafeArea(
+        child: Row(
+          children: [
+            if (_currentStep > 0)
+              Expanded(
+                child: GgButton(
+                  label: 'Back',
+                  isOutlined: true,
+                  onPressed: () => setState(() => _currentStep--),
+                ),
+              ),
+            if (_currentStep > 0) const SizedBox(width: AppSpacing.md),
+            Expanded(
+              flex: _currentStep == 0 ? 1 : 1,
+              child: GgButton(
+                label: _currentStep == 2 ? 'Proceed to Payment' : 'Continue',
+                useGradient: true,
+                onPressed: _canProceed
+                    ? () {
+                        if (_currentStep < 2) {
+                          setState(() => _currentStep++);
+                        } else {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (_) => PaymentScreen(
+                                garage: widget.garage,
+                                services: _selectedServices.toList(),
+                                totalAmount: _totalPrice,
+                                scheduledDate: _selectedDate,
+                                scheduledTime: _selectedTime!,
+                              ),
+                            ),
+                          );
+                        }
+                      }
+                    : null,
+              ),
+            ),
+          ],
         ),
       ),
     );
+  }
+
+  bool get _canProceed {
+    switch (_currentStep) {
+      case 0:
+        return _selectedServices.isNotEmpty;
+      case 1:
+        return _selectedTime != null;
+      case 2:
+        return true;
+      default:
+        return false;
+    }
   }
 }

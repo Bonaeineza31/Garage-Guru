@@ -5,7 +5,9 @@ import 'package:garage_guru/screens/customer/repair_detail_screen.dart';
 import 'package:intl/intl.dart';
 
 class RepairsHistoryScreen extends StatelessWidget {
-  const RepairsHistoryScreen({super.key});
+  final VoidCallback? onSwitchTab;
+  
+  const RepairsHistoryScreen({super.key, this.onSwitchTab});
 
   static final List<RepairHistoryModel> _history = [
     RepairHistoryModel(
@@ -42,7 +44,10 @@ class RepairsHistoryScreen extends StatelessWidget {
         padding: const EdgeInsets.all(16),
         itemCount: _history.length,
         separatorBuilder: (_, __) => const SizedBox(height: 12),
-        itemBuilder: (context, index) => _HistoryCard(item: _history[index]),
+        itemBuilder: (context, index) => _HistoryCard(
+          item: _history[index],
+          onSwitchTab: onSwitchTab,
+        ),
       ),
     );
   }
@@ -50,8 +55,9 @@ class RepairsHistoryScreen extends StatelessWidget {
 
 class _HistoryCard extends StatelessWidget {
   final RepairHistoryModel item;
+  final VoidCallback? onSwitchTab;
 
-  const _HistoryCard({required this.item});
+  const _HistoryCard({required this.item, this.onSwitchTab});
 
   @override
   Widget build(BuildContext context) {
@@ -187,8 +193,8 @@ class _HistoryCard extends StatelessWidget {
           Align(
             alignment: Alignment.centerRight,
             child: GestureDetector(
-              onTap: () {
-                Navigator.push(
+              onTap: () async {
+                final result = await Navigator.push(
                   context,
                   MaterialPageRoute(
                     builder: (_) => RepairDetailScreen(
@@ -220,6 +226,9 @@ class _HistoryCard extends StatelessWidget {
                     ),
                   ),
                 );
+                if (result == 'tab_current') {
+                  onSwitchTab?.call();
+                }
               },
               child: const Row(
                 mainAxisSize: MainAxisSize.min,
