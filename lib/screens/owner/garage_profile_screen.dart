@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:garage_guru/core/theme/app_theme.dart';
 import 'package:garage_guru/widgets/widgets.dart';
 import 'package:garage_guru/screens/auth/login_screen.dart';
+import 'package:garage_guru/screens/garage/add_garage_screen.dart';
 
 class GarageProfileScreen extends StatelessWidget {
   const GarageProfileScreen({super.key});
@@ -18,7 +19,13 @@ class GarageProfileScreen extends StatelessWidget {
         actions: [
           IconButton(
             icon: const Icon(Icons.edit_rounded),
-            onPressed: () {},
+            onPressed: () async {
+              await Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) => const AddGarageScreen(),
+                ),
+              );
+            },
           ),
         ],
       ),
