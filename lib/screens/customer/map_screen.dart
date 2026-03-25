@@ -31,8 +31,14 @@ class _MapScreenState extends State<MapScreen> {
             children: [
               GoogleMap(
                 initialCameraPosition: const CameraPosition(
-                  target: LatLng(37.7749, -122.4194),
+                  target: LatLng(-1.9441, 30.0619),
                   zoom: 12,
+                ),
+                cameraTargetBounds: CameraTargetBounds(
+                  LatLngBounds(
+                    southwest: const LatLng(-2.0315, 29.9575),
+                    northeast: const LatLng(-1.8680, 30.2225),
+                  ),
                 ),
                 markers: _buildGoogleMarkers(garages),
                 myLocationEnabled: true,
@@ -58,7 +64,7 @@ class _MapScreenState extends State<MapScreen> {
               onPressed: () {
                 _mapController?.animateCamera(
                   CameraUpdate.newLatLngZoom(
-                    const LatLng(37.7749, -122.4194),
+                    const LatLng(-1.9441, 30.0619),
                     12.0,
                   ),
                 );

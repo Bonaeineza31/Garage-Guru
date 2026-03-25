@@ -18,6 +18,8 @@ class _AddGarageScreenState extends State<AddGarageScreen> {
   final _descriptionController = TextEditingController();
   final _addressController = TextEditingController();
   final _phoneController = TextEditingController();
+  final _latController = TextEditingController();
+  final _lngController = TextEditingController();
 
   LatLng? _selectedLocation;
   bool _isLoading = false;
@@ -29,14 +31,28 @@ class _AddGarageScreenState extends State<AddGarageScreen> {
     _descriptionController.dispose();
     _addressController.dispose();
     _phoneController.dispose();
+    _latController.dispose();
+    _lngController.dispose();
     super.dispose();
+  }
+
+  void _updateLocationFromText(String _) {
+    final lat = double.tryParse(_latController.text);
+    final lng = double.tryParse(_lngController.text);
+    if (lat != null && lng != null) {
+      final newLoc = LatLng(lat, lng);
+      setState(() {
+        _selectedLocation = newLoc;
+      });
+      _mapController?.animateCamera(CameraUpdate.newLatLng(newLoc));
+    }
   }
 
   Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
     if (_selectedLocation == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please drop a pin on the map')),
+        const SnackBar(content: Text('Please provide a valid garage location')),
       );
       return;
     }
@@ -136,8 +152,34 @@ class _AddGarageScreenState extends State<AddGarageScreen> {
                 ),
                 const SizedBox(height: AppSpacing.xs),
                 Text(
-                  'Tap on the map to drop a pin for your garage coordinates.',
+                  'Enter latitude and longitude, or tap on the map to drop a pin.',
                   style: AppTextStyles.caption,
+                ),
+                const SizedBox(height: AppSpacing.md),
+                Row(
+                  children: [
+                    Expanded(
+                      child: GgTextField(
+                        label: 'Latitude',
+                        hint: 'e.g. 37.7749',
+                        controller: _latController,
+                        keyboardType: const TextInputType.numberWithOptions(decimal: true, signed: true),
+                        onChanged: _updateLocationFromText,
+                        validator: (val) => _selectedLocation == null ? 'Required' : null,
+                      ),
+                    ),
+                    const SizedBox(width: AppSpacing.md),
+                    Expanded(
+                      child: GgTextField(
+                        label: 'Longitude',
+                        hint: 'e.g. -122.4194',
+                        controller: _lngController,
+                        keyboardType: const TextInputType.numberWithOptions(decimal: true, signed: true),
+                        onChanged: _updateLocationFromText,
+                        validator: (val) => _selectedLocation == null ? 'Required' : null,
+                      ),
+                    ),
+                  ],
                 ),
                 const SizedBox(height: AppSpacing.md),
                 Container(
@@ -149,13 +191,21 @@ class _AddGarageScreenState extends State<AddGarageScreen> {
                   clipBehavior: Clip.antiAlias,
                   child: GoogleMap(
                     initialCameraPosition: const CameraPosition(
-                      target: LatLng(37.7749, -122.4194),
+                      target: LatLng(-1.9441, 30.0619),
                       zoom: 12,
+                    ),
+                    cameraTargetBounds: CameraTargetBounds(
+                      LatLngBounds(
+                        southwest: const LatLng(-2.0315, 29.9575),
+                        northeast: const LatLng(-1.8680, 30.2225),
+                      ),
                     ),
                     markers: markers,
                     onTap: (latLng) {
                       setState(() {
                         _selectedLocation = latLng;
+                        _latController.text = latLng.latitude.toStringAsFixed(6);
+                        _lngController.text = latLng.longitude.toStringAsFixed(6);
                       });
                     },
                     onMapCreated: (controller) => _mapController = controller,
