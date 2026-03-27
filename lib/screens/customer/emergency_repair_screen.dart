@@ -137,7 +137,7 @@ class _EmergencyRepairScreenState extends State<EmergencyRepairScreen> {
                     '+250 789 123 456',
                     style: TextStyle(
                       fontFamily: 'Poppins',
-                      fontSize: 22,
+                      fontSize: 18,
                       color: Color(0xFF0D9488),
                     ),
                   ),
@@ -152,7 +152,7 @@ class _EmergencyRepairScreenState extends State<EmergencyRepairScreen> {
                     '24/7 Emergency Support',
                     style: TextStyle(
                       fontFamily: 'Poppins',
-                      fontSize: 22,
+                      fontSize: 16,
                       color: Color(0xFF4B5563),
                     ),
                   ),
@@ -164,7 +164,7 @@ class _EmergencyRepairScreenState extends State<EmergencyRepairScreen> {
                   'Average response time: 15 minutes',
                   style: TextStyle(
                     fontFamily: 'Poppins',
-                    fontSize: 21,
+                    fontSize: 13,
                     color: Color(0xFF6B7280),
                   ),
                 ),
