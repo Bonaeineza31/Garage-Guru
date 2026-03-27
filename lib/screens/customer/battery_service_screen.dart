@@ -215,6 +215,7 @@ class _BatteryServiceScreenState extends State<BatteryServiceScreen> {
       const SnackBar(
         content: Text('Battery service booked successfully'),
         backgroundColor: Color(0xFF1D9CE5),
+        duration: Duration(seconds: 2),
       ),
     );
   }
