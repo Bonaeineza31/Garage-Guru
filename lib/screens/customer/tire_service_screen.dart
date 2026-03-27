@@ -93,7 +93,7 @@ class _TireServiceScreenState extends State<TireServiceScreen> {
             ),
             const SizedBox(height: 20),
             const Text(
-              'Book Battery Service',
+              'Book Tire Service',
               style: TextStyle(
                 fontFamily: 'Poppins',
                 fontWeight: FontWeight.w700,
