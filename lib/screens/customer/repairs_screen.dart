@@ -201,6 +201,7 @@ class _RepairsScreenState extends State<RepairsScreen> {
       const SnackBar(
         content: Text('Repair request submitted successfully'),
         backgroundColor: AppColors.success,
+        duration: Duration(seconds: 2),
       ),
     );
   }
