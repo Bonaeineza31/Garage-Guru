@@ -13,6 +13,7 @@ import 'package:garage_guru/main.dart';
 void main() {
   testWidgets('GarageGuru app loads login screen', (WidgetTester tester) async {
     await tester.pumpWidget(const GarageGuruApp());
+    await tester.pumpAndSettle();
     expect(find.byType(MaterialApp), findsOneWidget);
   });
 }
