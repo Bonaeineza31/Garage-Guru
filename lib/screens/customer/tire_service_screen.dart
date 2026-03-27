@@ -215,6 +215,7 @@ class _TireServiceScreenState extends State<TireServiceScreen> {
       const SnackBar(
         content: Text('Tire service booked successfully'),
         backgroundColor: Color(0xFF1D9CE5),
+        duration: Duration(seconds: 2),
       ),
     );
   }
