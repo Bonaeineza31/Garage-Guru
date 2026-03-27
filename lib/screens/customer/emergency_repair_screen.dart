@@ -230,6 +230,7 @@ class _EmergencyRepairScreenState extends State<EmergencyRepairScreen> {
       const SnackBar(
         content: Text('Emergency request sent. Mechanic is being assigned.'),
         backgroundColor: Color(0xFFFF6B00),
+        duration: Duration(seconds: 2),
       ),
     );
   }
