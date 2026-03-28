@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:garage_guru/core/theme/app_theme.dart';
-import 'package:garage_guru/data/mock_data.dart';
 import 'package:garage_guru/widgets/widgets.dart';
 import 'package:garage_guru/screens/auth/login_screen.dart';
 import 'package:garage_guru/screens/customer/my_vehicles_screen.dart';
@@ -8,12 +9,51 @@ import 'package:garage_guru/screens/customer/notifications_screen.dart';
 import 'package:garage_guru/screens/customer/edit_profile_screen.dart';
 import 'package:garage_guru/screens/customer/account_settings_screen.dart';
 
-class ProfileScreen extends StatelessWidget {
+class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
 
   @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+  String _displayName = '';
+  String _email = '';
+  String? _photoUrl;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUser();
+  }
+
+  Future<void> _loadUser() async {
+    final firebaseUser = FirebaseAuth.instance.currentUser;
+    if (firebaseUser == null) return;
+
+    String name = firebaseUser.displayName ?? '';
+    if (name.isEmpty) {
+      final doc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(firebaseUser.uid)
+          .get();
+      name = doc.data()?['name'] ?? firebaseUser.email?.split('@').first ?? 'User';
+    }
+
+    if (mounted) {
+      setState(() {
+        _displayName = name;
+        _email = firebaseUser.email ?? '';
+        _photoUrl = firebaseUser.photoURL;
+      });
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final user = MockData.currentUser;
+    final displayName = _displayName.isEmpty ? '...' : _displayName;
+    final email = _email;
+    final photoUrl = _photoUrl;
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -96,7 +136,7 @@ class ProfileScreen extends StatelessWidget {
                         ),
                         child: CircleAvatar(
                           radius: 50,
-                          backgroundImage: NetworkImage(user.profileImageUrl ?? 'https://i.pravatar.cc/150?img=1'),
+                          backgroundImage: photoUrl != null ? NetworkImage(photoUrl) : const NetworkImage('https://i.pravatar.cc/150?img=1'),
                         ),
                       ),
                       Container(
@@ -112,12 +152,12 @@ class ProfileScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: AppSpacing.md),
                   Text(
-                    user.fullName,
+                    displayName,
                     style: AppTextStyles.heading2.copyWith(color: Colors.white),
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    user.email,
+                    email,
                     style: AppTextStyles.bodySmall.copyWith(color: Colors.white70),
                   ),
                   const SizedBox(height: AppSpacing.md),
