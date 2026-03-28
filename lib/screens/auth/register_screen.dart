@@ -67,6 +67,24 @@ class _RegisterScreenState extends State<RegisterScreen> {
           'createdAt': FieldValue.serverTimestamp(),
         });
 
+        // Firebase does not send sign-up emails by default; this sends the verification template.
+        try {
+          await user.sendEmailVerification();
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('We sent a verification link to your email. Check spam if you don’t see it.'),
+              ),
+            );
+          }
+        } on FirebaseAuthException catch (e) {
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text(e.message ?? 'Could not send verification email')),
+            );
+          }
+        }
+
         if (!mounted) return;
         final destination =
             _selectedRole == 'garage_owner' ? const OwnerShell() : const CustomerShell();
