@@ -9,11 +9,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:garage_guru/main.dart';
+import 'package:garage_guru/screens/auth/landing_screen.dart';
 
 void main() {
-  testWidgets('GarageGuru app loads login screen', (WidgetTester tester) async {
+  testWidgets('GarageGuru opens on the landing screen', (WidgetTester tester) async {
     await tester.pumpWidget(const GarageGuruApp());
     await tester.pumpAndSettle();
     expect(find.byType(MaterialApp), findsOneWidget);
+    expect(find.byType(LandingScreen), findsOneWidget);
   });
 }
