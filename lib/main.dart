@@ -2,7 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
-import 'package:garage_guru/core/theme/theme_data.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:garage_guru/blocs/auth_bloc.dart';
+import 'package:garage_guru/blocs/garage_bloc.dart';
+import 'package:garage_guru/blocs/booking_bloc.dart';
+import 'package:garage_guru/theme/app_theme.dart';
 import 'package:garage_guru/screens/auth/landing_screen.dart';
 
 Future<void> main() async {
@@ -22,7 +26,16 @@ Future<void> main() async {
       systemNavigationBarIconBrightness: Brightness.dark,
     ),
   );
-  runApp(const GarageGuruApp());
+  runApp(
+    MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (context) => AuthBloc()),
+        BlocProvider(create: (context) => GarageBloc()..add(LoadGarages())),
+        BlocProvider(create: (context) => BookingBloc()),
+      ],
+      child: const GarageGuruApp(),
+    ),
+  );
 }
 
 class GarageGuruApp extends StatelessWidget {
@@ -34,7 +47,14 @@ class GarageGuruApp extends StatelessWidget {
       title: 'GarageGuru',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
-      home: const LandingScreen(),
+      home: BlocBuilder<AuthBloc, AuthState>(
+        builder: (context, state) {
+          if (state.status == AuthStatus.authenticated) {
+            return LandingScreen(); 
+          }
+          return LandingScreen();
+        },
+      ),
     );
   }
 }

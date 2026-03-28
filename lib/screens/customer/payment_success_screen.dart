@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:garage_guru/core/theme/app_theme.dart';
+import 'package:garage_guru/theme/app_theme.dart';
 import 'package:garage_guru/screens/customer/send_feedback_screen.dart';
 
 class PaymentSuccessScreen extends StatelessWidget {

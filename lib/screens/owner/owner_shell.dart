@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:garage_guru/core/theme/app_theme.dart';
+import 'package:garage_guru/theme/app_theme.dart';
 import 'package:garage_guru/screens/owner/owner_dashboard_screen.dart';
 import 'package:garage_guru/screens/owner/owner_bookings_screen.dart';
 import 'package:garage_guru/screens/owner/manage_services_screen.dart';
@@ -35,6 +35,11 @@ class _OwnerShellState extends State<OwnerShell> {
         child: BottomNavigationBar(
           currentIndex: _currentIndex,
           onTap: (index) => setState(() => _currentIndex = index),
+          backgroundColor: AppColors.primary,
+          selectedItemColor: Colors.white,
+          unselectedItemColor: Colors.white.withOpacity(0.6),
+          type: BottomNavigationBarType.fixed,
+          elevation: 0,
           items: const [
             BottomNavigationBarItem(
               icon: Icon(Icons.dashboard_outlined),

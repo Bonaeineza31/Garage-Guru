@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:garage_guru/core/theme/app_theme.dart';
+import 'package:garage_guru/theme/app_theme.dart';
 import 'package:garage_guru/screens/auth/auth_theme.dart';
 import 'package:garage_guru/screens/auth/auth_widgets.dart';
 import 'package:garage_guru/screens/auth/register_screen.dart';

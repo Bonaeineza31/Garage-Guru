@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:garage_guru/core/theme/app_theme.dart';
+import 'package:garage_guru/theme/app_theme.dart';
 import 'package:garage_guru/models/repair_model.dart';
 import 'package:intl/intl.dart';
 
@@ -45,7 +45,11 @@ class _SendFeedbackScreenState extends State<SendFeedbackScreen> {
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => Navigator.pop(context),
+          onPressed: () {
+            if (Navigator.canPop(context)) {
+              Navigator.pop(context);
+            }
+          },
         ),
         title: const Text(
           'Send Feedback',
@@ -283,7 +287,9 @@ class _SendFeedbackScreenState extends State<SendFeedbackScreen> {
                             backgroundColor: AppColors.success,
                           ),
                         );
-                        Navigator.pop(context);
+                        if (Navigator.canPop(context)) {
+                          Navigator.pop(context);
+                        }
                       },
                       icon: const Icon(Icons.send_rounded,
                           size: 16, color: Colors.white),

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:garage_guru/core/theme/app_theme.dart';
+import 'package:garage_guru/theme/app_theme.dart';
 class GgAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
   final List<Widget>? actions;
@@ -41,7 +41,11 @@ class GgAppBar extends StatelessWidget implements PreferredSizeWidget {
                   ),
                   child: const Icon(Icons.arrow_back_ios_new, size: 16),
                 ),
-                onPressed: () => Navigator.of(context).pop(),
+                onPressed: () {
+                  if (Navigator.of(context).canPop()) {
+                    Navigator.of(context).pop();
+                  }
+                },
               ))
           : leading,
       actions: actions,

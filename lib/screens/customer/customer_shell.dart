@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:garage_guru/core/theme/app_theme.dart';
+import 'package:garage_guru/theme/app_theme.dart';
 import 'package:garage_guru/screens/customer/home_screen.dart';
 import 'package:garage_guru/screens/customer/find_garages_screen.dart';
 import 'package:garage_guru/screens/customer/repairs_screen.dart';
