@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'firebase_options.dart';
+import 'package:garage_guru/bloc/garage/garage_bloc.dart';
 import 'package:garage_guru/core/theme/theme_data.dart';
 import 'package:garage_guru/screens/auth/landing_screen.dart';
 
@@ -30,11 +32,14 @@ class GarageGuruApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'GarageGuru',
-      debugShowCheckedModeBanner: false,
-      theme: AppTheme.lightTheme,
-      home: const LandingScreen(),
+    return BlocProvider(
+      create: (_) => GarageBloc()..add(LoadGarages()),
+      child: MaterialApp(
+        title: 'GarageGuru',
+        debugShowCheckedModeBanner: false,
+        theme: AppTheme.lightTheme,
+        home: const LandingScreen(),
+      ),
     );
   }
 }
