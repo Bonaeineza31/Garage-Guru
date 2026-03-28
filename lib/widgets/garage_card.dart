@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:garage_guru/bloc/garage/garage_bloc.dart';
 import 'package:garage_guru/core/theme/app_theme.dart';
 import 'package:garage_guru/models/garage_model.dart';
+
 class GarageCard extends StatelessWidget {
   final GarageModel garage;
   final VoidCallback? onTap;
@@ -15,11 +18,15 @@ class GarageCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (isCompact) return _buildCompactCard();
-    return _buildFullCard();
+    if (isCompact) return _buildCompactCard(context);
+    return _buildFullCard(context);
   }
 
-  Widget _buildFullCard() {
+  void _toggleFavorite(BuildContext context) {
+    context.read<GarageBloc>().add(ToggleFavorite(garage.id));
+  }
+
+  Widget _buildFullCard(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -169,6 +176,17 @@ class GarageCard extends StatelessWidget {
                             size: 18,
                           ),
                         ),
+                      GestureDetector(
+                        onTap: () => _toggleFavorite(context),
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: AppSpacing.sm),
+                          child: Icon(
+                            garage.isFavorite ? Icons.favorite_rounded : Icons.favorite_border_rounded,
+                            color: garage.isFavorite ? Colors.red : AppColors.textSecondary,
+                            size: 22,
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                   const SizedBox(height: AppSpacing.xs),
@@ -253,7 +271,7 @@ class GarageCard extends StatelessWidget {
     );
   }
 
-  Widget _buildCompactCard() {
+  Widget _buildCompactCard(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -300,6 +318,17 @@ class GarageCard extends StatelessWidget {
                       ),
                       if (garage.isVerified)
                         const Icon(Icons.verified, color: AppColors.primary, size: 16),
+                      GestureDetector(
+                        onTap: () => _toggleFavorite(context),
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 4),
+                          child: Icon(
+                            garage.isFavorite ? Icons.favorite_rounded : Icons.favorite_border_rounded,
+                            color: garage.isFavorite ? Colors.red : AppColors.textSecondary,
+                            size: 18,
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                   const SizedBox(height: 2),
