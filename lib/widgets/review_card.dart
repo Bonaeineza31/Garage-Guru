@@ -8,13 +8,14 @@ class ReviewCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     return Container(
       margin: const EdgeInsets.only(bottom: AppSpacing.md),
       padding: const EdgeInsets.all(AppSpacing.lg),
       decoration: BoxDecoration(
-        color: AppColors.cardBackground,
+        color: cs.surface,
         borderRadius: BorderRadius.circular(AppRadius.xl),
-        border: Border.all(color: AppColors.divider.withOpacity(0.3)),
+        border: Border.all(color: cs.outlineVariant),
         boxShadow: AppShadows.card,
       ),
       child: Column(
@@ -56,15 +57,21 @@ class ReviewCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(review.customerName, style: AppTextStyles.subtitle.copyWith(fontSize: 14)),
-                    Text(review.timeAgo, style: AppTextStyles.caption),
+                    Text(
+                      review.customerName,
+                      style: AppTextStyles.subtitle.copyWith(fontSize: 14, color: cs.onSurface),
+                    ),
+                    Text(
+                      review.timeAgo,
+                      style: AppTextStyles.caption.copyWith(color: cs.onSurfaceVariant),
+                    ),
                   ],
                 ),
               ),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: AppColors.starFilled.withOpacity(0.1),
+                  color: AppColors.starFilled.withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(AppRadius.pill),
                 ),
                 child: Row(
@@ -85,7 +92,10 @@ class ReviewCard extends StatelessWidget {
             ],
           ),
           const SizedBox(height: AppSpacing.md),
-          Text(review.comment, style: AppTextStyles.body),
+          Text(
+            review.comment,
+            style: AppTextStyles.body.copyWith(color: cs.onSurface),
+          ),
           if (review.images.isNotEmpty) ...[
             const SizedBox(height: AppSpacing.md),
             SizedBox(
@@ -105,8 +115,8 @@ class ReviewCard extends StatelessWidget {
                       errorBuilder: (_, __, ___) => Container(
                         width: 80,
                         height: 80,
-                        color: AppColors.background,
-                        child: const Icon(Icons.image, color: AppColors.textHint),
+                        color: cs.surfaceContainerHighest,
+                        child: Icon(Icons.image, color: cs.onSurfaceVariant),
                       ),
                     ),
                   );
@@ -119,28 +129,31 @@ class ReviewCard extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(AppSpacing.md),
               decoration: BoxDecoration(
-                color: AppColors.primary.withOpacity(0.04),
+                color: cs.primaryContainer.withValues(alpha: 0.35),
                 borderRadius: BorderRadius.circular(AppRadius.lg),
-                border: Border.all(color: AppColors.primary.withOpacity(0.1)),
+                border: Border.all(color: cs.primary.withValues(alpha: 0.25)),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
                     children: [
-                      const Icon(Icons.reply_rounded, size: 16, color: AppColors.primary),
+                      Icon(Icons.reply_rounded, size: 16, color: cs.primary),
                       const SizedBox(width: AppSpacing.xs),
                       Text(
                         'Owner\'s Response',
                         style: AppTextStyles.label.copyWith(
-                          color: AppColors.primary,
+                          color: cs.primary,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
                     ],
                   ),
                   const SizedBox(height: AppSpacing.xs),
-                  Text(review.reply!, style: AppTextStyles.bodySmall),
+                  Text(
+                    review.reply!,
+                    style: AppTextStyles.bodySmall.copyWith(color: cs.onSurface),
+                  ),
                 ],
               ),
             ),
@@ -164,6 +177,7 @@ class RatingSummary extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -173,7 +187,7 @@ class RatingSummary extends StatelessWidget {
               averageRating.toStringAsFixed(1),
               style: AppTextStyles.heading1.copyWith(
                 fontSize: 50,
-                color: AppColors.primary,
+                color: cs.onSurface,
                 height: 1,
                 fontWeight: FontWeight.w800,
               ),
@@ -187,13 +201,13 @@ class RatingSummary extends StatelessWidget {
                 } else if (index < averageRating) {
                   return const Icon(Icons.star_half, color: AppColors.starFilled, size: 20);
                 }
-                return const Icon(Icons.star_border, color: AppColors.starEmpty, size: 20);
+                return Icon(Icons.star_border, color: cs.outlineVariant, size: 20);
               }),
             ),
             const SizedBox(height: AppSpacing.xs),
             Text(
               '$totalReviews reviews',
-              style: AppTextStyles.bodySmall,
+              style: AppTextStyles.bodySmall.copyWith(color: cs.onSurfaceVariant),
             ),
           ],
         ),
@@ -209,7 +223,10 @@ class RatingSummary extends StatelessWidget {
                 padding: const EdgeInsets.only(bottom: 4),
                 child: Row(
                   children: [
-                    Text('$star', style: AppTextStyles.caption),
+                    Text(
+                      '$star',
+                      style: AppTextStyles.caption.copyWith(color: cs.onSurfaceVariant),
+                    ),
                     const SizedBox(width: AppSpacing.xs),
                     const Icon(Icons.star, color: AppColors.starFilled, size: 12),
                     const SizedBox(width: AppSpacing.sm),
@@ -218,7 +235,7 @@ class RatingSummary extends StatelessWidget {
                         borderRadius: BorderRadius.circular(4),
                         child: LinearProgressIndicator(
                           value: ratio,
-                          backgroundColor: AppColors.divider,
+                          backgroundColor: cs.outlineVariant.withValues(alpha: 0.5),
                           valueColor: const AlwaysStoppedAnimation<Color>(AppColors.starFilled),
                           minHeight: 8,
                         ),
@@ -229,7 +246,7 @@ class RatingSummary extends StatelessWidget {
                       width: 30,
                       child: Text(
                         '$count',
-                        style: AppTextStyles.caption,
+                        style: AppTextStyles.caption.copyWith(color: cs.onSurfaceVariant),
                         textAlign: TextAlign.right,
                       ),
                     ),
