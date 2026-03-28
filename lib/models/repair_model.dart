@@ -56,6 +56,47 @@ class RepairModel {
 
   String get vehicleInfo => '$vehicleMake $vehicleModel • $vehiclePlate';
 
+  factory RepairModel.fromMap(Map<String, dynamic> map, String docId) {
+    RepairStatus status;
+    switch (map['status']) {
+      case 'inProgress':
+        status = RepairStatus.inProgress;
+        break;
+      case 'completed':
+        status = RepairStatus.completed;
+        break;
+      case 'cancelled':
+        status = RepairStatus.cancelled;
+        break;
+      default:
+        status = RepairStatus.mechanicOnWay;
+    }
+
+    return RepairModel(
+      id: docId,
+      serviceName: map['serviceName'] ?? 'Service',
+      vehicleMake: map['vehicleMake'] ?? '',
+      vehicleModel: map['vehicleModel'] ?? '',
+      vehiclePlate: map['vehiclePlate'] ?? '',
+      progressPercent: (map['progressPercent'] ?? 0.0).toDouble(),
+      status: status,
+      mechanicName: map['mechanicName'] ?? 'Pending assignment',
+      mechanicSpecialty: map['mechanicSpecialty'] ?? '',
+      mechanicRating: (map['mechanicRating'] ?? 0.0).toDouble(),
+      location: map['garageName'] ?? map['location'] ?? '',
+      startDate: map['createdAt'] != null
+          ? DateTime.fromMillisecondsSinceEpoch(map['createdAt'])
+          : DateTime.now(),
+      estimatedCompletion: map['scheduledDate'] != null
+          ? '${map['scheduledDate']} at ${map['scheduledTime'] ?? ''}'
+          : 'To be confirmed',
+      repairDescription: map['notes'] ?? '',
+      partsCost: (map['partsCost'] ?? 0.0).toDouble(),
+      laborCost: (map['laborCost'] ?? 0.0).toDouble(),
+      updates: [],
+    );
+  }
+
   String get statusLabel {
     switch (status) {
       case RepairStatus.mechanicOnWay:
