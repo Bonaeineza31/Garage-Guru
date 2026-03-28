@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:garage_guru/core/theme/app_theme.dart';
 import 'package:garage_guru/data/mock_data.dart';
+import 'package:garage_guru/services/favorite_garages_service.dart';
 import 'package:garage_guru/widgets/garage_card.dart';
 import 'package:garage_guru/screens/customer/notifications_screen.dart';
 import 'package:garage_guru/screens/customer/garage_detail_screen.dart';
@@ -19,6 +20,12 @@ class _FindGaragesScreenState extends State<FindGaragesScreen> {
   String _searchQuery = '';
 
   @override
+  void initState() {
+    super.initState();
+    FavoriteGaragesService.instance.ensureLoaded();
+  }
+
+  @override
   void dispose() {
     _searchController.dispose();
     super.dispose();
@@ -31,9 +38,9 @@ class _FindGaragesScreenState extends State<FindGaragesScreen> {
     if (_searchQuery.isNotEmpty) {
       final query = _searchQuery.toLowerCase();
       garages = garages.where((garage) {
-        final nameMatch = (garage.name ?? '').toLowerCase().contains(query);
+        final nameMatch = garage.name.toLowerCase().contains(query);
         final servicesMatch = garage.services
-            .any((service) => (service ?? '').toLowerCase().contains(query));
+            .any((service) => service.toLowerCase().contains(query));
         return nameMatch || servicesMatch;
       }).toList();
     }
@@ -55,19 +62,71 @@ class _FindGaragesScreenState extends State<FindGaragesScreen> {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: const Text(
-          'Find Garages',
-          style: TextStyle(color: Colors.white),
-        ),
+        backgroundColor: Colors.white,
+        surfaceTintColor: Colors.transparent,
         elevation: 0,
+        scrolledUnderElevation: 0,
+        automaticallyImplyLeading: false,
+        leadingWidth: 56,
+        leading: Padding(
+          padding: const EdgeInsets.only(left: 12),
+          child: Center(
+            child: Container(
+              width: 36,
+              height: 36,
+              decoration: BoxDecoration(
+                color: AppColors.primary,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: const Center(
+                child: Text(
+                  'G',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w800,
+                    fontSize: 18,
+                    fontFamily: 'Poppins',
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+        title: Text(
+          'Find Garages',
+          style: AppTextStyles.heading3.copyWith(
+            color: AppColors.textPrimary,
+            fontSize: 18,
+          ),
+        ),
+        centerTitle: true,
+        iconTheme: const IconThemeData(color: AppColors.textPrimary),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.notifications_none_rounded),
-            onPressed: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(builder: (_) => const NotificationsScreen()),
-              );
-            },
+          Stack(
+            clipBehavior: Clip.none,
+            children: [
+              IconButton(
+                icon: const Icon(Icons.notifications_none_rounded),
+                color: AppColors.textPrimary,
+                onPressed: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(builder: (_) => const NotificationsScreen()),
+                  );
+                },
+              ),
+              Positioned(
+                top: 10,
+                right: 10,
+                child: Container(
+                  width: 8,
+                  height: 8,
+                  decoration: const BoxDecoration(
+                    color: Color(0xFFE53935),
+                    shape: BoxShape.circle,
+                  ),
+                ),
+              ),
+            ],
           ),
         ],
       ),
@@ -80,7 +139,7 @@ class _FindGaragesScreenState extends State<FindGaragesScreen> {
               controller: _searchController,
               onChanged: (value) => setState(() => _searchQuery = value),
               decoration: InputDecoration(
-                hintText: 'Search garage or service...',
+                hintText: 'Search for a garage...',
                 prefixIcon: const Icon(Icons.search, color: AppColors.textHint),
                 suffixIcon: _searchQuery.isNotEmpty
                     ? IconButton(
