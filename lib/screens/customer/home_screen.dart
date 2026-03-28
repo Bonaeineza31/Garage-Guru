@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:garage_guru/screens/customer/battery_service_screen.dart';
-import 'package:garage_guru/screens/customer/emergency_repair_screen.dart';
-import 'package:garage_guru/screens/customer/repairs_screen.dart';
-import 'package:garage_guru/screens/customer/tire_service_screen.dart';
-import 'package:garage_guru/screens/customer/add_vehicle_screen.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:garage_guru/core/theme/app_theme.dart';
+import 'package:garage_guru/models/models.dart';
 import 'package:garage_guru/screens/customer/find_garages_screen.dart';
 import 'package:garage_guru/screens/customer/notifications_screen.dart';
+import 'package:garage_guru/screens/customer/garage_detail_screen.dart';
+import 'package:garage_guru/screens/customer/emergency_repair_screen.dart';
 import 'package:garage_guru/screens/customer/request_repair_form_screen.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:garage_guru/screens/customer/repairs_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -28,264 +29,257 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF4F4F4),
+      backgroundColor: Colors.white,
       body: SafeArea(
         child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildTopBar(),
-                const SizedBox(height: 14),
-                _buildSearchBar(),
-                const SizedBox(height: 12),
-                _buildMapPreview(),
-                const SizedBox(height: 12),
-                _buildPrimaryActions(),
-                const SizedBox(height: 20),
-                _buildQuickServices(),
-                const SizedBox(height: 20),
-                _buildNearbyGarages(),
-                const SizedBox(height: 20),
-                _buildUpcomingMaintenance(),
-              ],
-            ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildAppBar(),
+              _buildSearchBar(),
+              _buildMapPreview(),
+              _buildActionButtons(),
+              _buildQuickServices(),
+              _buildNearbyGarages(),
+              _buildUpcomingMaintenance(),
+              const SizedBox(height: 24),
+            ],
           ),
         ),
       ),
     );
   }
 
-  Widget _buildTopBar() {
-    return Row(
-      children: [
-        Container(
-          width: 24,
-          height: 24,
-          decoration: BoxDecoration(
-            color: const Color(0xFF0EA5E9),
-            borderRadius: BorderRadius.circular(4),
+  Widget _buildAppBar() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(6),
+            decoration: BoxDecoration(
+              color: AppColors.primary,
+              borderRadius: BorderRadius.circular(6),
+            ),
+            child: const Icon(Icons.garage_rounded, color: Colors.white, size: 24),
           ),
-          alignment: Alignment.center,
-          child: const Text(
-            'G',
+          const SizedBox(width: 10),
+          const Text(
+            'GarageGuru',
             style: TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.w700,
-              fontSize: 12,
+              fontSize: 22,
+              fontWeight: FontWeight.bold,
+              color: Color(0xFF1F2937),
             ),
           ),
-        ),
-        const SizedBox(width: 8),
-        const Text(
-          'GarageGuru',
-          style: TextStyle(
-            fontFamily: 'Poppins',
-            fontWeight: FontWeight.w700,
-            fontSize: 22,
-            color: Color(0xFF111827),
-          ),
-        ),
-        const Spacer(),
-        Stack(
-          clipBehavior: Clip.none,
-          children: [
-            IconButton(
-              onPressed: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(builder: (_) => const NotificationsScreen()),
-                );
-              },
-              icon: const Icon(Icons.notifications_none_rounded),
-            ),
-            Positioned(
-              right: 10,
-              top: 8,
-              child: Container(
-                width: 8,
-                height: 8,
-                decoration: const BoxDecoration(
-                  color: Color(0xFFEF4444),
-                  shape: BoxShape.circle,
+          const Spacer(),
+          Stack(
+            children: [
+              Container(
+                decoration: BoxDecoration(
+                  color: const Color(0xFFF3F4F6),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: IconButton(
+                  icon: const Icon(Icons.notifications_none_rounded, color: Color(0xFF4B5563)),
+                  onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const NotificationsScreen())),
                 ),
               ),
-            ),
-          ],
-        ),
-      ],
+              Positioned(
+                right: 12,
+                top: 12,
+                child: Container(
+                  width: 8,
+                  height: 8,
+                  decoration: BoxDecoration(
+                    color: Colors.red,
+                    shape: BoxShape.circle,
+                    border: Border.all(color: Colors.white, width: 1.5),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 
   Widget _buildSearchBar() {
-    return Container(
-      height: 44,
-      decoration: BoxDecoration(
-        color: const Color(0xFFF1F1F1),
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: TextField(
-        controller: _searchController,
-        decoration: const InputDecoration(
-          border: InputBorder.none,
-          prefixIcon: Icon(Icons.location_on_outlined, color: Color(0xFF9CA3AF)),
-          hintText: 'Find nearby repair shops',
-          hintStyle: TextStyle(
-            color: Color(0xFF9CA3AF),
-            fontFamily: 'Poppins',
-            fontSize: 13,
-          ),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        decoration: BoxDecoration(
+          color: const Color(0xFFF3F4F6),
+          borderRadius: BorderRadius.circular(30),
+        ),
+        child: Row(
+          children: [
+            const Icon(Icons.location_on_outlined, color: Color(0xFF9CA3AF), size: 20),
+            const SizedBox(width: 10),
+            const Expanded(
+              child: TextField(
+                decoration: InputDecoration(
+                  hintText: 'Find nearby repair shops',
+                  hintStyle: TextStyle(color: Color(0xFF9CA3AF), fontSize: 14),
+                  border: InputBorder.none,
+                  enabledBorder: InputBorder.none,
+                  focusedBorder: InputBorder.none,
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
   }
 
   Widget _buildMapPreview() {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(10),
-      child: Container(
-        height: 180,
-        width: double.infinity,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: const Color(0xFFE5E7EB)),
-        ),
-        child: GoogleMap(
-          initialCameraPosition: const CameraPosition(
-            target: LatLng(-1.9441, 30.0619),
-            zoom: 13,
+    return Padding(
+      padding: const EdgeInsets.all(16),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(12),
+        child: Container(
+          height: 180,
+          width: double.infinity,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: const Color(0xFFF3F4F6)),
           ),
-          myLocationButtonEnabled: false,
-          myLocationEnabled: true,
-          zoomControlsEnabled: false,
-          mapToolbarEnabled: false,
-          markers: {
-            const Marker(
-              markerId: MarkerId('g1'),
-              position: LatLng(-1.9441, 30.0619),
-              infoWindow: InfoWindow(title: 'Auto Finit'),
-            ),
-            const Marker(
-              markerId: MarkerId('g2'),
-              position: LatLng(-1.9541, 30.0819),
-              infoWindow: InfoWindow(title: 'Kigali Motors'),
-            ),
-            const Marker(
-              markerId: MarkerId('g3'),
-              position: LatLng(-1.9341, 30.0519),
-              infoWindow: InfoWindow(title: 'Pro Mechanics'),
-            ),
-          },
+          child: StreamBuilder<QuerySnapshot>(
+            stream: FirebaseFirestore.instance.collection('garages').snapshots(),
+            builder: (context, snapshot) {
+              Set<Marker> markers = {};
+              LatLng initialPosition = const LatLng(-1.9441, 30.0619); // Kigali Default
+
+              if (snapshot.hasData) {
+                for (var doc in snapshot.data!.docs) {
+                  final data = doc.data() as Map<String, dynamic>;
+                  final lat = (data['latitude'] ?? 0.0).toDouble();
+                  final lng = (data['longitude'] ?? 0.0).toDouble();
+                  final name = data['name'] ?? 'Garage';
+
+                  if (lat != 0.0 && lng != 0.0) {
+                    markers.add(
+                      Marker(
+                        markerId: MarkerId(doc.id),
+                        position: LatLng(lat, lng),
+                        infoWindow: InfoWindow(title: name),
+                        icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueOrange),
+                      ),
+                    );
+                  }
+                }
+              }
+
+              return GoogleMap(
+                initialCameraPosition: CameraPosition(
+                  target: initialPosition,
+                  zoom: 13,
+                ),
+                markers: markers,
+                myLocationEnabled: true,
+                myLocationButtonEnabled: false,
+                zoomControlsEnabled: false,
+                mapToolbarEnabled: false,
+                compassEnabled: false,
+              );
+            },
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildPrimaryActions() {
-    return Row(
-      children: [
-        Expanded(
-          child: _ActionButton(
-            color: const Color(0xFFFF5A3D),
-            icon: Icons.warning_amber_rounded,
-            label: 'Emergency Repair',
-            onTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(builder: (_) => const EmergencyRepairScreen()),
-              );
-            },
+  Widget _buildActionButtons() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: Row(
+        children: [
+          _actionBtn(
+            'Emergency Repair',
+            const Color(0xFFF05138),
+            Icons.warning_amber_rounded,
+            () => Navigator.push(context, MaterialPageRoute(builder: (_) => const EmergencyRepairScreen())),
+          ),
+          const SizedBox(width: 8),
+          _actionBtn(
+            'Schedule Repair',
+            const Color(0xFF038DDB),
+            Icons.calendar_today_rounded,
+            () => Navigator.push(context, MaterialPageRoute(builder: (_) => const RequestRepairFormScreen())),
+          ),
+          const SizedBox(width: 8),
+          _actionBtn(
+            'Repair Updates',
+            const Color(0xFF19B25A),
+            Icons.shield_outlined,
+            () => Navigator.push(context, MaterialPageRoute(builder: (_) => const RepairsScreen())),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _actionBtn(String label, Color color, IconData icon, VoidCallback onTap) {
+    return Expanded(
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(8),
+        child: Container(
+          height: 50,
+          decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(8)),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(icon, color: Colors.white, size: 16),
+              const SizedBox(height: 2),
+              Text(
+                label,
+                style: const TextStyle(color: Colors.white, fontSize: 9, fontWeight: FontWeight.bold),
+                textAlign: TextAlign.center,
+              ),
+            ],
           ),
         ),
-        const SizedBox(width: 8),
-        Expanded(
-          child: _ActionButton(
-            color: const Color(0xFF1D9CE5),
-            icon: Icons.event_note_rounded,
-            label: 'Schedule Repair',
-            onTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (_) => const RequestRepairFormScreen(),
-                ),
-              );
-            },
-          ),
-        ),
-        const SizedBox(width: 8),
-        Expanded(
-          child: _ActionButton(
-            color: const Color(0xFF11A85A),
-            icon: Icons.shield_outlined,
-            label: 'Repair Updates',
-            onTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(builder: (_) => const RepairsScreen()),
-              );
-            },
-          ),
-        ),
-      ],
+      ),
     );
   }
 
   Widget _buildQuickServices() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          'Quick Services',
-          style: TextStyle(
-            fontFamily: 'Poppins',
-            fontWeight: FontWeight.w700,
-            fontSize: 20,
+    return Padding(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text('Quick Services', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+          const SizedBox(height: 16),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              _serviceItem('Oil Change', Icons.bolt_rounded),
+              _serviceItem('Tire Service', Icons.gps_fixed_rounded),
+              _serviceItem('Battery', Icons.battery_charging_full_rounded),
+              _serviceItem('Add Vehicle', Icons.garage_outlined),
+            ],
           ),
+        ],
+      ),
+    );
+  }
+
+  Widget _serviceItem(String label, IconData icon) {
+    return Column(
+      children: [
+        Container(
+          width: 56,
+          height: 56,
+          decoration: const BoxDecoration(color: Color(0xFFE0F2FE), shape: BoxShape.circle),
+          child: Icon(icon, color: const Color(0xFF0EA5E9), size: 24),
         ),
-        const SizedBox(height: 10),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            _QuickServiceIcon(
-              icon: Icons.bolt_rounded,
-              label: 'Oil Change',
-              onTap: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (_) => const RequestRepairFormScreen(
-                      initialRepairType: 'Oil Change',
-                    ),
-                  ),
-                );
-              },
-            ),
-            _QuickServiceIcon(
-              icon: Icons.tire_repair_rounded,
-              label: 'Tire Service',
-              onTap: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(builder: (_) => const TireServiceScreen()),
-                );
-              },
-            ),
-            _QuickServiceIcon(
-              icon: Icons.battery_5_bar_rounded,
-              label: 'Battery',
-              onTap: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(builder: (_) => const BatteryServiceScreen()),
-                );
-              },
-            ),
-            _QuickServiceIcon(
-              icon: Icons.car_repair_rounded,
-              label: 'Add Vehicle',
-              onTap: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(builder: (_) => const AddVehicleScreen()),
-                );
-              },
-            ),
-          ],
-        ),
+        const SizedBox(height: 8),
+        Text(label, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: Color(0xFF374151))),
       ],
     );
   }
@@ -294,309 +288,142 @@ class _HomeScreenState extends State<HomeScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          children: [
-            const Text(
-              'Nearby Garages',
-              style: TextStyle(
-                fontFamily: 'Poppins',
-                fontWeight: FontWeight.w700,
-                fontSize: 23,
-              ),
-            ),
-            const Spacer(),
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(builder: (_) => const FindGaragesScreen()),
-                );
-              },
-              child: const Text('View All'),
-            ),
-          ],
-        ),
-        const SizedBox(height: 8),
-        _GarageListTile(
-          name: 'Auto Finit',
-          distance: '0.6km',
-          eta: '~0.5km',
-          details: 'Details',
-          onDetails: () {
-            Navigator.of(context).push(
-              MaterialPageRoute(builder: (_) => const FindGaragesScreen()),
-            );
-          },
-        ),
-        const SizedBox(height: 10),
-        _GarageListTile(
-          name: 'Kigali Motors',
-          distance: '1.2km',
-          eta: '~1.0km',
-          details: 'Details',
-          onDetails: () {
-            Navigator.of(context).push(
-              MaterialPageRoute(builder: (_) => const FindGaragesScreen()),
-            );
-          },
-        ),
-      ],
-    );
-  }
-
-  Widget _buildUpcomingMaintenance() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          'Upcoming Maintenance',
-          style: TextStyle(
-            fontFamily: 'Poppins',
-            fontWeight: FontWeight.w700,
-            fontSize: 23,
-          ),
-        ),
-        const SizedBox(height: 10),
-        Container(
-          width: double.infinity,
-          padding: const EdgeInsets.all(14),
-          decoration: BoxDecoration(
-            color: const Color(0xFFE8F5FF),
-            borderRadius: BorderRadius.circular(10),
-          ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Container(
-                width: 36,
-                height: 36,
-                decoration: BoxDecoration(
-                  color: const Color(0xFFD5ECFF),
-                  borderRadius: BorderRadius.circular(18),
-                ),
-                child: const Icon(Icons.calendar_today, size: 18, color: Color(0xFF0284C7)),
-              ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      'Oil Change Due',
-                      style: TextStyle(
-                        fontFamily: 'Poppins',
-                        fontWeight: FontWeight.w700,
-                        fontSize: 15,
-                      ),
-                    ),
-                    const SizedBox(height: 2),
-                    const Text(
-                      'Toyota Camry - RAC 881C',
-                      style: TextStyle(
-                        fontFamily: 'Poppins',
-                        fontSize: 12,
-                        color: Color(0xFF6B7280),
-                      ),
-                    ),
-                    const SizedBox(height: 2),
-                    const Text(
-                      'Due in 2 days or 300km',
-                      style: TextStyle(
-                        fontFamily: 'Poppins',
-                        fontSize: 12,
-                        color: Color(0xFF6B7280),
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    SizedBox(
-                      height: 28,
-                      child: ElevatedButton(
-                        onPressed: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (_) => const RequestRepairFormScreen(
-                                initialRepairType: 'Oil Change',
-                              ),
-                            ),
-                          );
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF5DB4EF),
-                          elevation: 0,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(14),
-                          ),
-                        ),
-                        child: const Text(
-                          'Schedule Now',
-                          style: TextStyle(fontSize: 11, color: Colors.white),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+              const Text('Nearby Garages', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+              TextButton(
+                onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const FindGaragesScreen())),
+                child: const Text('View All', style: TextStyle(color: Color(0xFF038DDB), fontWeight: FontWeight.bold)),
               ),
             ],
           ),
         ),
+        StreamBuilder<QuerySnapshot>(
+          stream: FirebaseFirestore.instance.collection('garages').limit(3).snapshots(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) return const SizedBox(height: 100, child: Center(child: CircularProgressIndicator()));
+            if (snapshot.hasError) return Padding(padding: const EdgeInsets.all(16), child: Text('Error: ${snapshot.error}'));
+            
+            final garages = (snapshot.data?.docs ?? [])
+                .map((doc) => GarageModel.fromMap(doc.data() as Map<String, dynamic>, doc.id))
+                .toList();
+
+            return ListView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: garages.length,
+              itemBuilder: (context, index) => _buildGarageTile(garages[index]),
+            );
+          },
+        ),
       ],
     );
   }
 
-}
-
-class _ActionButton extends StatelessWidget {
-  final Color color;
-  final IconData icon;
-  final String label;
-  final VoidCallback onTap;
-
-  const _ActionButton({
-    required this.color,
-    required this.icon,
-    required this.label,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      height: 40,
-      child: ElevatedButton.icon(
-        onPressed: onTap,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: color,
-          elevation: 0,
-          padding: const EdgeInsets.symmetric(horizontal: 6),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-        ),
-        icon: Icon(icon, color: Colors.white, size: 13),
-        label: Text(
-          label,
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-          style: const TextStyle(
-            fontFamily: 'Poppins',
-            color: Colors.white,
-            fontSize: 10,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _QuickServiceIcon extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final VoidCallback onTap;
-
-  const _QuickServiceIcon({
-    required this.icon,
-    required this.label,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      borderRadius: BorderRadius.circular(26),
-      onTap: onTap,
-      child: Column(
+  Widget _buildGarageTile(GarageModel garage) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: Row(
         children: [
-          Container(
-            width: 52,
-            height: 52,
-            decoration: BoxDecoration(
-              color: const Color(0xFFDFF0FF),
-              borderRadius: BorderRadius.circular(26),
-            ),
-            child: Icon(icon, color: const Color(0xFF2196F3)),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(8),
+            child: Image.network(garage.coverImageUrl, width: 50, height: 50, fit: BoxFit.cover),
           ),
-          const SizedBox(height: 8),
-          Text(
-            label,
-            style: const TextStyle(fontFamily: 'Poppins', fontSize: 12),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(garage.name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                Row(
+                  children: [
+                    Text('${garage.distanceKm}Km', style: const TextStyle(color: Color(0xFF6B7280), fontSize: 12)),
+                    const SizedBox(width: 8),
+                    Row(
+                      children: List.generate(5, (starIndex) {
+                        return Icon(
+                          Icons.star_rounded,
+                          color: starIndex < garage.rating.floor() ? Colors.orange : const Color(0xFFD1D5DB),
+                          size: 14,
+                        );
+                      }),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          Icon(garage.isFavorite ? Icons.favorite_rounded : Icons.favorite_outline_rounded, color: garage.isFavorite ? Colors.red : const Color(0xFFD1D5DB)),
+          const SizedBox(width: 12),
+          ElevatedButton(
+            onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => GarageDetailScreen(garage: garage))),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFFE0F2FE),
+              foregroundColor: const Color(0xFF0369A1),
+              elevation: 0,
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
+            ),
+            child: const Text('Details', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
           ),
         ],
       ),
     );
   }
-}
 
-class _GarageListTile extends StatelessWidget {
-  final String name;
-  final String distance;
-  final String eta;
-  final String details;
-  final VoidCallback onDetails;
-
-  const _GarageListTile({
-    required this.name,
-    required this.distance,
-    required this.eta,
-    required this.details,
-    required this.onDetails,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      child: Row(
+  Widget _buildUpcomingMaintenance() {
+    return Padding(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          const Text('Upcoming Maintenance', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+          const SizedBox(height: 16),
           Container(
-            width: 38,
-            height: 38,
+            padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: const Color(0xFFD1E9FF),
-              borderRadius: BorderRadius.circular(6),
+              color: const Color(0xFFF0F9FF),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: const Color(0xFFE0F2FE)),
             ),
-            child: const Icon(Icons.garage_rounded, color: Color(0xFF1D9CE5), size: 20),
-          ),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            child: Row(
               children: [
-                Text(
-                  name,
-                  style: const TextStyle(
-                    fontFamily: 'Poppins',
-                    fontWeight: FontWeight.w600,
-                    fontSize: 14,
-                  ),
+                Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: const BoxDecoration(color: Color(0xFFE0F2FE), shape: BoxShape.circle),
+                  child: const Icon(Icons.calendar_today_rounded, color: Color(0xFF0EA5E9), size: 24),
                 ),
-                Text(
-                  '$distance   $eta',
-                  style: const TextStyle(
-                    fontFamily: 'Poppins',
-                    fontSize: 12,
-                    color: Color(0xFF6B7280),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text('Oil Change Due', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                      const Text('Toyota Camry • RAC 881C', style: TextStyle(color: Color(0xFF6B7280), fontSize: 12)),
+                      const Text('Due in 2 days or 300km', style: TextStyle(color: Color(0xFF6B7280), fontSize: 12)),
+                      const SizedBox(height: 8),
+                      ElevatedButton(
+                        onPressed: () {},
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFFE0F2FE),
+                          foregroundColor: const Color(0xFF0369A1),
+                          elevation: 0,
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                        ),
+                        child: const Text('Schedule Now', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+                      ),
+                    ],
                   ),
                 ),
               ],
             ),
           ),
-          const Icon(Icons.favorite_border, color: Color(0xFF9CA3AF), size: 18),
-          const SizedBox(width: 10),
-          SizedBox(
-            height: 26,
-            child: OutlinedButton(
-              onPressed: onDetails,
-              style: OutlinedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(horizontal: 10),
-                side: const BorderSide(color: Color(0xFF93C5FD)),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
-              ),
-              child: Text(
-                details,
-                style: const TextStyle(fontSize: 11, color: Color(0xFF1D9CE5)),
-              ),
-            ),
-          ),
         ],
       ),
     );
   }
-}
+}
