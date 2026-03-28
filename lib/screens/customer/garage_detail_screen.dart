@@ -189,7 +189,9 @@ class _GarageDetailScreenState extends State<GarageDetailScreen>
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (_) => BookingScreen(garage: garage)),
+                      MaterialPageRoute(
+                        builder: (_) => BookingScreen(garage: garage),
+                      ),
                     );
                   },
                   icon: const Icon(Icons.calendar_today_rounded, size: 16),
