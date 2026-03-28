@@ -28,12 +28,7 @@ dependencies:
   firebase_core: ^4.6.0
   firebase_auth: ^6.3.0
   cloud_firestore: ^6.2.0
-  flutter_bloc: ^9.1.1
-  bloc: ^9.2.0
-  equatable: ^2.0.8
-  shared_preferences: ^2.5.5
-  flutter_map: ^7.0.2
-  latlong2: ^0.9.1
+  google_sign_in: ^6.2.2
 
 dev_dependencies:
   flutter_test:

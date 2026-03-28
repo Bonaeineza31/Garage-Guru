@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:garage_guru/theme/app_theme.dart';
 import 'package:garage_guru/widgets/widgets.dart';
-import 'package:garage_guru/screens/auth/login_screen.dart';
+import 'package:garage_guru/core/auth/auth_service.dart';
 
 class GarageProfileScreen extends StatelessWidget {
   const GarageProfileScreen({super.key});
@@ -163,11 +163,8 @@ class GarageProfileScreen extends StatelessWidget {
                     label: 'Sign Out',
                     color: AppColors.error,
                     icon: Icons.logout,
-                    onPressed: () {
-                      Navigator.of(context).pushAndRemoveUntil(
-                        MaterialPageRoute(builder: (_) => const LoginScreen()),
-                        (route) => false,
-                      );
+                    onPressed: () async {
+                      await AuthService.signOut();
                     },
                   ),
                   const SizedBox(height: AppSpacing.xxl),

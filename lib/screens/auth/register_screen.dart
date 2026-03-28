@@ -1,15 +1,7 @@
+
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:garage_guru/theme/app_theme.dart';
-import 'package:garage_guru/screens/auth/auth_theme.dart';
-import 'package:garage_guru/screens/auth/auth_widgets.dart';
-import 'package:garage_guru/screens/auth/login_screen.dart';
-import 'package:garage_guru/screens/customer/customer_shell.dart';
-import 'package:garage_guru/screens/customer/privacy_policy_screen.dart';
-import 'package:garage_guru/screens/customer/terms_of_service_screen.dart';
-import 'package:garage_guru/screens/owner/owner_shell.dart';
+import 'package:garage_guru/core/theme/app_theme.dart';
+import 'package:garage_guru/widgets/widgets.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -67,6 +59,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           'role': _selectedRole,
           'createdAt': FieldValue.serverTimestamp(),
         });
+<<<<<<< HEAD
 
         // Firebase does not send sign-up emails by default; this sends the verification template.
         try {
@@ -93,6 +86,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
           MaterialPageRoute<void>(builder: (_) => destination),
           (route) => false,
         );
+=======
+        // AuthGate will navigate to the correct shell when auth state updates.
+>>>>>>> 5d9c514 (firebase data)
       }
     } on FirebaseAuthException catch (e) {
       if (!mounted) return;

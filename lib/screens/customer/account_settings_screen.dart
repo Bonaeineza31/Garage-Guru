@@ -1,18 +1,8 @@
+
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:provider/provider.dart';
-import 'package:garage_guru/theme/theme_provider.dart';
-import 'package:garage_guru/theme/app_theme.dart';
-import 'package:garage_guru/data/mock_data.dart';
-import 'package:garage_guru/screens/auth/login_screen.dart';
-import 'package:garage_guru/screens/customer/personal_information_screen.dart';
-import 'package:garage_guru/screens/customer/security_screen.dart';
-import 'package:garage_guru/screens/customer/notifications_screen.dart';
-import 'package:garage_guru/screens/customer/privacy_policy_screen.dart';
-import 'package:garage_guru/screens/customer/terms_of_service_screen.dart';
-import 'package:garage_guru/screens/customer/favorite_garages_screen.dart';
+import 'package:garage_guru/core/auth/auth_service.dart';
+import 'package:garage_guru/core/theme/app_theme.dart';
+import 'package:garage_guru/widgets/widgets.dart';
 
 class AccountSettingsScreen extends StatefulWidget {
   const AccountSettingsScreen({super.key});
@@ -248,11 +238,17 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
                           child: const Text('Cancel'),
                         ),
                         TextButton(
+<<<<<<< HEAD
                           onPressed: () {
                             Navigator.of(context).pushAndRemoveUntil(
                               MaterialPageRoute(builder: (_) => LoginScreen()),
                               (route) => false,
                             );
+=======
+                          onPressed: () async {
+                            Navigator.pop(ctx);
+                            await AuthService.signOut();
+>>>>>>> 5d9c514 (firebase data)
                           },
                           child: Text('Log Out', style: TextStyle(color: AppColors.error)),
                         ),

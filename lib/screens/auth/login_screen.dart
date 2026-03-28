@@ -1,14 +1,13 @@
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:garage_guru/theme/app_theme.dart';
-import 'package:garage_guru/screens/auth/auth_theme.dart';
-import 'package:garage_guru/screens/auth/auth_widgets.dart';
+import 'package:garage_guru/core/auth/auth_service.dart';
+import 'package:garage_guru/core/theme/app_theme.dart';
+import 'package:garage_guru/widgets/widgets.dart';
+import 'package:garage_guru/screens/auth/forgot_password_screen.dart';
 import 'package:garage_guru/screens/auth/register_screen.dart';
-import 'package:garage_guru/screens/auth/reset_password_screen.dart';
-import 'package:garage_guru/screens/customer/customer_shell.dart';
-import 'package:garage_guru/screens/owner/owner_shell.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -41,6 +40,7 @@ class _LoginScreenState extends State<LoginScreen> {
         password: _passwordController.text,
       );
 
+<<<<<<< HEAD
       final user = userCredential.user;
       if (user != null) {
         final doc = await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
@@ -53,6 +53,10 @@ class _LoginScreenState extends State<LoginScreen> {
         Navigator.of(context).pushReplacement(
           MaterialPageRoute<void>(builder: (_) => destination),
         );
+=======
+      if (userCredential.user != null && mounted) {
+        // AuthGate listens to auth state and routes by Firestore role.
+>>>>>>> 5d9c514 (firebase data)
       }
     } on FirebaseAuthException catch (e) {
       if (!mounted) return;
@@ -63,6 +67,32 @@ class _LoginScreenState extends State<LoginScreen> {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error: $e')),
+      );
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
+  }
+
+  Future<void> _handleGoogleSignIn() async {
+    if (_isLoading) return;
+    setState(() => _isLoading = true);
+    try {
+      final cred = await AuthService.signInWithGoogle();
+      final user = cred.user;
+      if (user != null) {
+        await AuthService.ensureUserDocument(user);
+      }
+    } on GoogleSignInCanceled {
+      // User closed the Google picker — no message.
+    } on FirebaseAuthException catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.message ?? 'Google sign-in failed')),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Google sign-in failed: $e')),
       );
     } finally {
       if (mounted) setState(() => _isLoading = false);
@@ -168,6 +198,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       "Don't have an account? ",
                       style: AppTextStyles.body.copyWith(color: AppColors.textSecondary),
                     ),
+<<<<<<< HEAD
                     GestureDetector(
                       onTap: () {
                         Navigator.of(context).push(
@@ -176,6 +207,31 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                         );
                       },
+=======
+                    validator: (value) {
+                      if (value == null || value.isEmpty) return 'Password is required';
+                      if (value.length < 6) return 'Password must be at least 6 characters';
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: AppSpacing.xs),
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: TextButton(
+                      onPressed: () {
+                        final email = _emailController.text.trim();
+                        Navigator.of(context).push(
+                          MaterialPageRoute<void>(
+                            builder: (_) => ForgotPasswordScreen(
+                              initialEmail: email.contains('@') ? email : null,
+                            ),
+                          ),
+                        );
+                      },
+                      style: TextButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
+                      ),
+>>>>>>> 5d9c514 (firebase data)
                       child: Text(
                         'Sign up',
                         style: AppTextStyles.body.copyWith(
@@ -184,9 +240,67 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ),
                     ),
+<<<<<<< HEAD
                   ],
                 ),
               ],
+=======
+                  ),
+                  const SizedBox(height: AppSpacing.xl),
+                  GgButton(
+                    label: 'Sign In',
+                    onPressed: _handleLogin,
+                    isLoading: _isLoading,
+                    useGradient: true,
+                  ),
+                  const SizedBox(height: AppSpacing.xxl),
+                  Row(
+                    children: [
+                      Expanded(child: Divider(color: AppColors.divider.withOpacity(0.5))),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
+                        child: Text(
+                          'OR',
+                          style: AppTextStyles.caption.copyWith(
+                            fontWeight: FontWeight.w600,
+                            letterSpacing: 1.5,
+                          ),
+                        ),
+                      ),
+                      Expanded(child: Divider(color: AppColors.divider.withOpacity(0.5))),
+                    ],
+                  ),
+                  const SizedBox(height: AppSpacing.xxl),
+                  GgButton(
+                    label: 'Continue with Google',
+                    icon: Icons.g_mobiledata,
+                    isOutlined: true,
+                    onPressed: _isLoading ? null : _handleGoogleSignIn,
+                  ),
+                  const SizedBox(height: AppSpacing.xxxl),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text('Don\'t have an account? ', style: AppTextStyles.body),
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(builder: (_) => const RegisterScreen()),
+                          );
+                        },
+                        child: Text(
+                          'Sign Up',
+                          style: AppTextStyles.body.copyWith(
+                            color: AppColors.accent,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+>>>>>>> 5d9c514 (firebase data)
             ),
           ),
         ),
