@@ -71,6 +71,10 @@ class _RepairsScreenState extends State<RepairsScreen>
           timestamp: DateTime(2025, 5, 15, 9, 0),
           message: 'Repair started',
         ),
+        RepairUpdate(
+          timestamp: DateTime(2025, 5, 15, 12, 0),
+          message: 'Old brake pads removed; new pads fitted and bedding in.',
+        ),
       ],
     ),
   ];
