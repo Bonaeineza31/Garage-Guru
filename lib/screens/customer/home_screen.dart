@@ -10,6 +10,7 @@ import 'package:garage_guru/screens/customer/find_garages_screen.dart';
 import 'package:garage_guru/screens/customer/garage_detail_screen.dart';
 import 'package:garage_guru/screens/customer/notifications_screen.dart';
 import 'package:garage_guru/screens/customer/request_repair_form_screen.dart';
+import 'package:garage_guru/screens/owner/add_garage_screen.dart';
 import 'package:garage_guru/widgets/garage_card.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
@@ -174,16 +175,32 @@ class _HomeScreenState extends State<HomeScreen> {
               borderRadius: BorderRadius.circular(10),
               border: Border.all(color: const Color(0xFFE5E7EB)),
             ),
-            child: GoogleMap(
-              initialCameraPosition: const CameraPosition(
-                target: LatLng(-1.9441, 30.0619),
-                zoom: 13,
-              ),
-              myLocationButtonEnabled: false,
-              myLocationEnabled: true,
-              zoomControlsEnabled: false,
-              mapToolbarEnabled: false,
-              markers: markers,
+            child: Stack(
+              children: [
+                GoogleMap(
+                  initialCameraPosition: const CameraPosition(
+                    target: LatLng(-1.9441, 30.0619),
+                    zoom: 13,
+                  ),
+                  myLocationButtonEnabled: false,
+                  myLocationEnabled: true,
+                  zoomControlsEnabled: false,
+                  mapToolbarEnabled: false,
+                  markers: markers,
+                ),
+                Positioned(
+                  bottom: 10,
+                  right: 10,
+                  child: FloatingActionButton.small(
+                    heroTag: 'add_garage_fab',
+                    backgroundColor: const Color(0xFF0EA5E9),
+                    onPressed: () => Navigator.of(context).push(
+                      MaterialPageRoute(builder: (_) => const AddGarageScreen()),
+                    ),
+                    child: const Icon(Icons.add, color: Colors.white),
+                  ),
+                ),
+              ],
             ),
           ),
         );
