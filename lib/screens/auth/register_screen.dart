@@ -59,6 +59,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
       final user = userCredential.user;
       if (user != null) {
+        await user.updateDisplayName(_nameController.text.trim());
         await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
           'name': _nameController.text.trim(),
           'email': _emailController.text.trim(),
