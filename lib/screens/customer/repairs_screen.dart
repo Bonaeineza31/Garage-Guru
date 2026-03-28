@@ -98,26 +98,9 @@ class _RepairsScreenState extends State<RepairsScreen>
       appBar: AppBar(
         backgroundColor: AppColors.primary,
         elevation: 0,
-        leadingWidth: 60,
-        leading: Padding(
-          padding: const EdgeInsets.all(12),
-          child: Container(
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.2),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: const Center(
-              child: Text(
-                'G',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontFamily: 'Poppins',
-                  fontWeight: FontWeight.w700,
-                  fontSize: 16,
-                ),
-              ),
-            ),
-          ),
+        leading: IconButton(
+          onPressed: () => Navigator.pop(context),
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
         ),
         title: const Text(
           'GarageGuru',
