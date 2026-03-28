@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:garage_guru/core/theme/app_theme.dart';
 import 'package:garage_guru/screens/customer/battery_service_screen.dart';
 import 'package:garage_guru/screens/customer/emergency_repair_screen.dart';
 import 'package:garage_guru/screens/customer/repairs_screen.dart';
 import 'package:garage_guru/screens/customer/tire_service_screen.dart';
-import 'package:garage_guru/screens/customer/scheduled_services_screen.dart';
+import 'package:garage_guru/screens/customer/add_vehicle_screen.dart';
+import 'package:garage_guru/screens/customer/find_garages_screen.dart';
+import 'package:garage_guru/screens/customer/notifications_screen.dart';
+import 'package:garage_guru/screens/customer/request_repair_form_screen.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -90,7 +92,11 @@ class _HomeScreenState extends State<HomeScreen> {
           clipBehavior: Clip.none,
           children: [
             IconButton(
-              onPressed: () => _showMessage('Notifications are up to date'),
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => const NotificationsScreen()),
+                );
+              },
               icon: const Icon(Icons.notifications_none_rounded),
             ),
             Positioned(
@@ -198,7 +204,9 @@ class _HomeScreenState extends State<HomeScreen> {
             label: 'Schedule Repair',
             onTap: () {
               Navigator.of(context).push(
-                MaterialPageRoute(builder: (_) => const ScheduledServicesScreen()),
+                MaterialPageRoute(
+                  builder: (_) => const RequestRepairFormScreen(),
+                ),
               );
             },
           ),
@@ -241,7 +249,11 @@ class _HomeScreenState extends State<HomeScreen> {
               label: 'Oil Change',
               onTap: () {
                 Navigator.of(context).push(
-                  MaterialPageRoute(builder: (_) => const TireServiceScreen()),
+                  MaterialPageRoute(
+                    builder: (_) => const RequestRepairFormScreen(
+                      initialRepairType: 'Oil Change',
+                    ),
+                  ),
                 );
               },
             ),
@@ -266,7 +278,11 @@ class _HomeScreenState extends State<HomeScreen> {
             _QuickServiceIcon(
               icon: Icons.car_repair_rounded,
               label: 'Add Vehicle',
-              onTap: () => _showMessage('Add vehicle flow will open here'),
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => const AddVehicleScreen()),
+                );
+              },
             ),
           ],
         ),
@@ -290,24 +306,38 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             const Spacer(),
             TextButton(
-              onPressed: () => _showMessage('Viewing all nearby garages'),
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => const FindGaragesScreen()),
+                );
+              },
               child: const Text('View All'),
             ),
           ],
         ),
         const SizedBox(height: 8),
-        const _GarageListTile(
+        _GarageListTile(
           name: 'Auto Finit',
           distance: '0.6km',
           eta: '~0.5km',
           details: 'Details',
+          onDetails: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(builder: (_) => const FindGaragesScreen()),
+            );
+          },
         ),
         const SizedBox(height: 10),
-        const _GarageListTile(
+        _GarageListTile(
           name: 'Kigali Motors',
           distance: '1.2km',
           eta: '~1.0km',
           details: 'Details',
+          onDetails: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(builder: (_) => const FindGaragesScreen()),
+            );
+          },
         ),
       ],
     );
@@ -382,7 +412,11 @@ class _HomeScreenState extends State<HomeScreen> {
                       child: ElevatedButton(
                         onPressed: () {
                           Navigator.of(context).push(
-                            MaterialPageRoute(builder: (_) => const RepairsScreen()),
+                            MaterialPageRoute(
+                              builder: (_) => const RequestRepairFormScreen(
+                                initialRepairType: 'Oil Change',
+                              ),
+                            ),
                           );
                         },
                         style: ElevatedButton.styleFrom(
@@ -408,11 +442,6 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  void _showMessage(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message)),
-    );
-  }
 }
 
 class _ActionButton extends StatelessWidget {
@@ -500,12 +529,14 @@ class _GarageListTile extends StatelessWidget {
   final String distance;
   final String eta;
   final String details;
+  final VoidCallback onDetails;
 
   const _GarageListTile({
     required this.name,
     required this.distance,
     required this.eta,
     required this.details,
+    required this.onDetails,
   });
 
   @override
@@ -552,11 +583,7 @@ class _GarageListTile extends StatelessWidget {
           SizedBox(
             height: 26,
             child: OutlinedButton(
-              onPressed: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Opening $name details')),
-                );
-              },
+              onPressed: onDetails,
               style: OutlinedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(horizontal: 10),
                 side: const BorderSide(color: Color(0xFF93C5FD)),
