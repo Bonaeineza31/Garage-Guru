@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:garage_guru/core/theme/app_theme.dart';
 import 'package:garage_guru/models/models.dart';
 import 'package:garage_guru/widgets/widgets.dart';
@@ -22,6 +24,8 @@ class _BookingScreenState extends State<BookingScreen> {
   String? _selectedService;
   int _selectedDateIndex = 1;
   int _selectedTimeIndex = 2;
+  bool _isLoading = false;
+  final _notesController = TextEditingController();
 
   final List<String> _services = [
     'General Maintenance',
@@ -35,6 +39,76 @@ class _BookingScreenState extends State<BookingScreen> {
   void initState() {
     super.initState();
     _selectedService = _mapGarageServiceName(widget.initialServiceType);
+  }
+
+  @override
+  void dispose() {
+    _notesController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _confirmBooking() async {
+    if (_selectedService == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please select a service')),
+      );
+      return;
+    }
+
+    setState(() => _isLoading = true);
+
+    try {
+      final user = FirebaseAuth.instance.currentUser;
+      final doc = FirebaseFirestore.instance.collection('bookings').doc();
+      await doc.set({
+        'id': doc.id,
+        'userId': user?.uid ?? '',
+        'garageId': widget.garage.id,
+        'garageName': widget.garage.name,
+        'garageAddress': widget.garage.address,
+        'serviceName': _selectedService,
+        'scheduledDate': _dates[_selectedDateIndex],
+        'scheduledTime': _times[_selectedTimeIndex],
+        'notes': _notesController.text.trim(),
+        'status': 'mechanicOnWay',
+        'progressPercent': 0.0,
+        'mechanicName': 'Pending assignment',
+        'mechanicSpecialty': '',
+        'mechanicRating': 0.0,
+        'vehicleMake': '',
+        'vehicleModel': '',
+        'vehiclePlate': '',
+        'partsCost': 0.0,
+        'laborCost': 0.0,
+        'createdAt': DateTime.now().millisecondsSinceEpoch,
+      });
+
+      if (!mounted) return;
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.xl)),
+          title: const Text('Booking Confirmed!'),
+          content: const Text('Your appointment has been successfully booked. You can track it in the Repairs screen.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context); // close dialog
+                Navigator.pop(context); // close booking screen
+              },
+              child: const Text('Done'),
+            ),
+          ],
+        ),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to book: $e')),
+      );
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
   }
 
   String? _mapGarageServiceName(String? raw) {
@@ -216,6 +290,7 @@ class _BookingScreenState extends State<BookingScreen> {
             Text('Add Notes', style: AppTextStyles.heading3),
             const SizedBox(height: AppSpacing.md),
             TextField(
+              controller: _notesController,
               maxLines: 4,
               decoration: InputDecoration(
                 hintText: 'Any specific issues or requests...',
@@ -264,27 +339,9 @@ class _BookingScreenState extends State<BookingScreen> {
               Expanded(
                 flex: 2,
                 child: GgButton(
-                  label: 'Confirm Booking',
+                  label: _isLoading ? 'Booking...' : 'Confirm Booking',
                   useGradient: true,
-                  onPressed: () {
-                    showDialog(
-                      context: context,
-                      builder: (context) => AlertDialog(
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.xl)),
-                        title: const Text('Booking Confirmed!'),
-                        content: const Text('Your appointment has been successfully booked.'),
-                        actions: [
-                          TextButton(
-                            onPressed: () {
-                              Navigator.pop(context); // close dialog
-                              Navigator.pop(context); // close booking screen
-                            },
-                            child: const Text('Done'),
-                          )
-                        ],
-                      ),
-                    );
-                  },
+                  onPressed: _isLoading ? null : _confirmBooking,
                 ),
               ),
             ],
