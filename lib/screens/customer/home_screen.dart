@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:garage_guru/bloc/garage/garage_bloc.dart';
 import 'package:garage_guru/screens/customer/battery_service_screen.dart';
 import 'package:garage_guru/screens/customer/emergency_repair_screen.dart';
 import 'package:garage_guru/screens/customer/repairs_screen.dart';
 import 'package:garage_guru/screens/customer/tire_service_screen.dart';
 import 'package:garage_guru/screens/customer/add_vehicle_screen.dart';
 import 'package:garage_guru/screens/customer/find_garages_screen.dart';
+import 'package:garage_guru/screens/customer/garage_detail_screen.dart';
 import 'package:garage_guru/screens/customer/notifications_screen.dart';
 import 'package:garage_guru/screens/customer/request_repair_form_screen.dart';
+import 'package:garage_guru/widgets/garage_card.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -126,6 +130,17 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       child: TextField(
         controller: _searchController,
+        textInputAction: TextInputAction.search,
+        onSubmitted: (query) {
+          if (query.trim().isNotEmpty) {
+            context.read<GarageBloc>().add(SearchGarages(query.trim()));
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (_) => FindGaragesScreen(initialQuery: query.trim()),
+              ),
+            );
+          }
+        },
         decoration: const InputDecoration(
           border: InputBorder.none,
           prefixIcon: Icon(Icons.location_on_outlined, color: Color(0xFF9CA3AF)),
@@ -141,43 +156,38 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildMapPreview() {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(10),
-      child: Container(
-        height: 180,
-        width: double.infinity,
-        decoration: BoxDecoration(
+    return BlocBuilder<GarageBloc, GarageState>(
+      builder: (context, state) {
+        final garages = state is GarageLoaded ? state.allGarages : [];
+        final markers = garages.map((g) => Marker(
+          markerId: MarkerId(g.id),
+          position: LatLng(g.latitude, g.longitude),
+          infoWindow: InfoWindow(title: g.name, snippet: g.address),
+        )).toSet();
+
+        return ClipRRect(
           borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: const Color(0xFFE5E7EB)),
-        ),
-        child: GoogleMap(
-          initialCameraPosition: const CameraPosition(
-            target: LatLng(-1.9441, 30.0619),
-            zoom: 13,
+          child: Container(
+            height: 180,
+            width: double.infinity,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(color: const Color(0xFFE5E7EB)),
+            ),
+            child: GoogleMap(
+              initialCameraPosition: const CameraPosition(
+                target: LatLng(-1.9441, 30.0619),
+                zoom: 13,
+              ),
+              myLocationButtonEnabled: false,
+              myLocationEnabled: true,
+              zoomControlsEnabled: false,
+              mapToolbarEnabled: false,
+              markers: markers,
+            ),
           ),
-          myLocationButtonEnabled: false,
-          myLocationEnabled: true,
-          zoomControlsEnabled: false,
-          mapToolbarEnabled: false,
-          markers: {
-            const Marker(
-              markerId: MarkerId('g1'),
-              position: LatLng(-1.9441, 30.0619),
-              infoWindow: InfoWindow(title: 'Auto Finit'),
-            ),
-            const Marker(
-              markerId: MarkerId('g2'),
-              position: LatLng(-1.9541, 30.0819),
-              infoWindow: InfoWindow(title: 'Kigali Motors'),
-            ),
-            const Marker(
-              markerId: MarkerId('g3'),
-              position: LatLng(-1.9341, 30.0519),
-              infoWindow: InfoWindow(title: 'Pro Mechanics'),
-            ),
-          },
-        ),
-      ),
+        );
+      },
     );
   }
 
@@ -316,27 +326,30 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
         const SizedBox(height: 8),
-        _GarageListTile(
-          name: 'Auto Finit',
-          distance: '0.6km',
-          eta: '~0.5km',
-          details: 'Details',
-          onDetails: () {
-            Navigator.of(context).push(
-              MaterialPageRoute(builder: (_) => const FindGaragesScreen()),
-            );
-          },
-        ),
-        const SizedBox(height: 10),
-        _GarageListTile(
-          name: 'Kigali Motors',
-          distance: '1.2km',
-          eta: '~1.0km',
-          details: 'Details',
-          onDetails: () {
-            Navigator.of(context).push(
-              MaterialPageRoute(builder: (_) => const FindGaragesScreen()),
-            );
+        BlocBuilder<GarageBloc, GarageState>(
+          builder: (context, state) {
+            if (state is GarageLoading) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            if (state is GarageLoaded) {
+              final garages = state.allGarages.take(3).toList();
+              if (garages.isEmpty) {
+                return const Text(
+                  'No nearby garages found.',
+                  style: TextStyle(fontFamily: 'Poppins', fontSize: 13, color: Color(0xFF6B7280)),
+                );
+              }
+              return Column(
+                children: garages.map((garage) => GarageCard(
+                  garage: garage,
+                  isCompact: true,
+                  onTap: () => Navigator.of(context).push(
+                    MaterialPageRoute(builder: (_) => GarageDetailScreen(garage: garage)),
+                  ),
+                )).toList(),
+              );
+            }
+            return const SizedBox.shrink();
           },
         ),
       ],
@@ -466,19 +479,24 @@ class _ActionButton extends StatelessWidget {
         style: ElevatedButton.styleFrom(
           backgroundColor: color,
           elevation: 0,
-          padding: const EdgeInsets.symmetric(horizontal: 6),
+          padding: const EdgeInsets.symmetric(horizontal: 4),
+          minimumSize: Size.zero,
+          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         ),
         icon: Icon(icon, color: Colors.white, size: 13),
-        label: Text(
-          label,
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-          style: const TextStyle(
-            fontFamily: 'Poppins',
-            color: Colors.white,
-            fontSize: 10,
-            fontWeight: FontWeight.w500,
+        label: FittedBox(
+          fit: BoxFit.scaleDown,
+          child: Text(
+            label,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(
+              fontFamily: 'Poppins',
+              color: Colors.white,
+              fontSize: 10,
+              fontWeight: FontWeight.w500,
+            ),
           ),
         ),
       ),
@@ -524,79 +542,3 @@ class _QuickServiceIcon extends StatelessWidget {
   }
 }
 
-class _GarageListTile extends StatelessWidget {
-  final String name;
-  final String distance;
-  final String eta;
-  final String details;
-  final VoidCallback onDetails;
-
-  const _GarageListTile({
-    required this.name,
-    required this.distance,
-    required this.eta,
-    required this.details,
-    required this.onDetails,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      child: Row(
-        children: [
-          Container(
-            width: 38,
-            height: 38,
-            decoration: BoxDecoration(
-              color: const Color(0xFFD1E9FF),
-              borderRadius: BorderRadius.circular(6),
-            ),
-            child: const Icon(Icons.garage_rounded, color: Color(0xFF1D9CE5), size: 20),
-          ),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  name,
-                  style: const TextStyle(
-                    fontFamily: 'Poppins',
-                    fontWeight: FontWeight.w600,
-                    fontSize: 14,
-                  ),
-                ),
-                Text(
-                  '$distance   $eta',
-                  style: const TextStyle(
-                    fontFamily: 'Poppins',
-                    fontSize: 12,
-                    color: Color(0xFF6B7280),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const Icon(Icons.favorite_border, color: Color(0xFF9CA3AF), size: 18),
-          const SizedBox(width: 10),
-          SizedBox(
-            height: 26,
-            child: OutlinedButton(
-              onPressed: onDetails,
-              style: OutlinedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(horizontal: 10),
-                side: const BorderSide(color: Color(0xFF93C5FD)),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
-              ),
-              child: Text(
-                details,
-                style: const TextStyle(fontSize: 11, color: Color(0xFF1D9CE5)),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
