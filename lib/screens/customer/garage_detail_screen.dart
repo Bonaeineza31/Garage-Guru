@@ -327,7 +327,20 @@ class _ServicesTab extends StatelessWidget {
               childrenPadding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.sm),
               children: categoryServices.map((service) => Padding(
                 padding: const EdgeInsets.only(bottom: AppSpacing.sm),
-                child: ServiceCard(service: service),
+                child: ServiceCard(
+                  service: service,
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => BookingScreen(
+                          garage: garage,
+                          initialServiceType: service.name,
+                        ),
+                      ),
+                    );
+                  },
+                ),
               )).toList(),
             ),
           ),
