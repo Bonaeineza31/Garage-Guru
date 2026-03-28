@@ -5,9 +5,7 @@ import 'package:garage_guru/screens/customer/repair_detail_screen.dart';
 import 'package:intl/intl.dart';
 
 class RepairsHistoryScreen extends StatelessWidget {
-  final VoidCallback? onSwitchTab;
-  
-  const RepairsHistoryScreen({super.key, this.onSwitchTab});
+  const RepairsHistoryScreen({super.key});
 
   static final List<RepairHistoryModel> _history = [
     RepairHistoryModel(
@@ -44,10 +42,7 @@ class RepairsHistoryScreen extends StatelessWidget {
         padding: const EdgeInsets.all(16),
         itemCount: _history.length,
         separatorBuilder: (_, __) => const SizedBox(height: 12),
-        itemBuilder: (context, index) => _HistoryCard(
-          item: _history[index],
-          onSwitchTab: onSwitchTab,
-        ),
+        itemBuilder: (context, index) => _HistoryCard(item: _history[index]),
       ),
     );
   }
@@ -55,9 +50,8 @@ class RepairsHistoryScreen extends StatelessWidget {
 
 class _HistoryCard extends StatelessWidget {
   final RepairHistoryModel item;
-  final VoidCallback? onSwitchTab;
 
-  const _HistoryCard({required this.item, this.onSwitchTab});
+  const _HistoryCard({required this.item});
 
   @override
   Widget build(BuildContext context) {
@@ -193,8 +187,8 @@ class _HistoryCard extends StatelessWidget {
           Align(
             alignment: Alignment.centerRight,
             child: GestureDetector(
-              onTap: () async {
-                final result = await Navigator.push(
+              onTap: () {
+                Navigator.push(
                   context,
                   MaterialPageRoute(
                     builder: (_) => RepairDetailScreen(
@@ -207,18 +201,24 @@ class _HistoryCard extends StatelessWidget {
                         progressPercent: 1.0,
                         status: RepairStatus.completed,
                         mechanicName: item.mechanicName,
-                        mechanicSpecialty: 'General Mechanic',
+                        mechanicSpecialty:
+                            item.serviceName.toLowerCase().contains('oil')
+                                ? 'Maintenance Specialist'
+                                : item.serviceName.toLowerCase().contains('tire')
+                                    ? 'Tire Specialist'
+                                    : 'General Mechanic',
                         mechanicRating: 4.8,
                         location: item.location,
                         startDate: item.date,
                         estimatedCompletion: 'Completed',
-                        repairDescription: 'Service completed successfully.',
+                        repairDescription:
+                            '${item.serviceName} completed at ${item.location}.',
                         partsCost: item.cost * 0.6,
                         laborCost: item.cost * 0.4,
                         updates: [
                           RepairUpdate(
                             timestamp: item.date,
-                            message: 'Service completed successfully.',
+                            message: '${item.serviceName} service completed.',
                           ),
                         ],
                         isPaid: true,
@@ -226,9 +226,6 @@ class _HistoryCard extends StatelessWidget {
                     ),
                   ),
                 );
-                if (result == 'tab_current') {
-                  onSwitchTab?.call();
-                }
               },
               child: const Row(
                 mainAxisSize: MainAxisSize.min,

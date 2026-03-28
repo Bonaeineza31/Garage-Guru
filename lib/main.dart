@@ -33,7 +33,7 @@ class GarageGuruApp extends StatelessWidget {
     return MaterialApp(
       title: 'GarageGuru',
       debugShowCheckedModeBanner: false,
-      theme: GarageGuruTheme.lightTheme,
+      theme: AppTheme.lightTheme,
       home: const LoginScreen(),
     );
   }

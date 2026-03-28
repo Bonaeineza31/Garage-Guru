@@ -2,30 +2,30 @@ import 'package:flutter/material.dart';
 
 class AppColors {
   AppColors._();
-  static const Color primary = Color(0xFF1E3A5F);
-  static const Color primaryDark = Color(0xFF0F2440);
-  static const Color primaryLight = Color(0xFFD6E4F0);
-  static const Color primaryMedium = Color(0xFF2B5C8A);
-  static const Color accent = Color(0xFFFF6B35);
-  static const Color accentLight = Color(0xFFFFE0CC);
-  static const Color background = Color(0xFFF4F6FA);
+  static const Color primary = Color(0xFF0097DA);
+  static const Color primaryDark = Color(0xFF007BAB);
+  static const Color primaryLight = Color(0xFFE1F5FE);
+  static const Color primaryMedium = Color(0xFF2DB0E1);
+  static const Color accent = Color(0xFFFFA000);
+  static const Color accentLight = Color(0xFFFFF8E1);
+  static const Color background = Color(0xFFF8FAFC);
   static const Color surface = Color(0xFFFFFFFF);
   static const Color cardBackground = Color(0xFFFFFFFF);
-  static const Color divider = Color(0xFFE8ECF1);
-  static const Color scaffoldDark = Color(0xFF121826);
-  static const Color textPrimary = Color(0xFF1A1E2C);
-  static const Color textSecondary = Color(0xFF6B7280);
-  static const Color textHint = Color(0xFFB0B8C4);
+  static const Color divider = Color(0xFFE2E8F0);
+  static const Color scaffoldDark = Color(0xFF0F172A);
+  static const Color textPrimary = Color(0xFF1E293B);
+  static const Color textSecondary = Color(0xFF64748B);
+  static const Color textHint = Color(0xFF94A3B8);
   static const Color textOnPrimary = Color(0xFFFFFFFF);
   static const Color success = Color(0xFF10B981);
   static const Color warning = Color(0xFFF59E0B);
-  static const Color error = Color(0xFFEF4444);
-  static const Color info = Color(0xFF3B82F6);
+  static const Color error = Color(0xFFF43F5E);
+  static const Color info = Color(0xFF2DB0E1);
   static const Color starFilled = Color(0xFFFBBF24);
-  static const Color starEmpty = Color(0xFFE5E7EB);
-  static const Color shadow = Color(0x14000000);
+  static const Color starEmpty = Color(0xFFE2E8F0);
+  static const Color shadow = Color(0x0F000000);
   static const LinearGradient primaryGradient = LinearGradient(
-    colors: [Color(0xFF1E3A5F), Color(0xFF2B5C8A)],
+    colors: [Color(0xFF0097DA), Color(0xFF2DB0E1)],
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );
@@ -37,7 +37,7 @@ class AppColors {
   );
 
   static const LinearGradient heroGradient = LinearGradient(
-    colors: [Color(0xFF0F2440), Color(0xFF1E3A5F), Color(0xFF2B5C8A)],
+    colors: [Color(0xFF0097DA), Color(0xFF2DB0E1)],
     begin: Alignment.topCenter,
     end: Alignment.bottomCenter,
   );
@@ -203,4 +203,90 @@ class AppShadows {
           offset: const Offset(0, 4),
         ),
       ];
+}
+
+/// Compatibility alias so legacy screens using AppTheme.xxx still compile.
+/// All values map to AppColors equivalents.
+class AppTheme {
+  AppTheme._();
+
+  // Primary brand colors
+  static const Color primaryBlue      = AppColors.primary;
+  static const Color scheduleBlue     = Color(0xFF0284C7);
+  static const Color emergencyOrange  = AppColors.accent;
+  static const Color repairGreen      = AppColors.success;
+
+  // UI / background colors
+  static const Color scaffoldBackground = AppColors.background;
+  static const Color cardBackground     = AppColors.cardBackground;
+  static const Color dividerColor       = AppColors.divider;
+  static const Color iconGray           = AppColors.textSecondary;
+  static const Color textHint           = AppColors.textHint;
+
+  // Text colors
+  static const Color textPrimary   = AppColors.textPrimary;
+  static const Color textSecondary = AppColors.textSecondary;
+
+  // Status colors
+  static const Color errorRed       = AppColors.error;
+  static const Color successGreen   = AppColors.success;
+  static const Color warningYellow  = AppColors.warning;
+  static const Color infoBlue       = AppColors.info;
+
+  /// Flutter ThemeData — kept for main.dart compatibility
+  static ThemeData get lightTheme {
+    return ThemeData(
+      useMaterial3: true,
+      fontFamily: 'Poppins',
+      scaffoldBackgroundColor: AppColors.background,
+      colorScheme: const ColorScheme.light(
+        primary: AppColors.primary,
+        secondary: AppColors.accent,
+        surface: AppColors.surface,
+        error: AppColors.error,
+      ),
+      appBarTheme: const AppBarTheme(
+        backgroundColor: AppColors.primary,
+        foregroundColor: Color(0xFFFFFFFF),
+        elevation: 0,
+        centerTitle: false,
+        titleTextStyle: TextStyle(
+          color: Color(0xFFFFFFFF),
+          fontSize: 18,
+          fontWeight: FontWeight.w600,
+          fontFamily: 'Poppins',
+        ),
+      ),
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: AppColors.primary,
+          foregroundColor: const Color(0xFFFFFFFF),
+          elevation: 0,
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+        ),
+      ),
+      inputDecorationTheme: InputDecorationTheme(
+        filled: true,
+        fillColor: AppColors.surface,
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: const BorderSide(color: AppColors.divider),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: const BorderSide(color: AppColors.divider),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: const BorderSide(color: AppColors.primary, width: 2),
+        ),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: const BorderSide(color: AppColors.error),
+        ),
+      ),
+    );
+  }
 }
