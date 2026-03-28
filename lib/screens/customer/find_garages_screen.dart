@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:garage_guru/core/theme/app_theme.dart';
-import 'package:garage_guru/data/mock_data.dart';
+import 'package:garage_guru/models/models.dart';
 import 'package:garage_guru/widgets/garage_card.dart';
 import 'package:garage_guru/screens/customer/notifications_screen.dart';
 import 'package:garage_guru/screens/customer/garage_detail_screen.dart';
@@ -24,34 +25,30 @@ class _FindGaragesScreenState extends State<FindGaragesScreen> {
     super.dispose();
   }
 
-  List get _filteredGarages {
-    var garages = MockData.garages.toList();
+  List<GarageModel> _applyFilters(List<GarageModel> garages) {
+    var filtered = garages.toList();
 
-    // Apply search
     if (_searchQuery.isNotEmpty) {
       final query = _searchQuery.toLowerCase();
-      garages = garages.where((garage) {
-        final nameMatch = (garage.name ?? '').toLowerCase().contains(query);
+      filtered = filtered.where((garage) {
+        final nameMatch = garage.name.toLowerCase().contains(query);
         final servicesMatch = garage.services
-            .any((service) => (service ?? '').toLowerCase().contains(query));
+            .any((service) => service.toLowerCase().contains(query));
         return nameMatch || servicesMatch;
       }).toList();
     }
 
-    // Apply filter
     if (_activeFilter == 'Top Rated') {
-      garages.sort((a, b) => b.rating.compareTo(a.rating));
+      filtered.sort((a, b) => b.rating.compareTo(a.rating));
     } else if (_activeFilter == 'Closest') {
-      garages.sort((a, b) => a.distanceKm.compareTo(b.distanceKm));
+      filtered.sort((a, b) => a.distanceKm.compareTo(b.distanceKm));
     }
 
-    return garages;
+    return filtered;
   }
 
   @override
   Widget build(BuildContext context) {
-    final garages = _filteredGarages;
-
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
@@ -144,51 +141,73 @@ class _FindGaragesScreenState extends State<FindGaragesScreen> {
             ),
           ),
 
-          // Results count
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
-            child: Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                '${garages.length} garage${garages.length == 1 ? '' : 's'} found',
-                style: AppTextStyles.bodySmall.copyWith(color: AppColors.textHint),
-              ),
-            ),
-          ),
-
           // Garage List
           Expanded(
-            child: garages.isEmpty
-                ? Center(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Icon(Icons.search_off_rounded, size: 48, color: AppColors.textHint),
-                        const SizedBox(height: AppSpacing.sm),
-                        Text(
-                          'No garages found',
+            child: StreamBuilder<QuerySnapshot>(
+              stream: FirebaseFirestore.instance.collection('garages').snapshots(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+                if (snapshot.hasError) {
+                  return Center(child: Text('Error: ${snapshot.error}'));
+                }
+
+                final allGarages = (snapshot.data?.docs ?? [])
+                    .map((doc) => GarageModel.fromMap(doc.data() as Map<String, dynamic>, doc.id))
+                    .toList();
+
+                final garages = _applyFilters(allGarages);
+
+                return Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          '${garages.length} garage${garages.length == 1 ? '' : 's'} found',
                           style: AppTextStyles.bodySmall.copyWith(color: AppColors.textHint),
                         ),
-                      ],
+                      ),
                     ),
-                  )
-                : ListView.builder(
-                    padding: const EdgeInsets.all(AppSpacing.lg),
-                    itemCount: garages.length,
-                    itemBuilder: (context, index) {
-                      return GarageCard(
-                        garage: garages[index],
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => GarageDetailScreen(garage: garages[index]),
+                    Expanded(
+                      child: garages.isEmpty
+                          ? Center(
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  const Icon(Icons.search_off_rounded, size: 48, color: AppColors.textHint),
+                                  const SizedBox(height: AppSpacing.sm),
+                                  Text(
+                                    'No garages found',
+                                    style: AppTextStyles.bodySmall.copyWith(color: AppColors.textHint),
+                                  ),
+                                ],
+                              ),
+                            )
+                          : ListView.builder(
+                              padding: const EdgeInsets.all(AppSpacing.lg),
+                              itemCount: garages.length,
+                              itemBuilder: (context, index) {
+                                return GarageCard(
+                                  garage: garages[index],
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => GarageDetailScreen(garage: garages[index]),
+                                      ),
+                                    );
+                                  },
+                                );
+                              },
                             ),
-                          );
-                        },
-                      );
-                    },
-                  ),
+                    ),
+                  ],
+                );
+              },
+            ),
           ),
         ],
       ),
