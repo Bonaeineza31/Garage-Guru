@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:garage_guru/core/theme/app_theme.dart';
 import 'package:garage_guru/models/garage_model.dart';
+import 'package:garage_guru/services/favorite_garages_service.dart';
 class GarageCard extends StatelessWidget {
   final GarageModel garage;
   final VoidCallback? onTap;
@@ -68,12 +69,28 @@ class GarageCard extends StatelessWidget {
                         color: AppColors.surface,
                         borderRadius: BorderRadius.circular(AppRadius.pill),
                       ),
-                      child: Text(
-                        garage.isOpen ? 'Open Now' : 'Closes at 6PM',
-                        style: AppTextStyles.caption.copyWith(
-                          color: garage.isOpen ? AppColors.success : AppColors.textSecondary,
-                          fontWeight: FontWeight.w600,
-                        ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          if (garage.isOpen) ...[
+                            Container(
+                              width: 7,
+                              height: 7,
+                              decoration: const BoxDecoration(
+                                color: AppColors.success,
+                                shape: BoxShape.circle,
+                              ),
+                            ),
+                            const SizedBox(width: 6),
+                          ],
+                          Text(
+                            garage.isOpen ? 'Open Now' : 'Closes at 6PM',
+                            style: AppTextStyles.caption.copyWith(
+                              color: garage.isOpen ? AppColors.success : AppColors.textSecondary,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
@@ -96,8 +113,23 @@ class GarageCard extends StatelessWidget {
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),
-                      const Icon(Icons.favorite_border_rounded, size: 20, color: AppColors.textSecondary),
-                      const SizedBox(width: AppSpacing.sm),
+                      ListenableBuilder(
+                        listenable: FavoriteGaragesService.instance,
+                        builder: (context, _) {
+                          final fav = FavoriteGaragesService.instance.isFavorite(garage.id);
+                          return IconButton(
+                            onPressed: () => FavoriteGaragesService.instance.toggle(garage.id),
+                            visualDensity: VisualDensity.compact,
+                            padding: EdgeInsets.zero,
+                            constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
+                            icon: Icon(
+                              fav ? Icons.favorite_rounded : Icons.favorite_border_rounded,
+                              size: 22,
+                              color: fav ? AppColors.error : AppColors.textSecondary,
+                            ),
+                          );
+                        },
+                      ),
                       const Icon(Icons.star_rounded, size: 16, color: AppColors.starFilled),
                       const SizedBox(width: 4),
                       Text(
