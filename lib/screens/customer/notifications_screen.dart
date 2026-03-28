@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:garage_guru/core/theme/app_theme.dart';
+import 'package:garage_guru/screens/customer/request_repair_form_screen.dart';
 import 'package:garage_guru/widgets/widgets.dart';
 
 class NotificationsScreen extends StatelessWidget {
@@ -96,7 +97,15 @@ class NotificationsScreen extends StatelessWidget {
                         Row(
                           children: [
                             OutlinedButton(
-                              onPressed: () {},
+                              onPressed: () {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (_) => const RequestRepairFormScreen(
+                                      initialRepairType: 'Oil Change',
+                                    ),
+                                  ),
+                                );
+                              },
                               style: OutlinedButton.styleFrom(
                                 side: const BorderSide(color: AppColors.primary),
                                 padding: const EdgeInsets.symmetric(horizontal: 16),
