@@ -5,8 +5,14 @@ import 'package:garage_guru/widgets/widgets.dart';
 
 class BookingScreen extends StatefulWidget {
   final GarageModel garage;
+  /// When set (e.g. from a service row or tag), the booking dropdown selects this option.
+  final String? initialServiceType;
 
-  const BookingScreen({super.key, required this.garage});
+  const BookingScreen({
+    super.key,
+    required this.garage,
+    this.initialServiceType,
+  });
 
   @override
   State<BookingScreen> createState() => _BookingScreenState();
@@ -16,14 +22,37 @@ class _BookingScreenState extends State<BookingScreen> {
   String? _selectedService;
   int _selectedDateIndex = 1;
   int _selectedTimeIndex = 2;
-  
+
   final List<String> _services = [
     'General Maintenance',
     'Tire Replacement',
     'Oil Change',
     'Engine Diagnostics',
-    'Brake Repair'
+    'Brake Repair',
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedService = _mapGarageServiceName(widget.initialServiceType);
+  }
+
+  String? _mapGarageServiceName(String? raw) {
+    if (raw == null || raw.trim().isEmpty) return null;
+    const aliases = {
+      'Brake Pad Replacement': 'Brake Repair',
+      'Tire Rotation': 'Tire Replacement',
+      'Battery Replacement': 'General Maintenance',
+      'Full Inspection': 'General Maintenance',
+      'AC Repair': 'General Maintenance',
+      'Transmission Service': 'General Maintenance',
+    };
+    final key = raw.trim();
+    final mapped = aliases[key] ?? key;
+    if (_services.contains(mapped)) return mapped;
+    if (_services.contains(key)) return key;
+    return null;
+  }
 
   final List<String> _dates = ['Mon 12', 'Tue 13', 'Wed 14', 'Thu 15', 'Fri 16'];
   final List<String> _times = ['09:00 AM', '10:00 AM', '11:00 AM', '01:00 PM', '02:00 PM', '04:00 PM'];
