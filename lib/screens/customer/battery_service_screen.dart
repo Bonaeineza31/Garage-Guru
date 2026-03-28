@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../core/theme/app_theme.dart';
-import '../widgets/app_bottom_navigation.dart';
 
-/// Battery service booking screen
 class BatteryServiceScreen extends StatefulWidget {
   const BatteryServiceScreen({super.key});
 
@@ -11,362 +8,158 @@ class BatteryServiceScreen extends StatefulWidget {
 }
 
 class _BatteryServiceScreenState extends State<BatteryServiceScreen> {
+  final TextEditingController _serviceTypeController = TextEditingController();
+  final TextEditingController _garageController = TextEditingController();
   final TextEditingController _dateController = TextEditingController();
   final TextEditingController _timeController = TextEditingController();
   final TextEditingController _locationController = TextEditingController();
-
-  String? _selectedServiceType;
-  String? _selectedGarage;
-  String? _selectedVehicle;
+  final TextEditingController _vehicleController = TextEditingController();
 
   @override
   void dispose() {
+    _serviceTypeController.dispose();
+    _garageController.dispose();
     _dateController.dispose();
     _timeController.dispose();
     _locationController.dispose();
+    _vehicleController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.scaffoldBackground,
+      backgroundColor: const Color(0xFFF4F4F4),
       appBar: AppBar(
+        backgroundColor: const Color(0xFF1D9CE5),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.pop(context),
+          onPressed: () => Navigator.of(context).pop(),
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
         ),
-        title: const Text('Battery Service'),
+        title: const Text(
+          'Battery Service',
+          style: TextStyle(
+            color: Colors.white,
+            fontFamily: 'Poppins',
+            fontWeight: FontWeight.w600,
+          ),
+        ),
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.fromLTRB(14, 14, 14, 20),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Service info card
             Container(
-              padding: const EdgeInsets.all(16),
+              width: double.infinity,
+              padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: AppTheme.dividerColor),
+                borderRadius: BorderRadius.circular(10),
               ),
-              child: Row(
+              child: const Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Container(
-                    width: 48,
-                    height: 48,
-                    decoration: BoxDecoration(
-                      color: AppTheme.primaryBlue.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: const Icon(
-                      Icons.battery_charging_full,
-                      color: AppTheme.primaryBlue,
-                      size: 24,
+                  Text(
+                    'Battery Services',
+                    style: TextStyle(
+                      fontFamily: 'Poppins',
+                      fontWeight: FontWeight.w600,
+                      fontSize: 15,
                     ),
                   ),
-                  const SizedBox(width: 12),
-                  const Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Battery Services',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: AppTheme.textPrimary,
-                          ),
-                        ),
-                        SizedBox(height: 4),
-                        Text(
-                          'Professional battery care for your vehicle',
-                          style: TextStyle(
-                            fontSize: 13,
-                            color: AppTheme.textSecondary,
-                          ),
-                        ),
-                      ],
+                  SizedBox(height: 4),
+                  Text(
+                    'Professional battery care for your vehicle',
+                    style: TextStyle(
+                      fontFamily: 'Poppins',
+                      fontSize: 12,
+                      color: Color(0xFF6B7280),
                     ),
                   ),
                 ],
               ),
             ),
-
-            const SizedBox(height: 24),
-
-            // Service options grid
-            Row(
-              children: [
-                Expanded(
-                  child: _buildServiceOption(
-                    title: 'Battery Replacement',
-                    price: 'From Frw 45,000',
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: _buildServiceOption(
-                    title: 'Battery Testing',
-                    price: 'From Frw 10,000',
-                  ),
-                ),
+            const SizedBox(height: 10),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: const [
+                _ServiceChip(label: 'Battery Replacement', price: 'From Rw 45,000'),
+                _ServiceChip(label: 'Battery Testing', price: 'From Rw 10,000'),
+                _ServiceChip(label: 'Charging System', price: 'From Rw 15,000'),
+                _ServiceChip(label: 'Jump Start', price: 'From Rw 5,000'),
               ],
             ),
-
-            const SizedBox(height: 12),
-
-            Row(
-              children: [
-                Expanded(
-                  child: _buildServiceOption(
-                    title: 'Charging System',
-                    price: 'From Frw 15,000',
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: _buildServiceOption(
-                    title: 'Jump Start',
-                    price: 'From Frw 5,000',
-                  ),
-                ),
-              ],
-            ),
-
-            const SizedBox(height: 32),
-
-            // Book Battery Service section
+            const SizedBox(height: 20),
             const Text(
               'Book Battery Service',
               style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: AppTheme.textPrimary,
+                fontFamily: 'Poppins',
+                fontWeight: FontWeight.w700,
+                fontSize: 23,
               ),
             ),
-
-            const SizedBox(height: 16),
-
-            // Service Type dropdown
-            const Text(
-              'Service Type',
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-                color: AppTheme.textPrimary,
-              ),
-            ),
+            const SizedBox(height: 12),
+            const Text('Service Type', style: _labelStyle),
             const SizedBox(height: 8),
-
-            DropdownButtonFormField<String>(
-              value: _selectedServiceType,
-              decoration: const InputDecoration(
-                hintText: 'Select service type',
-              ),
-              items: const [
-                DropdownMenuItem(
-                  value: 'replacement',
-                  child: Text('Battery Replacement'),
-                ),
-                DropdownMenuItem(
-                  value: 'testing',
-                  child: Text('Battery Testing'),
-                ),
-                DropdownMenuItem(
-                  value: 'charging',
-                  child: Text('Charging System'),
-                ),
-                DropdownMenuItem(value: 'jumpstart', child: Text('Jump Start')),
-              ],
-              onChanged: (value) {
-                setState(() {
-                  _selectedServiceType = value;
-                });
-              },
-            ),
-
-            const SizedBox(height: 20),
-
-            // Garage dropdown
-            const Text(
-              'Garage',
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-                color: AppTheme.textPrimary,
-              ),
-            ),
+            _field(_serviceTypeController, 'Select service type'),
+            const SizedBox(height: 12),
+            const Text('Garage', style: _labelStyle),
             const SizedBox(height: 8),
-
-            DropdownButtonFormField<String>(
-              value: _selectedGarage,
-              decoration: const InputDecoration(hintText: 'Select a garage'),
-              items: const [
-                DropdownMenuItem(
-                  value: 'auto_finit',
-                  child: Text('Auto Finit - 0.6km'),
-                ),
-                DropdownMenuItem(
-                  value: 'kigali_motors',
-                  child: Text('Kigali Motors - 1.2km'),
-                ),
-              ],
-              onChanged: (value) {
-                setState(() {
-                  _selectedGarage = value;
-                });
-              },
-            ),
-
-            const SizedBox(height: 20),
-
-            // Date and Time
+            _field(_garageController, 'Select a garage'),
+            const SizedBox(height: 12),
             Row(
               children: [
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
-                        'Date',
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
-                          color: AppTheme.textPrimary,
-                        ),
-                      ),
+                      const Text('Date', style: _labelStyle),
                       const SizedBox(height: 8),
-                      TextField(
-                        controller: _dateController,
-                        readOnly: true,
-                        decoration: const InputDecoration(
-                          hintText: 'mm/dd/yyyy',
-                          prefixIcon: Icon(Icons.calendar_today),
-                        ),
-                        onTap: () async {
-                          final date = await showDatePicker(
-                            context: context,
-                            initialDate: DateTime.now(),
-                            firstDate: DateTime.now(),
-                            lastDate: DateTime.now().add(
-                              const Duration(days: 365),
-                            ),
-                          );
-                          if (date != null) {
-                            _dateController.text =
-                                '${date.month.toString().padLeft(2, '0')}/${date.day.toString().padLeft(2, '0')}/${date.year}';
-                          }
-                        },
-                      ),
+                      _field(_dateController, 'mm/dd/yyyy', icon: Icons.calendar_today_outlined),
                     ],
                   ),
                 ),
-                const SizedBox(width: 12),
+                const SizedBox(width: 10),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
-                        'Time',
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
-                          color: AppTheme.textPrimary,
-                        ),
-                      ),
+                      const Text('Time', style: _labelStyle),
                       const SizedBox(height: 8),
-                      TextField(
-                        controller: _timeController,
-                        readOnly: true,
-                        decoration: const InputDecoration(
-                          hintText: '--:-- --',
-                          prefixIcon: Icon(Icons.access_time),
-                        ),
-                        onTap: () async {
-                          final time = await showTimePicker(
-                            context: context,
-                            initialTime: TimeOfDay.now(),
-                          );
-                          if (time != null) {
-                            _timeController.text = time.format(context);
-                          }
-                        },
-                      ),
+                      _field(_timeController, '--:-- --', icon: Icons.access_time_outlined),
                     ],
                   ),
                 ),
               ],
             ),
-
-            const SizedBox(height: 20),
-
-            // Location
-            const Text(
-              'Location',
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-                color: AppTheme.textPrimary,
-              ),
-            ),
+            const SizedBox(height: 12),
+            const Text('Location', style: _labelStyle),
             const SizedBox(height: 8),
-
-            TextField(
-              controller: _locationController,
-              decoration: const InputDecoration(
-                hintText: 'Where should the service be done?',
-                prefixIcon: Icon(Icons.location_on_outlined),
-              ),
-            ),
-
-            const SizedBox(height: 20),
-
-            // Vehicle dropdown
-            const Text(
-              'Vehicle',
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-                color: AppTheme.textPrimary,
-              ),
-            ),
+            _field(_locationController, 'Where should the service be done?', icon: Icons.location_on_outlined),
+            const SizedBox(height: 12),
+            const Text('Vehicle', style: _labelStyle),
             const SizedBox(height: 8),
-
-            DropdownButtonFormField<String>(
-              value: _selectedVehicle,
-              decoration: const InputDecoration(
-                hintText: 'Select your vehicle',
-                prefixIcon: Icon(Icons.directions_car_outlined),
-              ),
-              items: const [
-                DropdownMenuItem(
-                  value: 'toyota_camry',
-                  child: Text('Toyota Camry - RAC 881C'),
-                ),
-                DropdownMenuItem(
-                  value: 'honda_accord',
-                  child: Text('Honda Accord - RAB 123A'),
-                ),
-              ],
-              onChanged: (value) {
-                setState(() {
-                  _selectedVehicle = value;
-                });
-              },
-            ),
-
-            const SizedBox(height: 32),
-
-            // Book Service button
+            _field(_vehicleController, 'Select your vehicle', icon: Icons.directions_car_outlined),
+            const SizedBox(height: 20),
             SizedBox(
-              height: 50,
+              width: double.infinity,
+              height: 46,
               child: ElevatedButton(
                 onPressed: _bookService,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF1D9CE5),
+                  elevation: 0,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                ),
                 child: const Text(
                   'Book Service',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                  style: TextStyle(
+                    fontFamily: 'Poppins',
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white,
+                  ),
                 ),
               ),
             ),
@@ -376,75 +169,102 @@ class _BatteryServiceScreenState extends State<BatteryServiceScreen> {
     );
   }
 
-  Widget _buildServiceOption({required String title, required String price}) {
-    return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: AppTheme.scaffoldBackground,
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: AppTheme.dividerColor),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            title,
-            style: const TextStyle(
-              fontSize: 13,
-              fontWeight: FontWeight.w600,
-              color: AppTheme.textPrimary,
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            price,
-            style: const TextStyle(fontSize: 11, color: AppTheme.textSecondary),
-          ),
-        ],
+  Widget _field(TextEditingController controller, String hint, {IconData? icon}) {
+    return TextField(
+      controller: controller,
+      style: const TextStyle(fontFamily: 'Poppins', fontSize: 13),
+      decoration: InputDecoration(
+        hintText: hint,
+        hintStyle: const TextStyle(
+          color: Color(0xFF9CA3AF),
+          fontFamily: 'Poppins',
+          fontSize: 13,
+        ),
+        prefixIcon: icon == null ? null : Icon(icon, size: 18, color: const Color(0xFF9CA3AF)),
+        filled: true,
+        fillColor: Colors.white,
+        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: const BorderSide(color: Color(0xFFD1D5DB)),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: const BorderSide(color: Color(0xFF1D9CE5)),
+        ),
       ),
     );
   }
 
   void _bookService() {
-    // Validate inputs
-    if (_selectedServiceType == null ||
-        _selectedGarage == null ||
-        _dateController.text.isEmpty ||
-        _timeController.text.isEmpty ||
-        _locationController.text.trim().isEmpty ||
-        _selectedVehicle == null) {
+    final valid = _serviceTypeController.text.trim().isNotEmpty &&
+        _garageController.text.trim().isNotEmpty &&
+        _dateController.text.trim().isNotEmpty &&
+        _timeController.text.trim().isNotEmpty &&
+        _locationController.text.trim().isNotEmpty &&
+        _vehicleController.text.trim().isNotEmpty;
+
+    if (!valid) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Please fill all fields'),
-          backgroundColor: AppTheme.errorRed,
-        ),
+        const SnackBar(content: Text('Please complete all booking fields')),
       );
       return;
     }
 
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Row(
-          children: [
-            Icon(Icons.check_circle, color: AppTheme.successGreen),
-            const SizedBox(width: 8),
-            const Text('Booking Confirmed'),
-          ],
-        ),
-        content: const Text(
-          'Your battery service has been booked successfully!',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-              Navigator.pop(context);
-            },
-            child: const Text('OK'),
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Battery service booked successfully'),
+        backgroundColor: Color(0xFF1D9CE5),
+        duration: Duration(seconds: 2),
+      ),
+    );
+  }
+}
+
+class _ServiceChip extends StatelessWidget {
+  final String label;
+  final String price;
+
+  const _ServiceChip({required this.label, required this.price});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 160,
+      padding: const EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        color: const Color(0xFFF1F5F9),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            label,
+            style: const TextStyle(
+              fontFamily: 'Poppins',
+              fontWeight: FontWeight.w500,
+              fontSize: 12,
+            ),
+          ),
+          const SizedBox(height: 2),
+          Text(
+            price,
+            style: const TextStyle(
+              fontFamily: 'Poppins',
+              fontSize: 11,
+              color: Color(0xFF6B7280),
+            ),
           ),
         ],
       ),
     );
   }
 }
+
+const TextStyle _labelStyle = TextStyle(
+  fontFamily: 'Poppins',
+  fontWeight: FontWeight.w500,
+  fontSize: 13,
+  color: Color(0xFF111827),
+);

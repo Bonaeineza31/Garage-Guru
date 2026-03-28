@@ -148,4 +148,27 @@ class MockData {
     address: '100 Customer Lane, City',
     createdAt: DateTime(2025, 1, 15),
   );
+  static final List<VehicleModel> vehicles = [
+  VehicleModel(
+    id: 'v1',
+    make: 'Toyota',
+    model: 'Camry',
+    year: 2020,
+    color: 'Silver',
+    plateNumber: 'RAH234H',
+    imageUrl: 'https://images.unsplash.com/photo-1550355291-bbee04a92027?w=400',
+    nextServiceDate: DateTime(2025, 5, 25),
+  ),
+  VehicleModel(
+    id: 'v2',
+    make: 'Honda',
+    model: 'Civic',
+    year: 2018,
+    color: 'Blue',
+    plateNumber: 'RAA567K',
+    imageUrl: 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=400',
+    nextServiceDate: DateTime(2025, 6, 10),
+  ),
+];
 }
+

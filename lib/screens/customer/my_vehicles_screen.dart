@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:garage_guru/core/theme/app_theme.dart';
 import 'package:garage_guru/data/mock_data.dart';
 import 'package:garage_guru/models/models.dart';
+import 'package:garage_guru/models/vehicle_model.dart';
 import 'package:garage_guru/widgets/widgets.dart';
 import 'package:intl/intl.dart';
 
@@ -20,12 +21,6 @@ class MyVehiclesScreen extends StatelessWidget {
     return Scaffold(
       appBar: GgAppBar(
         title: 'My Vehicles',
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.settings_outlined),
-            onPressed: () {},
-          ),
-        ],
       ),
       body: Column(
         children: [
@@ -68,7 +63,7 @@ class _VehicleCard extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(bottom: AppSpacing.lg),
       decoration: BoxDecoration(
-        color: AppColors.cardBackground,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(AppRadius.lg),
         boxShadow: AppShadows.card,
         border: Border.all(color: AppColors.divider.withOpacity(0.5)),
