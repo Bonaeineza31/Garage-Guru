@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'package:garage_guru/core/theme/theme_data.dart';
-import 'package:garage_guru/screens/auth/login_screen.dart';
+import 'package:garage_guru/screens/auth/landing_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -34,7 +34,7 @@ class GarageGuruApp extends StatelessWidget {
       title: 'GarageGuru',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
-      home: const LoginScreen(),
+      home: const LandingScreen(),
     );
   }
 }
