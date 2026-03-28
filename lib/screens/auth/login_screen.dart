@@ -1,10 +1,12 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:garage_guru/core/theme/app_theme.dart';
-import 'package:garage_guru/widgets/widgets.dart';
+import 'package:garage_guru/screens/auth/auth_theme.dart';
+import 'package:garage_guru/screens/auth/auth_widgets.dart';
 import 'package:garage_guru/screens/auth/register_screen.dart';
+import 'package:garage_guru/screens/auth/reset_password_screen.dart';
 import 'package:garage_guru/screens/customer/customer_shell.dart';
 import 'package:garage_guru/screens/owner/owner_shell.dart';
 
@@ -15,29 +17,15 @@ class LoginScreen extends StatefulWidget {
   State<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStateMixin {
+class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _obscurePassword = true;
   bool _isLoading = false;
-  late final AnimationController _fadeController;
-  late final Animation<double> _fadeAnimation;
-
-  @override
-  void initState() {
-    super.initState();
-    _fadeController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 800),
-    );
-    _fadeAnimation = CurvedAnimation(parent: _fadeController, curve: Curves.easeOut);
-    _fadeController.forward();
-  }
 
   @override
   void dispose() {
-    _fadeController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
     super.dispose();
@@ -59,12 +47,11 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
         final role = doc.data()?['role'] ?? 'customer';
 
         if (!mounted) return;
-        final destination = role == 'garage_owner'
-            ? const OwnerShell()
-            : const CustomerShell();
-        
+        final destination =
+            role == 'garage_owner' ? const OwnerShell() : const CustomerShell();
+
         Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (_) => destination),
+          MaterialPageRoute<void>(builder: (_) => destination),
         );
       }
     } on FirebaseAuthException catch (e) {
@@ -74,7 +61,6 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
       );
     } catch (e) {
       if (!mounted) return;
-      print('Login Error: $e');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error: $e')),
       );
@@ -85,169 +71,122 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
 
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setSystemUIOverlayStyle(
-      const SystemUiOverlayStyle(
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: const SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
         statusBarIconBrightness: Brightness.dark,
       ),
-    );
-    return Scaffold(
-      body: SafeArea(
-        child: FadeTransition(
-          opacity: _fadeAnimation,
+      child: AuthShell(
+        body: Form(
+          key: _formKey,
           child: SingleChildScrollView(
-            padding: const EdgeInsets.all(AppSpacing.xxl),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  const SizedBox(height: AppSpacing.xxxl),
-                  Center(
-                    child: Column(
-                      children: [
-                        Container(
-                          width: 88,
-                          height: 88,
-                          decoration: BoxDecoration(
-                            gradient: AppColors.primaryGradient,
-                            borderRadius: BorderRadius.circular(24),
-                            boxShadow: [
-                              BoxShadow(
-                                color: AppColors.primary.withOpacity(0.3),
-                                blurRadius: 24,
-                                offset: const Offset(0, 8),
-                              ),
-                            ],
-                          ),
-                          child: const Icon(
-                            Icons.car_repair_rounded,
-                            color: Colors.white,
-                            size: 46,
-                          ),
+            padding: const EdgeInsets.fromLTRB(24, 28, 24, 24),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Text(
+                  'Login into Account',
+                  textAlign: TextAlign.center,
+                  style: AuthTheme.title(context),
+                ),
+                const SizedBox(height: 10),
+                Text(
+                  'Join GarageGuru for reliable car repair services',
+                  textAlign: TextAlign.center,
+                  style: AuthTheme.subtitleStyle(context),
+                ),
+                const SizedBox(height: 22),
+                const AuthSocialRow(),
+                const SizedBox(height: 20),
+                const AuthOrDivider(),
+                const SizedBox(height: 20),
+                AuthTextField(
+                  controller: _emailController,
+                  hint: 'you@example.com',
+                  keyboardType: TextInputType.emailAddress,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) return 'Email is required';
+                    if (!value.contains('@')) return 'Enter a valid email';
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 14),
+                AuthTextField(
+                  controller: _passwordController,
+                  hint: '••••••••',
+                  obscureText: _obscurePassword,
+                  suffix: IconButton(
+                    splashRadius: 20,
+                    icon: Icon(
+                      _obscurePassword ? Icons.visibility_off_outlined : Icons.visibility_outlined,
+                      color: AppColors.textSecondary,
+                      size: 22,
+                    ),
+                    onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) return 'Password is required';
+                    if (value.length < 6) return 'Password must be at least 6 characters';
+                    return null;
+                  },
+                ),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: TextButton(
+                    onPressed: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute<void>(
+                          builder: (_) => const ResetPasswordScreen(),
                         ),
-                        const SizedBox(height: AppSpacing.xl),
-                        Text(
-                          'GarageGuru',
-                          style: AppTextStyles.heading1.copyWith(
-                            color: AppColors.primary,
-                            fontSize: 30,
-                            letterSpacing: -0.5,
-                          ),
-                        ),
-                        const SizedBox(height: AppSpacing.xs),
-                        Text(
-                          'Find trusted garages near you',
-                          style: AppTextStyles.body.copyWith(color: AppColors.textSecondary),
-                        ),
-                      ],
+                      );
+                    },
+                    style: TextButton.styleFrom(
+                      foregroundColor: AuthTheme.link,
+                      padding: const EdgeInsets.only(top: 4),
+                    ),
+                    child: const Text(
+                      'Forgot Password?',
+                      style: TextStyle(
+                        fontFamily: 'Poppins',
+                        fontWeight: FontWeight.w600,
+                        fontSize: 13,
+                      ),
                     ),
                   ),
-                  const SizedBox(height: AppSpacing.xxxl * 1.5),
-                  GgTextField(
-                    label: 'Email',
-                    hint: 'Enter your email',
-                    controller: _emailController,
-                    keyboardType: TextInputType.emailAddress,
-                    prefixIcon: Icons.email_outlined,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) return 'Email is required';
-                      if (!value.contains('@')) return 'Enter a valid email';
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: AppSpacing.lg),
-                  GgTextField(
-                    label: 'Password',
-                    hint: 'Enter your password',
-                    controller: _passwordController,
-                    obscureText: _obscurePassword,
-                    prefixIcon: Icons.lock_outline_rounded,
-                    suffix: IconButton(
-                      icon: Icon(
-                        _obscurePassword ? Icons.visibility_off_rounded : Icons.visibility_rounded,
-                        color: AppColors.textSecondary,
-                        size: 20,
-                      ),
-                      onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
+                ),
+                const SizedBox(height: 8),
+                AuthPrimaryButton(
+                  label: 'Sign In',
+                  isLoading: _isLoading,
+                  onPressed: _handleLogin,
+                ),
+                const SizedBox(height: 22),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      "Don't have an account? ",
+                      style: AppTextStyles.body.copyWith(color: AppColors.textSecondary),
                     ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) return 'Password is required';
-                      if (value.length < 6) return 'Password must be at least 6 characters';
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: AppSpacing.xs),
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: TextButton(
-                      onPressed: () {},
-                      style: TextButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
-                      ),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute<void>(
+                            builder: (_) => const RegisterScreen(),
+                          ),
+                        );
+                      },
                       child: Text(
-                        'Forgot Password?',
-                        style: AppTextStyles.bodySmall.copyWith(
-                          color: AppColors.accent,
-                          fontWeight: FontWeight.w600,
+                        'Sign up',
+                        style: AppTextStyles.body.copyWith(
+                          color: AuthTheme.link,
+                          fontWeight: FontWeight.w700,
                         ),
                       ),
                     ),
-                  ),
-                  const SizedBox(height: AppSpacing.xl),
-                  GgButton(
-                    label: 'Sign In',
-                    onPressed: _handleLogin,
-                    isLoading: _isLoading,
-                    useGradient: true,
-                  ),
-                  const SizedBox(height: AppSpacing.xxl),
-                  Row(
-                    children: [
-                      Expanded(child: Divider(color: AppColors.divider.withOpacity(0.5))),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
-                        child: Text(
-                          'OR',
-                          style: AppTextStyles.caption.copyWith(
-                            fontWeight: FontWeight.w600,
-                            letterSpacing: 1.5,
-                          ),
-                        ),
-                      ),
-                      Expanded(child: Divider(color: AppColors.divider.withOpacity(0.5))),
-                    ],
-                  ),
-                  const SizedBox(height: AppSpacing.xxl),
-                  GgButton(
-                    label: 'Continue with Google',
-                    icon: Icons.g_mobiledata,
-                    isOutlined: true,
-                    onPressed: () {},
-                  ),
-                  const SizedBox(height: AppSpacing.xxxl),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text('Don\'t have an account? ', style: AppTextStyles.body),
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(builder: (_) => const RegisterScreen()),
-                          );
-                        },
-                        child: Text(
-                          'Sign Up',
-                          style: AppTextStyles.body.copyWith(
-                            color: AppColors.accent,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
+                  ],
+                ),
+              ],
             ),
           ),
         ),
