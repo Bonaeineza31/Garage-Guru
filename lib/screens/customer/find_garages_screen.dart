@@ -52,14 +52,34 @@ class _FindGaragesScreenState extends State<FindGaragesScreen> {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: const Text(
-          'Find Garages',
-          style: TextStyle(color: Colors.white),
-        ),
+        backgroundColor: AppColors.surface,
         elevation: 0,
+        centerTitle: false,
+        title: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(4),
+              decoration: BoxDecoration(
+                color: AppColors.primary,
+                borderRadius: BorderRadius.circular(4),
+              ),
+              child: const Icon(Icons.garage, color: Colors.white, size: 20),
+            ),
+            const SizedBox(width: 8),
+            const Text(
+              'GarageGuru',
+              style: TextStyle(
+                color: AppColors.textPrimary,
+                fontWeight: FontWeight.bold,
+                fontSize: 16,
+                fontFamily: 'Poppins',
+              ),
+            ),
+          ],
+        ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.notifications_none_rounded),
+            icon: const Icon(Icons.notifications_none_rounded, color: AppColors.textPrimary),
             onPressed: () {
               Navigator.of(context).push(
                 MaterialPageRoute(builder: (_) => const NotificationsScreen()),
@@ -69,39 +89,30 @@ class _FindGaragesScreenState extends State<FindGaragesScreen> {
         ],
       ),
       body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Text(
+              'Find Garages',
+              style: AppTextStyles.heading2,
+            ),
+          ),
           // Search bar
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: AppSpacing.sm),
+            padding: const EdgeInsets.symmetric(horizontal: 16),
             child: TextField(
               controller: _searchController,
               onChanged: (value) => setState(() => _searchQuery = value),
               decoration: InputDecoration(
                 hintText: 'Search garage or service...',
                 prefixIcon: const Icon(Icons.search, color: AppColors.textHint),
-                suffixIcon: _searchQuery.isNotEmpty
-                    ? IconButton(
-                        icon: const Icon(Icons.clear, color: AppColors.textHint),
-                        onPressed: () {
-                          _searchController.clear();
-                          setState(() => _searchQuery = '');
-                        },
-                      )
-                    : null,
                 filled: true,
-                fillColor: AppColors.surface,
-                contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: AppSpacing.lg),
+                fillColor: AppColors.divider.withOpacity(0.2),
+                contentPadding: const EdgeInsets.symmetric(vertical: 0),
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(AppRadius.pill),
-                  borderSide: const BorderSide(color: AppColors.divider),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(AppRadius.pill),
-                  borderSide: const BorderSide(color: AppColors.divider),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(AppRadius.pill),
-                  borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
+                  borderRadius: BorderRadius.circular(AppRadius.md),
+                  borderSide: BorderSide.none,
                 ),
               ),
             ),
@@ -110,30 +121,29 @@ class _FindGaragesScreenState extends State<FindGaragesScreen> {
           // Filter Chips
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: AppSpacing.sm),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: Row(
               children: _filters.map((filter) {
                 final isActive = _activeFilter == filter;
                 return Padding(
-                  padding: const EdgeInsets.only(right: AppSpacing.sm),
+                  padding: const EdgeInsets.only(right: 8),
                   child: FilterChip(
                     label: Text(filter),
                     selected: isActive,
                     onSelected: (selected) {
                       if (selected) setState(() => _activeFilter = filter);
                     },
-                    backgroundColor: AppColors.surface,
+                    backgroundColor: AppColors.divider.withOpacity(0.3),
                     selectedColor: AppColors.primary,
-                    labelStyle: AppTextStyles.bodySmall.copyWith(
+                    labelStyle: TextStyle(
                       color: isActive ? Colors.white : AppColors.textPrimary,
-                      fontWeight: isActive ? FontWeight.w600 : FontWeight.w500,
+                      fontSize: 12,
+                      fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
                     ),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(AppRadius.pill),
-                      side: BorderSide(
-                        color: isActive ? AppColors.primary : AppColors.divider,
-                      ),
                     ),
+                    side: BorderSide.none,
                     showCheckmark: false,
                   ),
                 );

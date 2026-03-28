@@ -16,6 +16,7 @@ class GarageModel {
   final double rating;
   final int reviewCount;
   final bool isVerified;
+  final bool isFavorite;
   final Map<String, WorkingHours> workingHours;
   final double distanceKm;
 
@@ -37,26 +38,52 @@ class GarageModel {
     this.rating = 0.0,
     this.reviewCount = 0,
     this.isVerified = false,
+    this.isFavorite = false,
     this.workingHours = const {},
     this.distanceKm = 0.0,
   });
 
   factory GarageModel.fromMap(Map<String, dynamic> map, String docId) {
+    double safeDouble(dynamic value) {
+      if (value == null) return 0.0;
+      if (value is num) return value.toDouble();
+      if (value is String) return double.tryParse(value) ?? 0.0;
+      return 0.0;
+    }
+
+    int safeInt(dynamic value) {
+      if (value == null) return 0;
+      if (value is num) return value.toInt();
+      if (value is String) return int.tryParse(value) ?? 0;
+      return 0;
+    }
+
+    bool safeBool(dynamic value) {
+      if (value == null) return false;
+      if (value is bool) return value;
+      if (value is String) return value.toLowerCase() == 'true';
+      return false;
+    }
+
     return GarageModel(
       id: docId,
       ownerId: map['ownerId'] ?? '',
       name: map['name'] ?? '',
       description: map['description'] ?? '',
       address: map['address'] ?? '',
-      latitude: (map['latitude'] ?? 0.0).toDouble(),
-      longitude: (map['longitude'] ?? 0.0).toDouble(),
+      latitude: safeDouble(map['latitude']),
+      longitude: safeDouble(map['longitude']),
       phone: map['phone'] ?? '',
       email: map['email'],
       website: map['website'],
       coverImageUrl: map['coverImageUrl'] ?? 'https://images.unsplash.com/photo-1625047509248-ec889cbff17f?w=800',
-      rating: (map['rating'] ?? 0.0).toDouble(),
-      reviewCount: map['reviewCount'] ?? 0,
-      isVerified: map['isVerified'] ?? false,
+      rating: safeDouble(map['rating']),
+      reviewCount: safeInt(map['reviewCount']),
+      isVerified: safeBool(map['isVerified']),
+      isFavorite: safeBool(map['isFavorite']),
+      services: List<String>.from(map['services'] ?? []),
+      galleryImages: List<String>.from(map['galleryImages'] ?? []),
+      distanceKm: safeDouble(map['distanceKm']),
     );
   }
 

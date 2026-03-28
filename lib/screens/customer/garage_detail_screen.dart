@@ -41,6 +41,7 @@ class _GarageDetailScreenState extends State<GarageDetailScreen>
         backgroundColor: AppColors.primary,
         foregroundColor: Colors.white,
         title: const Text('Garage Details'),
+        elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => Navigator.pop(context),
@@ -60,7 +61,11 @@ class _GarageDetailScreenState extends State<GarageDetailScreen>
                 unselectedLabelColor: AppColors.textSecondary,
                 indicatorColor: AppColors.primary,
                 indicatorWeight: 3,
-                labelStyle: AppTextStyles.subtitle.copyWith(fontSize: 14),
+                labelStyle: const TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                  fontFamily: 'Poppins',
+                ),
                 tabs: const [
                   Tab(text: 'Services'),
                   Tab(text: 'Reviews'),
@@ -85,55 +90,58 @@ class _GarageDetailScreenState extends State<GarageDetailScreen>
   Widget _buildHeader(BuildContext context, GarageModel garage) {
     return Container(
       color: AppColors.surface,
-      padding: const EdgeInsets.all(AppSpacing.lg),
+      padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
               ClipRRect(
-                borderRadius: BorderRadius.circular(AppRadius.md),
+                borderRadius: BorderRadius.circular(8),
                 child: Image.network(
                   garage.coverImageUrl,
-                  width: 60,
-                  height: 60,
+                  width: 80,
+                  height: 80,
                   fit: BoxFit.cover,
                   errorBuilder: (_, __, ___) => Container(
-                    width: 60,
-                    height: 60,
+                    width: 80,
+                    height: 80,
                     color: AppColors.primaryLight,
-                    child: const Icon(Icons.garage, color: AppColors.primary),
+                    child: const Icon(Icons.garage, color: AppColors.primary, size: 40),
                   ),
                 ),
               ),
-              const SizedBox(width: AppSpacing.md),
+              const SizedBox(width: 16),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       garage.name,
-                      style: AppTextStyles.heading3,
+                      style: AppTextStyles.heading2,
                     ),
                     const SizedBox(height: 4),
                     Row(
                       children: [
-                        const Icon(Icons.star_rounded, color: AppColors.starFilled, size: 16),
+                        const Icon(Icons.star_rounded, color: AppColors.starFilled, size: 20),
                         const SizedBox(width: 4),
                         Text(
                           '${garage.rating} (${garage.reviewCount} reviews)',
-                          style: AppTextStyles.caption.copyWith(fontWeight: FontWeight.w600),
+                          style: AppTextStyles.bodySmall.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.textPrimary,
+                          ),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 2),
+                    const SizedBox(height: 4),
                     Row(
                       children: [
-                        const Icon(Icons.location_on_outlined, size: 14, color: AppColors.textSecondary),
+                        const Icon(Icons.location_on_outlined, size: 16, color: AppColors.textSecondary),
                         const SizedBox(width: 4),
                         Text(
-                          '${garage.distanceKm.toStringAsFixed(1)}km away • ${garage.address.split(',').last.trim()}',
-                          style: AppTextStyles.caption,
+                          '${garage.distanceKm}km away • ${garage.address.split(',').last.trim()}',
+                          style: AppTextStyles.bodySmall,
                         ),
                       ],
                     ),
@@ -142,48 +150,42 @@ class _GarageDetailScreenState extends State<GarageDetailScreen>
               ),
             ],
           ),
-          const SizedBox(height: AppSpacing.lg),
+          const SizedBox(height: 20),
           Row(
             children: [
               Expanded(
                 child: OutlinedButton.icon(
                   onPressed: () {},
-                  icon: const Icon(Icons.phone_outlined, size: 16),
+                  icon: const Icon(Icons.phone_outlined, size: 18),
                   label: const Text('Call'),
                   style: OutlinedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(
-                      vertical: AppSpacing.sm,
-                      horizontal: 0,
-                    ),
+                    padding: const EdgeInsets.symmetric(vertical: 12),
                     foregroundColor: AppColors.primary,
-                    side: const BorderSide(color: AppColors.primary, width: 1.5),
-                    backgroundColor: Colors.white,
+                    side: const BorderSide(color: AppColors.primary),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                   ),
                 ),
               ),
-              const SizedBox(width: AppSpacing.sm),
+              const SizedBox(width: 12),
               Expanded(
                 child: OutlinedButton.icon(
                   onPressed: () {
-                     Navigator.push(
-                       context,
-                       MaterialPageRoute(builder: (_) => GarageMessageScreen(garage: garage)),
-                     );
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => GarageMessageScreen(garage: garage)),
+                    );
                   },
-                  icon: const Icon(Icons.chat_bubble_outline_rounded, size: 16),
+                  icon: const Icon(Icons.chat_bubble_outline_rounded, size: 18),
                   label: const Text('Message'),
                   style: OutlinedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(
-                      vertical: AppSpacing.sm,
-                      horizontal: 0,
-                    ),
+                    padding: const EdgeInsets.symmetric(vertical: 12),
                     foregroundColor: AppColors.primary,
-                    side: const BorderSide(color: AppColors.primary, width: 1.5),
-                    backgroundColor: Colors.white,
+                    side: const BorderSide(color: AppColors.primary),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                   ),
                 ),
               ),
-              const SizedBox(width: AppSpacing.sm),
+              const SizedBox(width: 12),
               Expanded(
                 child: ElevatedButton.icon(
                   onPressed: () {
@@ -194,12 +196,14 @@ class _GarageDetailScreenState extends State<GarageDetailScreen>
                       ),
                     );
                   },
-                  icon: const Icon(Icons.calendar_today_rounded, size: 16),
+                  icon: const Icon(Icons.calendar_today_rounded, size: 18),
                   label: const Text('Book'),
                   style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm, horizontal: 0),
+                    padding: const EdgeInsets.symmetric(vertical: 12),
                     backgroundColor: AppColors.primary,
                     foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                    elevation: 0,
                   ),
                 ),
               ),
@@ -218,66 +222,64 @@ class _AboutTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(AppSpacing.lg),
+      padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('About', style: AppTextStyles.heading3),
-          const SizedBox(height: AppSpacing.sm),
-          Text(garage.description, style: AppTextStyles.body),
-          const SizedBox(height: AppSpacing.xxl),
-          Text('Contact & Location', style: AppTextStyles.heading3),
-          const SizedBox(height: AppSpacing.md),
-          InfoRow(
-            icon: Icons.location_on_rounded,
-            label: 'Address',
-            value: garage.address,
-            iconColor: AppColors.textSecondary,
-            onTap: () {},
-          ),
-          InfoRow(
-            icon: Icons.phone_rounded,
-            label: 'Phone',
-            value: garage.phone,
-            iconColor: AppColors.textSecondary,
-            onTap: () {},
-          ),
-          InfoRow(
-            icon: Icons.access_time_rounded,
-            label: 'Hours',
-            value: 'Mon-Sat: 8:00 AM - 6:00 PM',
-            iconColor: AppColors.textSecondary,
-            onTap: () {},
-          ),
-          const SizedBox(height: AppSpacing.xxl),
-          if (garage.galleryImages.isNotEmpty) ...[
-            Text('Gallery', style: AppTextStyles.heading3),
-            const SizedBox(height: AppSpacing.md),
-            GridView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 3,
-                crossAxisSpacing: AppSpacing.sm,
-                mainAxisSpacing: AppSpacing.sm,
-              ),
-              itemCount: garage.galleryImages.length,
-              itemBuilder: (context, index) {
-                return ClipRRect(
-                  borderRadius: BorderRadius.circular(AppRadius.md),
-                  child: Image.network(
-                    garage.galleryImages[index],
-                    fit: BoxFit.cover,
-                    errorBuilder: (_, __, ___) => Container(
-                      color: AppColors.background,
-                      child: const Icon(Icons.image, color: AppColors.textHint, size: 32),
-                    ),
-                  ),
-                );
-              },
+          const Text('About', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.textPrimary)),
+          const SizedBox(height: 8),
+          Text(garage.description, style: AppTextStyles.bodySmall),
+          const SizedBox(height: 24),
+          const Text('Contact & Location', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.textPrimary)),
+          const SizedBox(height: 12),
+          _buildInfoRow(Icons.location_on_outlined, 'Address', garage.address),
+          _buildInfoRow(Icons.phone_outlined, 'Phone', garage.phone),
+          _buildInfoRow(Icons.access_time_outlined, 'Hours', 'Mon-Sat: 8:00 AM - 6:00 PM'),
+          const SizedBox(height: 24),
+          const Text('Gallery', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.textPrimary)),
+          const SizedBox(height: 12),
+          GridView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 3,
+              crossAxisSpacing: 8,
+              mainAxisSpacing: 8,
             ),
-          ],
-          const SizedBox(height: AppSpacing.xxxl),
+            itemCount: garage.galleryImages.length,
+            itemBuilder: (context, index) {
+              return ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: Image.network(
+                  garage.galleryImages[index],
+                  fit: BoxFit.cover,
+                ),
+              );
+            },
+          ),
+          const SizedBox(height: 32),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildInfoRow(IconData icon, String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(icon, size: 20, color: AppColors.textSecondary),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(label, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: AppColors.textPrimary)),
+                Text(value, style: AppTextStyles.bodySmall),
+              ],
+            ),
+          ),
         ],
       ),
     );
@@ -290,62 +292,64 @@ class _ServicesTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final services = MockData.services
-        .where((s) => s.garageId == garage.id)
-        .toList();
-
-    if (services.isEmpty) {
-      return const EmptyState(
-        icon: Icons.build,
-        title: 'No Services Listed',
-        subtitle: 'This garage hasn\'t listed their services yet.',
-      );
-    }
-    final categories = <String, List<ServiceModel>>{};
-    for (final service in services) {
-      categories.putIfAbsent(service.category, () => []).add(service);
-    }
+    final serviceCategories = [
+      'Engine Services',
+      'Battery Service',
+      'Tire Services',
+      'Maintenance',
+    ];
 
     return ListView.builder(
-      padding: const EdgeInsets.all(AppSpacing.lg),
-      itemCount: categories.keys.length,
+      padding: const EdgeInsets.all(16),
+      itemCount: serviceCategories.length,
       itemBuilder: (context, index) {
-        final category = categories.keys.elementAt(index);
-        final categoryServices = categories[category]!;
-        
-        return Padding(
-          padding: const EdgeInsets.only(bottom: AppSpacing.md),
-          child: Container(
-            decoration: BoxDecoration(
-              color: AppColors.surface,
-              borderRadius: BorderRadius.circular(AppRadius.lg),
-              border: Border.all(color: AppColors.divider.withOpacity(0.5)),
+        return Container(
+          margin: const EdgeInsets.only(bottom: 12),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(color: AppColors.divider),
+          ),
+          child: ExpansionTile(
+            title: Text(
+              serviceCategories[index],
+              style: const TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: AppColors.textPrimary,
+              ),
             ),
-            child: ExpansionTile(
-              title: Text(category, style: AppTextStyles.subtitle),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.lg)),
-              childrenPadding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.sm),
-              children: categoryServices.map((service) => Padding(
-                padding: const EdgeInsets.only(bottom: AppSpacing.sm),
-                child: ServiceCard(
-                  service: service,
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => BookingScreen(
-                          garage: garage,
-                          initialServiceType: service.name,
-                        ),
-                      ),
-                    );
-                  },
-                ),
-              )).toList(),
-            ),
+            shape: const RoundedRectangleBorder(side: BorderSide.none),
+            collapsedShape: const RoundedRectangleBorder(side: BorderSide.none),
+            iconColor: AppColors.textSecondary,
+            collapsedIconColor: AppColors.textSecondary,
+            childrenPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            children: [
+              _buildServiceItem('Full computer diagnostics', 'Frw 25,000'),
+              _buildServiceItem('Oil Change', 'Frw 30,000'),
+            ],
           ),
         );
       },
+    );
+  }
+
+  Widget _buildServiceItem(String name, String price) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(name, style: AppTextStyles.bodySmall),
+          Text(
+            price,
+            style: AppTextStyles.bodySmall.copyWith(
+              fontWeight: FontWeight.bold,
+              color: AppColors.primary,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -356,27 +360,91 @@ class _ReviewsTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final reviews = MockData.reviews
-        .where((r) => r.garageId == garage.id)
-        .toList();
-
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(AppSpacing.lg),
+      padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          RatingSummary(
-            averageRating: garage.rating,
-            totalReviews: garage.reviewCount,
+          Row(
+            children: [
+              Column(
+                children: [
+                   Text(
+                    '${garage.rating}',
+                    style: const TextStyle(fontSize: 48, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
+                  ),
+                  Row(
+                    children: List.generate(5, (index) => const Icon(Icons.star_rounded, color: AppColors.starFilled, size: 20)),
+                  ),
+                  const SizedBox(height: 4),
+                  Text('${garage.reviewCount} reviews', style: AppTextStyles.caption),
+                ],
+              ),
+              const SizedBox(width: 32),
+              Expanded(
+                child: Column(
+                  children: [
+                    _buildRatingBar(5, 0.9),
+                    _buildRatingBar(4, 0.1),
+                    _buildRatingBar(3, 0.0),
+                    _buildRatingBar(2, 0.0),
+                    _buildRatingBar(1, 0.0),
+                  ],
+                ),
+              ),
+            ],
           ),
-          const SizedBox(height: AppSpacing.xxl),
-          ...reviews.map((review) => ReviewCard(review: review)),
-          if (reviews.isEmpty)
-            const EmptyState(
-              icon: Icons.reviews,
-              title: 'No Reviews Yet',
-              subtitle: 'Be the first to review this garage!',
+          const SizedBox(height: 32),
+          _buildReviewCard('Jean Pierre', 'May 15, 2023', 'Excellent service! They fixed my car quickly and at a reasonable price.', 5),
+          _buildReviewCard('Marie Claire', 'May 5, 2023', 'Good service but I had to wait a bit longer than expected. The mechanics are very professional though.', 4),
+          _buildReviewCard('Emmanuel', 'April 20, 2023', 'Best garage in Kigali! They diagnosed and fixed my engine problem that other garages couldn\'t figure out.', 5),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildRatingBar(int stars, double progress) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 2),
+      child: Row(
+        children: [
+          Text('$stars', style: AppTextStyles.caption),
+          const SizedBox(width: 8),
+          Expanded(
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(4),
+              child: LinearProgressIndicator(
+                value: progress,
+                backgroundColor: AppColors.divider,
+                valueColor: const AlwaysStoppedAnimation<Color>(AppColors.starFilled),
+                minHeight: 8,
+              ),
             ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildReviewCard(String user, String date, String content, int rating) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(user, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+              Text(date, style: AppTextStyles.caption),
+            ],
+          ),
+          const SizedBox(height: 4),
+          Row(
+            children: List.generate(5, (index) => Icon(Icons.star_rounded, color: index < rating ? AppColors.starFilled : AppColors.divider, size: 16)),
+          ),
+          const SizedBox(height: 8),
+          Text(content, style: AppTextStyles.bodySmall),
         ],
       ),
     );
