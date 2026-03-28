@@ -18,6 +18,7 @@ class GarageModel {
   final bool isVerified;
   final Map<String, WorkingHours> workingHours;
   final double distanceKm;
+  final bool isFavorite;
 
   const GarageModel({
     required this.id,
@@ -39,24 +40,71 @@ class GarageModel {
     this.isVerified = false,
     this.workingHours = const {},
     this.distanceKm = 0.0,
+    this.isFavorite = false,
   });
+
+  GarageModel copyWith({
+    String? id,
+    String? ownerId,
+    String? name,
+    String? description,
+    String? address,
+    double? latitude,
+    double? longitude,
+    String? phone,
+    String? email,
+    String? website,
+    String? coverImageUrl,
+    List<String>? galleryImages,
+    List<String>? services,
+    List<String>? specializations,
+    double? rating,
+    int? reviewCount,
+    bool? isVerified,
+    Map<String, WorkingHours>? workingHours,
+    double? distanceKm,
+    bool? isFavorite,
+  }) {
+    return GarageModel(
+      id: id ?? this.id,
+      ownerId: ownerId ?? this.ownerId,
+      name: name ?? this.name,
+      description: description ?? this.description,
+      address: address ?? this.address,
+      latitude: latitude ?? this.latitude,
+      longitude: longitude ?? this.longitude,
+      phone: phone ?? this.phone,
+      email: email ?? this.email,
+      website: website ?? this.website,
+      coverImageUrl: coverImageUrl ?? this.coverImageUrl,
+      galleryImages: galleryImages ?? this.galleryImages,
+      services: services ?? this.services,
+      specializations: specializations ?? this.specializations,
+      rating: rating ?? this.rating,
+      reviewCount: reviewCount ?? this.reviewCount,
+      isVerified: isVerified ?? this.isVerified,
+      workingHours: workingHours ?? this.workingHours,
+      distanceKm: distanceKm ?? this.distanceKm,
+      isFavorite: isFavorite ?? this.isFavorite,
+    );
+  }
 
   factory GarageModel.fromMap(Map<String, dynamic> map, String docId) {
     return GarageModel(
       id: docId,
-      ownerId: map['ownerId'] ?? '',
-      name: map['name'] ?? '',
-      description: map['description'] ?? '',
-      address: map['address'] ?? '',
-      latitude: (map['latitude'] ?? 0.0).toDouble(),
-      longitude: (map['longitude'] ?? 0.0).toDouble(),
-      phone: map['phone'] ?? '',
-      email: map['email'],
-      website: map['website'],
-      coverImageUrl: map['coverImageUrl'] ?? 'https://images.unsplash.com/photo-1625047509248-ec889cbff17f?w=800',
-      rating: (map['rating'] ?? 0.0).toDouble(),
-      reviewCount: map['reviewCount'] ?? 0,
-      isVerified: map['isVerified'] ?? false,
+      ownerId: map['ownerId']?.toString() ?? '',
+      name: map['name']?.toString() ?? '',
+      description: map['description']?.toString() ?? '',
+      address: map['address']?.toString() ?? '',
+      latitude: num.tryParse(map['latitude']?.toString() ?? '0')?.toDouble() ?? 0.0,
+      longitude: num.tryParse(map['longitude']?.toString() ?? '0')?.toDouble() ?? 0.0,
+      phone: map['phone']?.toString() ?? '',
+      email: map['email']?.toString(),
+      website: map['website']?.toString(),
+      coverImageUrl: map['coverImageUrl']?.toString() ?? 'https://images.unsplash.com/photo-1625047509248-ec889cbff17f?w=800',
+      rating: num.tryParse(map['rating']?.toString() ?? '0')?.toDouble() ?? 0.0,
+      reviewCount: int.tryParse(map['reviewCount']?.toString() ?? '0') ?? 0,
+      isVerified: map['isVerified'] == true,
     );
   }
 
