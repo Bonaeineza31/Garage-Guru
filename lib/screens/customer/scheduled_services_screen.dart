@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:garage_guru/core/theme/app_theme.dart';
+import 'package:garage_guru/screens/customer/request_repair_form_screen.dart';
 import 'package:garage_guru/widgets/widgets.dart';
 
 class ScheduledServicesScreen extends StatelessWidget {
@@ -33,24 +34,28 @@ class ScheduledServicesScreen extends StatelessWidget {
               subtitle: 'Replace engine oil and filter',
               estCost: r'$45 - $80',
               estTime: '30 min',
+              repairTypeForRequest: 'Oil Change',
             ),
             _ServiceSelectionCard(
               title: 'Tire Rotation',
               subtitle: 'Rotate tires to ensure even wear',
               estCost: r'$30 - $50',
               estTime: '30 min',
+              repairTypeForRequest: 'Tire Rotation',
             ),
             _ServiceSelectionCard(
               title: 'Brake Service',
               subtitle: 'Inspect and service brake system',
               estCost: r'$100 - $300',
               estTime: '1-2 hours',
+              repairTypeForRequest: 'Brake Service',
             ),
             _ServiceSelectionCard(
               title: 'Full Inspection',
               subtitle: 'Complete vehicle inspection',
               estCost: r'$80 - $150',
               estTime: '1 hour',
+              repairTypeForRequest: 'Full Inspection',
             ),
           ],
         ),
@@ -64,12 +69,14 @@ class _ServiceSelectionCard extends StatelessWidget {
   final String subtitle;
   final String estCost;
   final String estTime;
+  final String repairTypeForRequest;
 
   const _ServiceSelectionCard({
     required this.title,
     required this.subtitle,
     required this.estCost,
     required this.estTime,
+    required this.repairTypeForRequest,
   });
 
   @override
@@ -113,7 +120,15 @@ class _ServiceSelectionCard extends StatelessWidget {
                 ),
               ),
               OutlinedButton(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => RequestRepairFormScreen(
+                        initialRepairType: repairTypeForRequest,
+                      ),
+                    ),
+                  );
+                },
                 style: OutlinedButton.styleFrom(
                   foregroundColor: AppColors.primary,
                   side: BorderSide(color: AppColors.primary),
