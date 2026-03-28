@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:garage_guru/core/theme/app_theme.dart';
+import 'package:garage_guru/theme/app_theme.dart';
 import 'package:garage_guru/models/models.dart';
 
 class GarageMessageScreen extends StatelessWidget {
@@ -17,7 +17,11 @@ class GarageMessageScreen extends StatelessWidget {
         titleSpacing: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => Navigator.pop(context),
+          onPressed: () {
+            if (Navigator.canPop(context)) {
+              Navigator.pop(context);
+            }
+          },
         ),
         title: Row(
           children: [

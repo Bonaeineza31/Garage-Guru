@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:garage_guru/core/theme/app_theme.dart';
+import 'package:garage_guru/theme/app_theme.dart';
 import 'package:garage_guru/data/mock_data.dart';
 import 'package:garage_guru/models/models.dart';
 import 'package:garage_guru/widgets/widgets.dart';
@@ -44,7 +44,11 @@ class _GarageDetailScreenState extends State<GarageDetailScreen>
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.pop(context),
+          onPressed: () {
+            if (Navigator.canPop(context)) {
+              Navigator.pop(context);
+            }
+          },
         ),
       ),
       body: NestedScrollView(

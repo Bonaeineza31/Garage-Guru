@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:garage_guru/core/theme/app_theme.dart';
+import 'package:garage_guru/theme/app_theme.dart';
 class GgTextField extends StatelessWidget {
   final String label;
   final String? hint;

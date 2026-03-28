@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:garage_guru/core/theme/app_theme.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:garage_guru/theme/app_theme.dart';
 import 'package:garage_guru/models/models.dart';
 import 'package:garage_guru/widgets/widgets.dart';
+import 'package:garage_guru/blocs/booking_bloc.dart';
+import 'package:garage_guru/blocs/auth_bloc.dart';
 
 class BookingScreen extends StatefulWidget {
   final GarageModel garage;
@@ -109,7 +112,11 @@ class _BookingScreenState extends State<BookingScreen> {
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.pop(context),
+          onPressed: () {
+            if (Navigator.canPop(context)) {
+              Navigator.pop(context);
+            }
+          },
         ),
       ),
       body: SingleChildScrollView(
@@ -280,6 +287,21 @@ class _BookingScreenState extends State<BookingScreen> {
 
   void _validateAndConfirm() {
     if (_formKey.currentState!.validate()) {
+      final userId = context.read<AuthBloc>().state.user?.uid;
+      if (userId != null) {
+        context.read<BookingBloc>().add(AddBooking({
+          'userId': userId,
+          'garageId': widget.garage.id,
+          'garageName': widget.garage.name,
+          'service': _selectedService,
+          'vehicle': _selectedVehicle,
+          'date': _dateController.text,
+          'time': _timeController.text,
+          'status': 'Pending',
+          'createdAt': DateTime.now().toIso8601String(),
+        }));
+      }
+
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
@@ -289,7 +311,9 @@ class _BookingScreenState extends State<BookingScreen> {
             TextButton(
               onPressed: () {
                 Navigator.pop(context);
-                Navigator.pop(context);
+                if (Navigator.canPop(context)) {
+                  Navigator.pop(context);
+                }
               },
               child: const Text('OK'),
             ),

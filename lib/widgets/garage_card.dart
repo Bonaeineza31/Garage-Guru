@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:garage_guru/core/theme/app_theme.dart';
+import 'package:garage_guru/theme/app_theme.dart';
 import 'package:garage_guru/models/garage_model.dart';
 class GarageCard extends StatelessWidget {
   final GarageModel garage;

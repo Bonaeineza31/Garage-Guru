@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:garage_guru/core/theme/app_theme.dart';
+import 'package:garage_guru/theme/app_theme.dart';
 import 'package:garage_guru/models/review_model.dart';
 class ReviewCard extends StatelessWidget {
   final ReviewModel review;

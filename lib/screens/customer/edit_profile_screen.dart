@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:garage_guru/core/theme/app_theme.dart';
+import 'package:garage_guru/theme/app_theme.dart';
 import 'package:garage_guru/data/mock_data.dart';
 import 'package:garage_guru/widgets/widgets.dart';
 

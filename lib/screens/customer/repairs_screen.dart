@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:garage_guru/core/theme/app_theme.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:garage_guru/theme/app_theme.dart';
 import 'package:garage_guru/models/repair_model.dart';
 import 'package:garage_guru/screens/customer/repair_detail_screen.dart';
 import 'package:garage_guru/screens/customer/repairs_history_screen.dart';
 import 'package:garage_guru/screens/customer/notifications_screen.dart';
-
+import 'package:garage_guru/blocs/booking_bloc.dart';
+import 'package:garage_guru/blocs/auth_bloc.dart';
 
 class RepairsScreen extends StatefulWidget {
   const RepairsScreen({super.key});
@@ -17,72 +19,15 @@ class _RepairsScreenState extends State<RepairsScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
-  final List<RepairModel> _currentRepairs = [
-    RepairModel(
-      id: '1',
-      serviceName: 'Engine Diagnostics',
-      vehicleMake: 'Toyota',
-      vehicleModel: 'Camry',
-      vehiclePlate: 'BA01234',
-      progressPercent: 0.25,
-      status: RepairStatus.mechanicOnWay,
-      mechanicName: 'Jean Claude',
-      mechanicSpecialty: 'Engine Specialist',
-      mechanicRating: 4.9,
-      location: 'Auto Finit, Kigali',
-      startDate: DateTime(2025, 5, 15),
-      estimatedCompletion: 'May 15, 2025 (4 hours)',
-      repairDescription:
-          'Full engine diagnostic scan, checking all sensors and systems for faults.',
-      partsCost: 20000,
-      laborCost: 15000,
-      updates: [
-        RepairUpdate(
-          timestamp: DateTime(2025, 5, 15, 10, 0),
-          message: 'Repair started',
-        ),
-        RepairUpdate(
-          timestamp: DateTime(2025, 5, 15, 11, 30),
-          message:
-              'Initial diagnostics complete, identified potential issue with spark plugs',
-        ),
-      ],
-    ),
-    RepairModel(
-      id: '2',
-      serviceName: 'Brake Pad Replacement',
-      vehicleMake: 'Toyota',
-      vehicleModel: 'Camry',
-      vehiclePlate: 'BA01234',
-      progressPercent: 0.75,
-      status: RepairStatus.inProgress,
-      mechanicName: 'Marie Claire',
-      mechanicSpecialty: 'Brake Specialist',
-      mechanicRating: 4.8,
-      location: 'Kigali Motors',
-      startDate: DateTime(2025, 5, 15),
-      estimatedCompletion: '2 hours',
-      repairDescription:
-          'Replacement of front and rear brake pads, inspection of brake rotors and calipers.',
-      partsCost: 20000,
-      laborCost: 15000,
-      updates: [
-        RepairUpdate(
-          timestamp: DateTime(2025, 5, 15, 9, 0),
-          message: 'Repair started',
-        ),
-        RepairUpdate(
-          timestamp: DateTime(2025, 5, 15, 12, 0),
-          message: 'Old brake pads removed; new pads fitted and bedding in.',
-        ),
-      ],
-    ),
-  ];
-
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
+    
+    final userId = context.read<AuthBloc>().state.user?.uid;
+    if (userId != null) {
+      context.read<BookingBloc>().add(LoadRepairs(userId));
+    }
   }
 
   @override
@@ -93,121 +38,151 @@ class _RepairsScreenState extends State<RepairsScreen>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      appBar: AppBar(
-        backgroundColor: AppColors.primary,
-        elevation: 0,
-        leading: IconButton(
-          onPressed: () => Navigator.pop(context),
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
-        ),
-        title: const Text(
-          'GarageGuru',
-          style: TextStyle(
-            fontFamily: 'Poppins',
-            fontWeight: FontWeight.w700,
-            fontSize: 18,
-            color: Colors.white,
-          ),
-        ),
-        actions: [
-          Stack(
-            children: [
-              IconButton(
-                icon: const Icon(
-                  Icons.notifications_none_rounded,
-                  color: Colors.white,
-                ),
-                onPressed: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (_) => const NotificationsScreen(),
-                    ),
-                  );
-                },
+    return BlocBuilder<BookingBloc, BookingState>(
+      builder: (context, state) {
+        return Scaffold(
+          backgroundColor: AppColors.background,
+          appBar: AppBar(
+            backgroundColor: AppColors.primary,
+            elevation: 0,
+            leading: IconButton(
+              onPressed: () {
+                if (Navigator.canPop(context)) {
+                  Navigator.pop(context);
+                }
+              },
+              icon: const Icon(Icons.arrow_back, color: Colors.white),
+            ),
+            title: const Text(
+              'GarageGuru',
+              style: TextStyle(
+                fontFamily: 'Poppins',
+                fontWeight: FontWeight.w700,
+                fontSize: 18,
+                color: Colors.white,
               ),
-              Positioned(
-                right: 12,
-                top: 12,
-                child: Container(
-                  width: 8,
-                  height: 8,
-                  decoration: BoxDecoration(
-                    color: AppColors.error,
-                    shape: BoxShape.circle,
-                    border: Border.all(color: AppColors.primary, width: 1.5),
+            ),
+            actions: [
+              Stack(
+                children: [
+                  IconButton(
+                    icon: const Icon(
+                      Icons.notifications_none_rounded,
+                      color: Colors.white,
+                    ),
+                    onPressed: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => const NotificationsScreen(),
+                        ),
+                      );
+                    },
                   ),
+                  Positioned(
+                    right: 12,
+                    top: 12,
+                    child: Container(
+                      width: 8,
+                      height: 8,
+                      decoration: BoxDecoration(
+                        color: AppColors.error,
+                        shape: BoxShape.circle,
+                        border: Border.all(color: AppColors.primary, width: 1.5),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+          body: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                color: AppColors.primary,
+                padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    TabBar(
+                      controller: _tabController,
+                      labelColor: Colors.white,
+                      unselectedLabelColor: Colors.white.withOpacity(0.7),
+                      indicatorColor: Colors.white,
+                      dividerColor: Colors.transparent,
+                      indicatorWeight: 3,
+                      labelStyle: const TextStyle(
+                        fontFamily: 'Poppins',
+                        fontWeight: FontWeight.w600,
+                        fontSize: 14,
+                      ),
+                      unselectedLabelStyle: const TextStyle(
+                        fontFamily: 'Poppins',
+                        fontWeight: FontWeight.w400,
+                        fontSize: 14,
+                      ),
+                      tabs: const [
+                        Tab(text: 'Current'),
+                        Tab(text: 'History'),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: TabBarView(
+                  controller: _tabController,
+                  children: [
+                    _buildCurrentTab(state),
+                    const RepairsHistoryScreen(),
+                  ],
                 ),
               ),
             ],
           ),
-        ],
-      ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            color: AppColors.primary,
-            padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                TabBar(
-                  controller: _tabController,
-                  labelColor: Colors.white,
-                  unselectedLabelColor: Colors.white.withOpacity(0.7),
-                  indicatorColor: Colors.white,
-                  dividerColor: Colors.transparent,
-                  indicatorWeight: 3,
-                  labelStyle: const TextStyle(
-                    fontFamily: 'Poppins',
-                    fontWeight: FontWeight.w600,
-                    fontSize: 14,
-                  ),
-                  unselectedLabelStyle: const TextStyle(
-                    fontFamily: 'Poppins',
-                    fontWeight: FontWeight.w400,
-                    fontSize: 14,
-                  ),
-                  tabs: const [
-                    Tab(text: 'Current'),
-                    Tab(text: 'History'),
-                  ],
-                ),
-              ],
-            ),
-          ),
-          Expanded(
-            child: TabBarView(
-              controller: _tabController,
-              children: [
-                _buildCurrentTab(),
-                const RepairsHistoryScreen(),
-              ],
-            ),
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 
-  Widget _buildCurrentTab() {
+  Widget _buildCurrentTab(BookingState state) {
+    if (state.status == BookingStatus.loading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    final currentRepairs = state.activeRepairs.where((r) => r.status != RepairStatus.completed).toList();
+
+    if (currentRepairs.isEmpty) {
+      return Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(Icons.build_circle_outlined, size: 64, color: AppColors.textHint),
+            const SizedBox(height: 16),
+            Text(
+              'No active repairs',
+              style: TextStyle(color: AppColors.textHint, fontSize: 16),
+            ),
+          ],
+        ),
+      );
+    }
+
     return ListView.separated(
       padding: const EdgeInsets.all(16),
-      itemCount: _currentRepairs.length,
+      itemCount: currentRepairs.length,
       separatorBuilder: (_, __) => const SizedBox(height: 12),
       itemBuilder: (context, index) => _RepairCard(
-        repair: _currentRepairs[index],
+        repair: currentRepairs[index],
         onViewDetails: () {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (_) => RepairDetailScreen(repair: _currentRepairs[index]),
+              builder: (_) => RepairDetailScreen(repair: currentRepairs[index]),
             ),
           );
         },
-        onCancel: () => _showCancelDialog(context, _currentRepairs[index]),
+        onCancel: () => _showCancelDialog(context, currentRepairs[index]),
       ),
     );
   }

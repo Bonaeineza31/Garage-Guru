@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:garage_guru/core/theme/app_theme.dart';
+import 'package:garage_guru/theme/app_theme.dart';
 import 'package:garage_guru/widgets/widgets.dart';
 
 class AddGarageScreen extends StatefulWidget {
@@ -79,7 +79,9 @@ class _AddGarageScreenState extends State<AddGarageScreen> {
       });
 
       if (!mounted) return;
-      Navigator.pop(context);
+      if (Navigator.canPop(context)) {
+        Navigator.pop(context);
+      }
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Garage successfully added!')),
       );

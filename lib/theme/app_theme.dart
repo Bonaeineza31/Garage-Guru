@@ -205,35 +205,28 @@ class AppShadows {
       ];
 }
 
-/// Compatibility alias so legacy screens using AppTheme.xxx still compile.
-/// All values map to AppColors equivalents.
 class AppTheme {
   AppTheme._();
 
-  // Primary brand colors
   static const Color primaryBlue      = AppColors.primary;
   static const Color scheduleBlue     = Color(0xFF0284C7);
   static const Color emergencyOrange  = AppColors.accent;
   static const Color repairGreen      = AppColors.success;
 
-  // UI / background colors
   static const Color scaffoldBackground = AppColors.background;
   static const Color cardBackground     = AppColors.cardBackground;
   static const Color dividerColor       = AppColors.divider;
   static const Color iconGray           = AppColors.textSecondary;
   static const Color textHint           = AppColors.textHint;
 
-  // Text colors
   static const Color textPrimary   = AppColors.textPrimary;
   static const Color textSecondary = AppColors.textSecondary;
 
-  // Status colors
   static const Color errorRed       = AppColors.error;
   static const Color successGreen   = AppColors.success;
   static const Color warningYellow  = AppColors.warning;
   static const Color infoBlue       = AppColors.info;
 
-  /// Flutter ThemeData — kept for main.dart compatibility
   static ThemeData get lightTheme {
     return ThemeData(
       useMaterial3: true,

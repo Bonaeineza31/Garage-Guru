@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:garage_guru/core/theme/app_theme.dart';
+import 'package:garage_guru/theme/app_theme.dart';
 import 'package:garage_guru/models/models.dart';
 import 'package:garage_guru/screens/customer/find_garages_screen.dart';
 import 'package:garage_guru/screens/customer/notifications_screen.dart';
@@ -9,6 +10,8 @@ import 'package:garage_guru/screens/customer/garage_detail_screen.dart';
 import 'package:garage_guru/screens/customer/emergency_repair_screen.dart';
 import 'package:garage_guru/screens/customer/request_repair_form_screen.dart';
 import 'package:garage_guru/screens/customer/repairs_screen.dart';
+import 'package:garage_guru/blocs/garage_bloc.dart';
+import 'package:garage_guru/blocs/auth_bloc.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -301,15 +304,14 @@ class _HomeScreenState extends State<HomeScreen> {
             ],
           ),
         ),
-        StreamBuilder<QuerySnapshot>(
-          stream: FirebaseFirestore.instance.collection('garages').limit(3).snapshots(),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) return const SizedBox(height: 100, child: Center(child: CircularProgressIndicator()));
-            if (snapshot.hasError) return Padding(padding: const EdgeInsets.all(16), child: Text('Error: ${snapshot.error}'));
+        BlocBuilder<GarageBloc, GarageState>(
+          builder: (context, state) {
+            if (state.status == GarageStatus.loading) return const SizedBox(height: 100, child: Center(child: CircularProgressIndicator()));
+            if (state.status == GarageStatus.failure) return const Padding(padding: EdgeInsets.all(16), child: Text('Failed to load garages'));
             
-            final garages = (snapshot.data?.docs ?? [])
-                .map((doc) => GarageModel.fromMap(doc.data() as Map<String, dynamic>, doc.id))
-                .toList();
+            final garages = state.allGarages.take(3).toList();
+
+            if (garages.isEmpty) return const Padding(padding: EdgeInsets.all(16), child: Text('No garages found nearby'));
 
             return ListView.builder(
               shrinkWrap: true,
@@ -426,4 +428,4 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
-}
+}
