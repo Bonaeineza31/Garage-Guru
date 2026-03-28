@@ -5,6 +5,7 @@ import 'package:garage_guru/screens/customer/emergency_repair_screen.dart';
 import 'package:garage_guru/screens/customer/repairs_screen.dart';
 import 'package:garage_guru/screens/customer/tire_service_screen.dart';
 import 'package:garage_guru/screens/customer/scheduled_services_screen.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -139,57 +140,36 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Container(
         height: 180,
         width: double.infinity,
-        color: const Color(0xFFDCEFFB),
-        child: Stack(
-          children: [
-            Positioned.fill(
-              child: Container(
-                decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [Color(0xFFDDEDF9), Color(0xFFBFDDF8)],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                ),
-              ),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: const Color(0xFFE5E7EB)),
+        ),
+        child: GoogleMap(
+          initialCameraPosition: const CameraPosition(
+            target: LatLng(-1.9441, 30.0619),
+            zoom: 13,
+          ),
+          myLocationButtonEnabled: false,
+          myLocationEnabled: true,
+          zoomControlsEnabled: false,
+          mapToolbarEnabled: false,
+          markers: {
+            const Marker(
+              markerId: MarkerId('g1'),
+              position: LatLng(-1.9441, 30.0619),
+              infoWindow: InfoWindow(title: 'Auto Finit'),
             ),
-            ...List.generate(
-              10,
-              (index) => Positioned(
-                left: 20.0 + (index * 28) % 260,
-                top: 18.0 + (index * 24) % 130,
-                child: Container(
-                  width: 18,
-                  height: 18,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(9),
-                    border: Border.all(color: AppColors.accent, width: 1.3),
-                  ),
-                  child: const Icon(
-                    Icons.build_rounded,
-                    size: 10,
-                    color: AppColors.accent,
-                  ),
-                ),
-              ),
+            const Marker(
+              markerId: MarkerId('g2'),
+              position: LatLng(-1.9541, 30.0819),
+              infoWindow: InfoWindow(title: 'Kigali Motors'),
             ),
-            Positioned(
-              bottom: 12,
-              left: 130,
-              child: Icon(
-                Icons.navigation_rounded,
-                color: AppColors.accent,
-                size: 28,
-                shadows: [
-                  Shadow(
-                    blurRadius: 10,
-                    color: Colors.black.withValues(alpha: 0.2),
-                  ),
-                ],
-              ),
+            const Marker(
+              markerId: MarkerId('g3'),
+              position: LatLng(-1.9341, 30.0519),
+              infoWindow: InfoWindow(title: 'Pro Mechanics'),
             ),
-          ],
+          },
         ),
       ),
     );
