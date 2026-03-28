@@ -61,27 +61,9 @@ class RepairDetailScreen extends StatelessWidget {
                         const SizedBox(height: 8),
                         Row(
                           children: [
-                            GestureDetector(
-                              onTap: () {
-                                if (repair.status == RepairStatus.completed) {
-                                  Navigator.pop(context, 'tab_current');
-                                }
-                              },
-                              child: _TabChip(
-                                  label: 'Current',
-                                  isSelected: repair.status != RepairStatus.completed),
-                            ),
+                            _TabChip(label: 'Current', isSelected: true),
                             const SizedBox(width: 24),
-                            GestureDetector(
-                              onTap: () {
-                                if (repair.status != RepairStatus.completed) {
-                                  Navigator.pop(context, 'tab_history');
-                                }
-                              },
-                              child: _TabChip(
-                                  label: 'History',
-                                  isSelected: repair.status == RepairStatus.completed),
-                            ),
+                            _TabChip(label: 'History', isSelected: false),
                           ],
                         ),
                         const SizedBox(height: 16),

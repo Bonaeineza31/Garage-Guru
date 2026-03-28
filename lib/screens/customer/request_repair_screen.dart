@@ -2,21 +2,21 @@ import 'package:flutter/material.dart';
 import '../../core/theme/app_theme.dart';
 import '../widgets/app_bottom_navigation.dart';
 
-/// Battery service booking screen
-class BatteryServiceScreen extends StatefulWidget {
-  const BatteryServiceScreen({super.key});
+/// Standard repair request screen for scheduled maintenance
+class RequestRepairScreen extends StatefulWidget {
+  const RequestRepairScreen({super.key});
 
   @override
-  State<BatteryServiceScreen> createState() => _BatteryServiceScreenState();
+  State<RequestRepairScreen> createState() => _RequestRepairScreenState();
 }
 
-class _BatteryServiceScreenState extends State<BatteryServiceScreen> {
+class _RequestRepairScreenState extends State<RequestRepairScreen> {
   final TextEditingController _dateController = TextEditingController();
   final TextEditingController _timeController = TextEditingController();
   final TextEditingController _locationController = TextEditingController();
+  final TextEditingController _issueController = TextEditingController();
 
-  String? _selectedServiceType;
-  String? _selectedGarage;
+  String? _selectedRepairType;
   String? _selectedVehicle;
 
   @override
@@ -24,6 +24,7 @@ class _BatteryServiceScreenState extends State<BatteryServiceScreen> {
     _dateController.dispose();
     _timeController.dispose();
     _locationController.dispose();
+    _issueController.dispose();
     super.dispose();
   }
 
@@ -36,122 +37,16 @@ class _BatteryServiceScreenState extends State<BatteryServiceScreen> {
           icon: const Icon(Icons.arrow_back),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text('Battery Service'),
+        title: const Text('Request Repair'),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // Service info card
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: AppTheme.dividerColor),
-              ),
-              child: Row(
-                children: [
-                  Container(
-                    width: 48,
-                    height: 48,
-                    decoration: BoxDecoration(
-                      color: AppTheme.primaryBlue.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: const Icon(
-                      Icons.battery_charging_full,
-                      color: AppTheme.primaryBlue,
-                      size: 24,
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  const Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Battery Services',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: AppTheme.textPrimary,
-                          ),
-                        ),
-                        SizedBox(height: 4),
-                        Text(
-                          'Professional battery care for your vehicle',
-                          style: TextStyle(
-                            fontSize: 13,
-                            color: AppTheme.textSecondary,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
-            const SizedBox(height: 24),
-
-            // Service options grid
-            Row(
-              children: [
-                Expanded(
-                  child: _buildServiceOption(
-                    title: 'Battery Replacement',
-                    price: 'From Frw 45,000',
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: _buildServiceOption(
-                    title: 'Battery Testing',
-                    price: 'From Frw 10,000',
-                  ),
-                ),
-              ],
-            ),
-
-            const SizedBox(height: 12),
-
-            Row(
-              children: [
-                Expanded(
-                  child: _buildServiceOption(
-                    title: 'Charging System',
-                    price: 'From Frw 15,000',
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: _buildServiceOption(
-                    title: 'Jump Start',
-                    price: 'From Frw 5,000',
-                  ),
-                ),
-              ],
-            ),
-
-            const SizedBox(height: 32),
-
-            // Book Battery Service section
+            // Repair Type dropdown
             const Text(
-              'Book Battery Service',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: AppTheme.textPrimary,
-              ),
-            ),
-
-            const SizedBox(height: 16),
-
-            // Service Type dropdown
-            const Text(
-              'Service Type',
+              'Repair Type',
               style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
@@ -161,68 +56,38 @@ class _BatteryServiceScreenState extends State<BatteryServiceScreen> {
             const SizedBox(height: 8),
 
             DropdownButtonFormField<String>(
-              value: _selectedServiceType,
+              value: _selectedRepairType,
               decoration: const InputDecoration(
-                hintText: 'Select service type',
+                hintText: 'Select Repair type',
+                prefixIcon: Icon(Icons.build_outlined),
               ),
               items: const [
                 DropdownMenuItem(
-                  value: 'replacement',
-                  child: Text('Battery Replacement'),
+                  value: 'oil_change',
+                  child: Text('Oil Change'),
                 ),
                 DropdownMenuItem(
-                  value: 'testing',
-                  child: Text('Battery Testing'),
+                  value: 'tire_service',
+                  child: Text('Tire Service'),
                 ),
                 DropdownMenuItem(
-                  value: 'charging',
-                  child: Text('Charging System'),
+                  value: 'battery',
+                  child: Text('Battery Service'),
                 ),
-                DropdownMenuItem(value: 'jumpstart', child: Text('Jump Start')),
+                DropdownMenuItem(value: 'brake', child: Text('Brake Service')),
+                DropdownMenuItem(value: 'engine', child: Text('Engine Repair')),
+                DropdownMenuItem(value: 'other', child: Text('Other')),
               ],
               onChanged: (value) {
                 setState(() {
-                  _selectedServiceType = value;
+                  _selectedRepairType = value;
                 });
               },
             ),
 
             const SizedBox(height: 20),
 
-            // Garage dropdown
-            const Text(
-              'Garage',
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-                color: AppTheme.textPrimary,
-              ),
-            ),
-            const SizedBox(height: 8),
-
-            DropdownButtonFormField<String>(
-              value: _selectedGarage,
-              decoration: const InputDecoration(hintText: 'Select a garage'),
-              items: const [
-                DropdownMenuItem(
-                  value: 'auto_finit',
-                  child: Text('Auto Finit - 0.6km'),
-                ),
-                DropdownMenuItem(
-                  value: 'kigali_motors',
-                  child: Text('Kigali Motors - 1.2km'),
-                ),
-              ],
-              onChanged: (value) {
-                setState(() {
-                  _selectedGarage = value;
-                });
-              },
-            ),
-
-            const SizedBox(height: 20),
-
-            // Date and Time
+            // Date and Time section
             Row(
               children: [
                 Expanded(
@@ -302,7 +167,7 @@ class _BatteryServiceScreenState extends State<BatteryServiceScreen> {
 
             const SizedBox(height: 20),
 
-            // Location
+            // Location section
             const Text(
               'Location',
               style: TextStyle(
@@ -316,7 +181,7 @@ class _BatteryServiceScreenState extends State<BatteryServiceScreen> {
             TextField(
               controller: _locationController,
               decoration: const InputDecoration(
-                hintText: 'Where should the service be done?',
+                hintText: 'Where should the mechanic meet you?',
                 prefixIcon: Icon(Icons.location_on_outlined),
               ),
             ),
@@ -357,15 +222,37 @@ class _BatteryServiceScreenState extends State<BatteryServiceScreen> {
               },
             ),
 
+            const SizedBox(height: 20),
+
+            // Issue Description
+            const Text(
+              'Issue Description',
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: AppTheme.textPrimary,
+              ),
+            ),
+            const SizedBox(height: 8),
+
+            TextField(
+              controller: _issueController,
+              maxLines: 4,
+              decoration: const InputDecoration(
+                hintText: 'Describe the issue with your vehicle',
+                alignLabelWithHint: true,
+              ),
+            ),
+
             const SizedBox(height: 32),
 
-            // Book Service button
+            // Submit button
             SizedBox(
               height: 50,
               child: ElevatedButton(
-                onPressed: _bookService,
+                onPressed: _submitRequest,
                 child: const Text(
-                  'Book Service',
+                  'Submit Request',
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                 ),
               ),
@@ -376,52 +263,39 @@ class _BatteryServiceScreenState extends State<BatteryServiceScreen> {
     );
   }
 
-  Widget _buildServiceOption({required String title, required String price}) {
-    return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: AppTheme.scaffoldBackground,
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: AppTheme.dividerColor),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            title,
-            style: const TextStyle(
-              fontSize: 13,
-              fontWeight: FontWeight.w600,
-              color: AppTheme.textPrimary,
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            price,
-            style: const TextStyle(fontSize: 11, color: AppTheme.textSecondary),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _bookService() {
-    // Validate inputs
-    if (_selectedServiceType == null ||
-        _selectedGarage == null ||
-        _dateController.text.isEmpty ||
-        _timeController.text.isEmpty ||
-        _locationController.text.trim().isEmpty ||
-        _selectedVehicle == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Please fill all fields'),
-          backgroundColor: AppTheme.errorRed,
-        ),
-      );
+  void _submitRequest() {
+    // Validate all fields
+    if (_selectedRepairType == null) {
+      _showError('Please select a repair type');
       return;
     }
 
+    if (_dateController.text.isEmpty) {
+      _showError('Please select a date');
+      return;
+    }
+
+    if (_timeController.text.isEmpty) {
+      _showError('Please select a time');
+      return;
+    }
+
+    if (_locationController.text.trim().isEmpty) {
+      _showError('Please enter a location');
+      return;
+    }
+
+    if (_selectedVehicle == null) {
+      _showError('Please select a vehicle');
+      return;
+    }
+
+    if (_issueController.text.trim().isEmpty) {
+      _showError('Please describe the issue');
+      return;
+    }
+
+    // Show success message
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -429,22 +303,28 @@ class _BatteryServiceScreenState extends State<BatteryServiceScreen> {
           children: [
             Icon(Icons.check_circle, color: AppTheme.successGreen),
             const SizedBox(width: 8),
-            const Text('Booking Confirmed'),
+            const Text('Request Submitted'),
           ],
         ),
         content: const Text(
-          'Your battery service has been booked successfully!',
+          'Your repair request has been submitted successfully. You will receive a confirmation shortly.',
         ),
         actions: [
           TextButton(
             onPressed: () {
-              Navigator.pop(context);
-              Navigator.pop(context);
+              Navigator.pop(context); // Close dialog
+              Navigator.pop(context); // Go back
             },
             child: const Text('OK'),
           ),
         ],
       ),
+    );
+  }
+
+  void _showError(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message), backgroundColor: AppTheme.errorRed),
     );
   }
 }
