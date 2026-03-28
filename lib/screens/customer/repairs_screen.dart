@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:garage_guru/core/theme/app_theme.dart';
 import 'package:garage_guru/models/repair_model.dart';
 import 'package:garage_guru/screens/customer/repair_detail_screen.dart';
@@ -17,67 +19,22 @@ class _RepairsScreenState extends State<RepairsScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
-  final List<RepairModel> _currentRepairs = [
-    RepairModel(
-      id: '1',
-      serviceName: 'Engine Diagnostics',
-      vehicleMake: 'Toyota',
-      vehicleModel: 'Camry',
-      vehiclePlate: 'BA01234',
-      progressPercent: 0.25,
-      status: RepairStatus.mechanicOnWay,
-      mechanicName: 'Jean Claude',
-      mechanicSpecialty: 'Engine Specialist',
-      mechanicRating: 4.9,
-      location: 'Auto Finit, Kigali',
-      startDate: DateTime(2025, 5, 15),
-      estimatedCompletion: 'May 15, 2025 (4 hours)',
-      repairDescription:
-          'Full engine diagnostic scan, checking all sensors and systems for faults.',
-      partsCost: 20000,
-      laborCost: 15000,
-      updates: [
-        RepairUpdate(
-          timestamp: DateTime(2025, 5, 15, 10, 0),
-          message: 'Repair started',
-        ),
-        RepairUpdate(
-          timestamp: DateTime(2025, 5, 15, 11, 30),
-          message:
-              'Initial diagnostics complete, identified potential issue with spark plugs',
-        ),
-      ],
-    ),
-    RepairModel(
-      id: '2',
-      serviceName: 'Brake Pad Replacement',
-      vehicleMake: 'Toyota',
-      vehicleModel: 'Camry',
-      vehiclePlate: 'BA01234',
-      progressPercent: 0.75,
-      status: RepairStatus.inProgress,
-      mechanicName: 'Marie Claire',
-      mechanicSpecialty: 'Brake Specialist',
-      mechanicRating: 4.8,
-      location: 'Kigali Motors',
-      startDate: DateTime(2025, 5, 15),
-      estimatedCompletion: '2 hours',
-      repairDescription:
-          'Replacement of front and rear brake pads, inspection of brake rotors and calipers.',
-      partsCost: 20000,
-      laborCost: 15000,
-      updates: [
-        RepairUpdate(
-          timestamp: DateTime(2025, 5, 15, 9, 0),
-          message: 'Repair started',
-        ),
-        RepairUpdate(
-          timestamp: DateTime(2025, 5, 15, 12, 0),
-          message: 'Old brake pads removed; new pads fitted and bedding in.',
-        ),
-      ],
-    ),
-  ];
+  Stream<List<RepairModel>> get _bookingsStream {
+    final uid = FirebaseAuth.instance.currentUser?.uid;
+    if (uid == null) return const Stream.empty();
+    return FirebaseFirestore.instance
+        .collection('bookings')
+        .where('userId', isEqualTo: uid)
+        .snapshots()
+        .map((snap) {
+          final repairs = snap.docs
+              .map((d) => RepairModel.fromMap(d.data(), d.id))
+              .where((r) => r.status != RepairStatus.completed && r.status != RepairStatus.cancelled)
+              .toList();
+          repairs.sort((a, b) => b.startDate.compareTo(a.startDate));
+          return repairs;
+        });
+  }
 
   @override
   void initState() {
@@ -210,22 +167,53 @@ class _RepairsScreenState extends State<RepairsScreen>
   }
 
   Widget _buildCurrentTab() {
-    return ListView.separated(
-      padding: const EdgeInsets.all(16),
-      itemCount: _currentRepairs.length,
-      separatorBuilder: (_, __) => const SizedBox(height: 12),
-      itemBuilder: (context, index) => _RepairCard(
-        repair: _currentRepairs[index],
-        onViewDetails: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (_) => RepairDetailScreen(repair: _currentRepairs[index]),
+    return StreamBuilder<List<RepairModel>>(
+      stream: _bookingsStream,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        if (snapshot.hasError) {
+          return Center(child: Text('Error: ${snapshot.error}'));
+        }
+        final repairs = snapshot.data ?? [];
+        if (repairs.isEmpty) {
+          return const Center(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(Icons.build_outlined, size: 48, color: Color(0xFF9CA3AF)),
+                SizedBox(height: 12),
+                Text(
+                  'No active bookings',
+                  style: TextStyle(
+                    fontFamily: 'Poppins',
+                    fontSize: 15,
+                    color: Color(0xFF6B7280),
+                  ),
+                ),
+              ],
             ),
           );
-        },
-        onCancel: () => _showCancelDialog(context, _currentRepairs[index]),
-      ),
+        }
+        return ListView.separated(
+          padding: const EdgeInsets.all(16),
+          itemCount: repairs.length,
+          separatorBuilder: (_, __) => const SizedBox(height: 12),
+          itemBuilder: (context, index) => _RepairCard(
+            repair: repairs[index],
+            onViewDetails: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => RepairDetailScreen(repair: repairs[index]),
+                ),
+              );
+            },
+            onCancel: () => _showCancelDialog(context, repairs[index]),
+          ),
+        );
+      },
     );
   }
 
