@@ -201,18 +201,24 @@ class _HistoryCard extends StatelessWidget {
                         progressPercent: 1.0,
                         status: RepairStatus.completed,
                         mechanicName: item.mechanicName,
-                        mechanicSpecialty: 'General Mechanic',
+                        mechanicSpecialty:
+                            item.serviceName.toLowerCase().contains('oil')
+                                ? 'Maintenance Specialist'
+                                : item.serviceName.toLowerCase().contains('tire')
+                                    ? 'Tire Specialist'
+                                    : 'General Mechanic',
                         mechanicRating: 4.8,
                         location: item.location,
                         startDate: item.date,
                         estimatedCompletion: 'Completed',
-                        repairDescription: 'Service completed successfully.',
+                        repairDescription:
+                            '${item.serviceName} completed at ${item.location}.',
                         partsCost: item.cost * 0.6,
                         laborCost: item.cost * 0.4,
                         updates: [
                           RepairUpdate(
                             timestamp: item.date,
-                            message: 'Service completed successfully.',
+                            message: '${item.serviceName} service completed.',
                           ),
                         ],
                         isPaid: true,
