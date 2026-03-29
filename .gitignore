@@ -44,6 +44,9 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 
+# Secrets
+lib/config/secrets.dart
+
 # others
 # ios/Runner/GeneratedPluginRegistrant.*
 # macos/Flutter/GeneratedPluginRegistrant.swift
