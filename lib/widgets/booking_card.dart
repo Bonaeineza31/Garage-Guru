@@ -18,10 +18,10 @@ class BookingCard extends StatelessWidget {
       child: Container(
         margin: const EdgeInsets.only(bottom: AppSpacing.md),
         decoration: BoxDecoration(
-          color: AppColors.cardBackground,
+          color: Theme.of(context).cardColor,
           borderRadius: BorderRadius.circular(AppRadius.xl),
-          border: Border.all(color: AppColors.divider.withOpacity(0.3)),
-          boxShadow: AppShadows.card,
+          border: Border.all(color: Theme.of(context).dividerColor.withOpacity(0.1)),
+          boxShadow: Theme.of(context).brightness == Brightness.dark ? [] : AppShadows.card,
         ),
         child: Column(
           children: [
@@ -57,7 +57,7 @@ class BookingCard extends StatelessWidget {
                   const Spacer(),
                   Text(
                     'Booking #${booking.id.toUpperCase()}',
-                    style: AppTextStyles.caption,
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Theme.of(context).hintColor),
                   ),
                 ],
               ),
@@ -95,14 +95,14 @@ class BookingCard extends StatelessWidget {
                           children: [
                             Text(
                               booking.garageName,
-                              style: AppTextStyles.subtitle,
+                              style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                             ),
                             const SizedBox(height: 2),
                             Text(
                               booking.garageAddress,
-                              style: AppTextStyles.bodySmall,
+                              style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Theme.of(context).hintColor),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                             ),
@@ -117,11 +117,13 @@ class BookingCard extends StatelessWidget {
                   Row(
                     children: [
                       _buildInfoItem(
+                        context,
                         Icons.calendar_today,
                         _formatDate(booking.scheduledDate),
                       ),
                       const SizedBox(width: AppSpacing.xl),
                       _buildInfoItem(
+                        context,
                         Icons.access_time,
                         booking.scheduledTime,
                       ),
@@ -132,6 +134,7 @@ class BookingCard extends StatelessWidget {
                     Row(
                       children: [
                         _buildInfoItem(
+                          context,
                           Icons.directions_car_rounded,
                           booking.vehicleInfo,
                         ),
@@ -145,10 +148,10 @@ class BookingCard extends StatelessWidget {
                       children: [
                         const Icon(Icons.check_circle_rounded, color: AppColors.success, size: 16),
                         const SizedBox(width: AppSpacing.sm),
-                        Expanded(child: Text(s.name, style: AppTextStyles.body)),
+                        Expanded(child: Text(s.name, style: Theme.of(context).textTheme.bodyMedium)),
                         Text(
                           '\$${s.price.toStringAsFixed(2)}',
-                          style: AppTextStyles.body.copyWith(fontWeight: FontWeight.w500),
+                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w500),
                         ),
                       ],
                     ),
@@ -159,10 +162,13 @@ class BookingCard extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text('Total', style: AppTextStyles.subtitle),
+                      Text('Total', style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
                       Text(
                         '\$${booking.totalAmount.toStringAsFixed(2)}',
-                        style: AppTextStyles.price,
+                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.primary,
+                        ),
                       ),
                     ],
                   ),
@@ -175,13 +181,13 @@ class BookingCard extends StatelessWidget {
     );
   }
 
-  Widget _buildInfoItem(IconData icon, String text) {
+  Widget _buildInfoItem(BuildContext context, IconData icon, String text) {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(icon, size: 16, color: AppColors.textSecondary),
+        Icon(icon, size: 16, color: Theme.of(context).hintColor),
         const SizedBox(width: AppSpacing.xs),
-        Text(text, style: AppTextStyles.bodySmall),
+        Text(text, style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Theme.of(context).hintColor)),
       ],
     );
   }

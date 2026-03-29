@@ -209,10 +209,10 @@ class _AppointmentCard extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: AppSpacing.sm),
       padding: const EdgeInsets.all(AppSpacing.lg),
       decoration: BoxDecoration(
-        color: AppColors.cardBackground,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(AppRadius.lg),
-        border: Border.all(color: AppColors.divider.withOpacity(0.3)),
-        boxShadow: AppShadows.card,
+        border: Border.all(color: Theme.of(context).dividerColor.withOpacity(0.1)),
+        boxShadow: Theme.of(context).brightness == Brightness.dark ? [] : AppShadows.card,
       ),
       child: Row(
         children: [
@@ -220,7 +220,7 @@ class _AppointmentCard extends StatelessWidget {
             width: 60,
             padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
             decoration: BoxDecoration(
-              color: AppColors.primaryLight.withOpacity(0.3),
+              color: AppColors.primary.withOpacity(0.12),
               borderRadius: BorderRadius.circular(AppRadius.sm),
             ),
             child: Center(
@@ -228,7 +228,7 @@ class _AppointmentCard extends StatelessWidget {
                 time,
                 style: AppTextStyles.bodySmall.copyWith(
                   color: AppColors.primary,
-                  fontWeight: FontWeight.w600,
+                  fontWeight: FontWeight.bold,
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -241,14 +241,14 @@ class _AppointmentCard extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    Text(customerName, style: AppTextStyles.subtitle.copyWith(fontSize: 14)),
+                    Text(customerName, style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600)),
                     const Spacer(),
-                    _buildStatusBadge(),
+                    _buildStatusBadge(context),
                   ],
                 ),
                 const SizedBox(height: 2),
-                Text(service, style: AppTextStyles.body.copyWith(color: AppColors.primary)),
-                Text(vehicleInfo, style: AppTextStyles.caption),
+                Text(service, style: AppTextStyles.body.copyWith(color: AppColors.primary, fontWeight: FontWeight.w600)),
+                Text(vehicleInfo, style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Theme.of(context).hintColor)),
               ],
             ),
           ),
@@ -257,7 +257,7 @@ class _AppointmentCard extends StatelessWidget {
     );
   }
 
-  Widget _buildStatusBadge() {
+  Widget _buildStatusBadge(BuildContext context) {
     Color color;
     String label;
     switch (status) {

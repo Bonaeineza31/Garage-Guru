@@ -108,8 +108,8 @@ class _VehicleCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(AppRadius.lg),
-        boxShadow: isDark ? [] : AppShadows.card,
-        border: Border.all(color: isDark ? Colors.white10 : AppColors.divider.withOpacity(0.5)),
+        boxShadow: Theme.of(context).brightness == Brightness.dark ? [] : AppShadows.card,
+        border: Border.all(color: Theme.of(context).dividerColor),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -128,8 +128,8 @@ class _VehicleCard extends StatelessWidget {
                     errorBuilder: (context, error, stackTrace) => Container(
                       width: 100,
                       height: 80,
-                      color: isDark ? const Color(0xFF1E293B) : AppColors.primaryLight,
-                      child: Icon(Icons.directions_car, color: isDark ? Colors.white54 : AppColors.primary),
+                      color: Theme.of(context).dividerColor.withOpacity(0.05),
+                      child: const Icon(Icons.directions_car, color: AppColors.primary),
                     ),
                   ),
                 ),
@@ -141,24 +141,24 @@ class _VehicleCard extends StatelessWidget {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Expanded(
+                           Expanded(
                             child: Text(
                               vehicle.fullName,
-                              style: (isDark ? const TextStyle(color: Colors.white) : AppTextStyles.subtitle).copyWith(fontWeight: FontWeight.w700),
+                              style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w700),
                               overflow: TextOverflow.ellipsis,
                             ),
                           ),
-                          Icon(Icons.settings_outlined, color: isDark ? Colors.white54 : AppColors.textSecondary, size: 18),
+                          Icon(Icons.settings_outlined, color: Theme.of(context).hintColor, size: 18),
                         ],
                       ),
                       const SizedBox(height: 4),
                       Text(
                         '${vehicle.year} • ${vehicle.plateNumber ?? "N/A"}',
-                        style: isDark ? const TextStyle(color: Colors.white70, fontSize: 12) : AppTextStyles.bodySmall,
+                        style: Theme.of(context).textTheme.bodySmall,
                       ),
                       Text(
                         'Color: ${vehicle.color}',
-                        style: isDark ? const TextStyle(color: Colors.white70, fontSize: 12) : AppTextStyles.bodySmall,
+                        style: Theme.of(context).textTheme.bodySmall,
                       ),
                     ],
                   ),
@@ -166,21 +166,21 @@ class _VehicleCard extends StatelessWidget {
               ],
             ),
           ),
-          Divider(height: 1, color: isDark ? Colors.white10 : null),
+          Divider(height: 1, color: Theme.of(context).dividerColor),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.sm),
             child: Row(
               children: [
-                Icon(Icons.calendar_today_outlined, size: 16, color: isDark ? Colors.white54 : AppColors.textSecondary),
+                Icon(Icons.calendar_today_outlined, size: 16, color: Theme.of(context).hintColor),
                 const SizedBox(width: 8),
                 Text(
                   'Next service: ${vehicle.nextServiceDate != null ? DateFormat('MMMM d, yyyy').format(vehicle.nextServiceDate!) : 'Not scheduled'}',
-                  style: (isDark ? const TextStyle(color: Colors.white70) : AppTextStyles.bodySmall).copyWith(fontWeight: FontWeight.w500),
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w500),
                 ),
               ],
             ),
           ),
-          Divider(height: 1, color: isDark ? Colors.white10 : null),
+          Divider(height: 1, color: Theme.of(context).dividerColor),
           Padding(
             padding: const EdgeInsets.all(AppSpacing.sm),
             child: Row(
@@ -194,8 +194,9 @@ class _VehicleCard extends StatelessWidget {
                     },
                     child: Text(
                       'View Service History',
-                      style: (isDark ? const TextStyle(color: Color(0xFF0EA5E9)) : AppTextStyles.bodySmall).copyWith(
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
                         fontWeight: FontWeight.w600,
+                        color: const Color(0xFF0EA5E9),
                       ),
                     ),
                   ),
@@ -213,8 +214,9 @@ class _VehicleCard extends StatelessWidget {
                       children: [
                         Text(
                           'Schedule Service',
-                          style: (isDark ? const TextStyle(color: Color(0xFF0EA5E9)) : AppTextStyles.bodySmall).copyWith(
+                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
                             fontWeight: FontWeight.w600,
+                            color: const Color(0xFF0EA5E9),
                           ),
                         ),
                         const SizedBox(width: 4),

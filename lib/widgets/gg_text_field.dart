@@ -42,9 +42,9 @@ class GgTextField extends StatelessWidget {
       children: [
         Text(
           label, 
-          style: (Theme.of(context).brightness == Brightness.dark 
-            ? AppTextStyles.label.copyWith(color: Colors.white, fontWeight: FontWeight.bold) 
-            : AppTextStyles.label).copyWith(fontWeight: FontWeight.w600)
+          style: Theme.of(context).textTheme.labelLarge?.copyWith(
+            fontWeight: FontWeight.bold,
+          ),
         ),
         const SizedBox(height: AppSpacing.sm),
         TextFormField(
@@ -58,20 +58,15 @@ class GgTextField extends StatelessWidget {
           onChanged: onChanged,
           inputFormatters: inputFormatters,
           enabled: enabled,
-          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-            color: Theme.of(context).brightness == Brightness.dark ? Colors.white : AppColors.textPrimary,
-          ),
+          style: Theme.of(context).textTheme.bodyMedium,
           decoration: InputDecoration(
-            hintText: hint,
-            hintStyle: TextStyle(color: Theme.of(context).brightness == Brightness.dark ? Colors.white38 : AppColors.textHint),
+            hintStyle: TextStyle(color: Theme.of(context).hintColor),
             prefixIcon: prefixIcon != null
-                ? Icon(prefixIcon, color: Theme.of(context).brightness == Brightness.dark ? Colors.white38 : AppColors.textHint, size: 20)
+                ? Icon(prefixIcon, color: Theme.of(context).hintColor, size: 20)
                 : null,
-            suffixIcon: Theme.of(context).brightness == Brightness.dark && suffix is Icon 
-                ? Icon((suffix as Icon).icon, color: Colors.white70) 
-                : suffix,
+            suffixIcon: suffix,
             filled: true,
-            fillColor: Theme.of(context).brightness == Brightness.dark ? const Color(0xFF1E293B) : Theme.of(context).colorScheme.surface,
+            fillColor: Theme.of(context).cardColor,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(AppRadius.md),
               borderSide: BorderSide.none,
@@ -120,9 +115,9 @@ class GgSearchBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(AppRadius.lg),
-        boxShadow: AppShadows.elevated,
+        boxShadow: Theme.of(context).brightness == Brightness.dark ? [] : AppShadows.elevated,
       ),
       child: Row(
         children: [
@@ -130,13 +125,13 @@ class GgSearchBar extends StatelessWidget {
             child: TextField(
               controller: controller,
               onChanged: onChanged,
-              style: AppTextStyles.body,
+              style: Theme.of(context).textTheme.bodyMedium,
             decoration: InputDecoration(
                 hintText: hint,
-                hintStyle: TextStyle(color: Theme.of(context).brightness == Brightness.dark ? Colors.white38 : AppColors.textHint),
+                hintStyle: TextStyle(color: Theme.of(context).hintColor),
                 prefixIcon: Padding(
                   padding: const EdgeInsets.only(left: 12, right: 4),
-                  child: Icon(Icons.search_rounded, color: Theme.of(context).brightness == Brightness.dark ? Colors.white38 : AppColors.textHint, size: 22),
+                  child: Icon(Icons.search_rounded, color: Theme.of(context).hintColor, size: 22),
                 ),
                 prefixIconConstraints: const BoxConstraints(minWidth: 40),
                 border: InputBorder.none,

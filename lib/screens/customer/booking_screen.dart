@@ -104,7 +104,7 @@ class _BookingScreenState extends State<BookingScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         title: const Text('Book Garage'),
         backgroundColor: AppColors.primary,
@@ -126,10 +126,9 @@ class _BookingScreenState extends State<BookingScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Header
               _buildHeader(),
               const SizedBox(height: 24),
-              const Text('Book Appointment', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+              Text('Book Appointment', style: Theme.of(context).textTheme.titleLarge),
               const SizedBox(height: 16),
               
               _buildInputLabel('Date'),
@@ -163,7 +162,7 @@ class _BookingScreenState extends State<BookingScreen> {
               ),
               
               const SizedBox(height: 32),
-              const Text('Available Services', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+              Text('Available Services', style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
               const SizedBox(height: 16),
               _buildAvailableService('Engine Diagnostics', 'Full computer diagnostics', 'Frw 25,000'),
               _buildAvailableService('Brake Pad Replacement', 'All 4 wheels', 'Frw 45,000'),
@@ -193,20 +192,20 @@ class _BookingScreenState extends State<BookingScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(widget.garage.name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+              Text(widget.garage.name, style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
               Row(
                 children: [
                   const Icon(Icons.star_rounded, color: AppColors.starFilled, size: 16),
                   const SizedBox(width: 4),
                   Text(
                     '${widget.garage.rating} (${widget.garage.reviewCount} reviews)',
-                    style: AppTextStyles.caption.copyWith(fontWeight: FontWeight.bold),
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(fontWeight: FontWeight.bold),
                   ),
                 ],
               ),
               Text(
                 '${widget.garage.distanceKm}km away • ${widget.garage.address.split(',').last.trim()}',
-                style: AppTextStyles.caption,
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Theme.of(context).hintColor),
               ),
             ],
           ),
@@ -218,7 +217,7 @@ class _BookingScreenState extends State<BookingScreen> {
   Widget _buildInputLabel(String label) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
-      child: Text(label, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+      child: Text(label, style: Theme.of(context).textTheme.labelLarge?.copyWith(fontWeight: FontWeight.bold)),
     );
   }
 
@@ -228,8 +227,10 @@ class _BookingScreenState extends State<BookingScreen> {
       readOnly: true,
       decoration: InputDecoration(
         hintText: 'mm/dd/yyyy',
-        suffixIcon: const Icon(Icons.calendar_today_outlined, size: 20),
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: const BorderSide(color: AppColors.divider)),
+        hintStyle: TextStyle(color: Theme.of(context).hintColor),
+        suffixIcon: Icon(Icons.calendar_today_outlined, size: 20, color: Theme.of(context).hintColor),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide(color: Theme.of(context).dividerColor)),
+        enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide(color: Theme.of(context).dividerColor)),
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       ),
       onTap: _selectDate,
@@ -243,8 +244,10 @@ class _BookingScreenState extends State<BookingScreen> {
       readOnly: true,
       decoration: InputDecoration(
         hintText: '-- : -- --',
-        suffixIcon: const Icon(Icons.access_time_outlined, size: 20),
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: const BorderSide(color: AppColors.divider)),
+        hintStyle: TextStyle(color: Theme.of(context).hintColor),
+        suffixIcon: Icon(Icons.access_time_outlined, size: 20, color: Theme.of(context).hintColor),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide(color: Theme.of(context).dividerColor)),
+        enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide(color: Theme.of(context).dividerColor)),
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       ),
       onTap: _selectTime,
@@ -255,12 +258,14 @@ class _BookingScreenState extends State<BookingScreen> {
   Widget _buildDropdown(String hint, String? value, List<String> items, Function(String?) onChanged) {
     return DropdownButtonFormField<String>(
       value: value,
-      hint: Text(hint, style: const TextStyle(fontSize: 14)),
+      dropdownColor: Theme.of(context).cardColor,
+      hint: Text(hint, style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Theme.of(context).hintColor)),
       decoration: InputDecoration(
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: const BorderSide(color: AppColors.divider)),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide(color: Theme.of(context).dividerColor)),
+        enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide(color: Theme.of(context).dividerColor)),
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       ),
-      items: items.map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
+      items: items.map((e) => DropdownMenuItem(value: e, child: Text(e, style: Theme.of(context).textTheme.bodyMedium))).toList(),
       onChanged: onChanged,
       validator: (val) => val == null ? 'Please select an option' : null,
     );
@@ -275,11 +280,11 @@ class _BookingScreenState extends State<BookingScreen> {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
-              Text(desc, style: AppTextStyles.caption),
+              Text(name, style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.bold)),
+              Text(desc, style: Theme.of(context).textTheme.bodySmall),
             ],
           ),
-          Text(price, style: const TextStyle(fontWeight: FontWeight.bold, color: AppColors.textPrimary)),
+          Text(price, style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.bold, color: AppColors.primary)),
         ],
       ),
     );

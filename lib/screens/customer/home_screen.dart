@@ -155,7 +155,7 @@ class _HomeScreenState extends State<HomeScreen> {
           width: double.infinity,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: const Color(0xFFF3F4F6)),
+            border: Border.all(color: Theme.of(context).dividerColor.withOpacity(0.1)),
           ),
           child: StreamBuilder<QuerySnapshot>(
             stream: FirebaseFirestore.instance.collection('garages').snapshots(),

@@ -30,7 +30,7 @@ class _SecurityScreenState extends State<SecurityScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         backgroundColor: AppColors.primary,
         foregroundColor: Colors.white,
@@ -87,8 +87,8 @@ class _SecurityScreenState extends State<SecurityScreen> {
                     borderRadius: BorderRadius.circular(4),
                     child: LinearProgressIndicator(
                       value: 0.6,
-                      backgroundColor: AppColors.divider,
-                      valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary),
+                      backgroundColor: Theme.of(context).dividerColor.withOpacity(0.1),
+                      valueColor: const AlwaysStoppedAnimation<Color>(AppColors.primary),
                       minHeight: 6,
                     ),
                   ),
@@ -130,8 +130,8 @@ class _SecurityScreenState extends State<SecurityScreen> {
                     borderRadius: BorderRadius.circular(4),
                     child: LinearProgressIndicator(
                       value: 0.5,
-                      backgroundColor: AppColors.divider,
-                      valueColor: AlwaysStoppedAnimation<Color>(AppColors.warning),
+                      backgroundColor: Theme.of(context).dividerColor.withOpacity(0.1),
+                      valueColor: const AlwaysStoppedAnimation<Color>(AppColors.warning),
                       minHeight: 4,
                     ),
                   ),
@@ -263,9 +263,9 @@ class _SecurityScreenState extends State<SecurityScreen> {
       width: double.infinity,
       padding: EdgeInsets.all(AppSpacing.lg),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(AppRadius.lg),
-        boxShadow: AppShadows.card,
+        boxShadow: Theme.of(context).brightness == Brightness.dark ? [] : AppShadows.card,
       ),
       child: child,
     );
@@ -325,10 +325,10 @@ class _SecurityScreenState extends State<SecurityScreen> {
         Container(
           padding: EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: AppColors.background,
+            color: Theme.of(context).scaffoldBackgroundColor,
             borderRadius: BorderRadius.circular(AppRadius.sm),
           ),
-          child: Icon(icon, size: 20, color: AppColors.textSecondary),
+          child: Icon(icon, size: 20, color: Theme.of(context).iconTheme.color?.withOpacity(0.7)),
         ),
         SizedBox(width: AppSpacing.md),
         Expanded(
@@ -363,9 +363,9 @@ class _SecurityScreenState extends State<SecurityScreen> {
     return Container(
       padding: EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
-        color: AppColors.background,
+        color: Theme.of(context).scaffoldBackgroundColor,
         borderRadius: BorderRadius.circular(AppRadius.md),
-        border: Border.all(color: AppColors.divider.withOpacity(0.5)),
+        border: Border.all(color: Theme.of(context).dividerColor.withOpacity(0.1)),
       ),
       child: Row(
         children: [

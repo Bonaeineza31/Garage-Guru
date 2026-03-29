@@ -123,7 +123,7 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         backgroundColor: AppColors.primary,
         foregroundColor: Colors.white,
@@ -178,7 +178,7 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
                 Row(
                   children: ['Female', 'Male', 'Other'].map((g) => Row(children: [
                     Radio<String>(value: g, groupValue: _selectedGender, onChanged: (v) => setState(() => _selectedGender = v!), activeColor: AppColors.primary),
-                    Text(g, style: AppTextStyles.body),
+                    Text(g, style: Theme.of(context).textTheme.bodyMedium),
                     const SizedBox(width: 8),
                   ])).toList(),
                 ),
@@ -217,9 +217,9 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
   Widget _buildSectionHeader(IconData icon, String title) {
     return Row(
       children: [
-        Icon(icon, color: AppColors.textPrimary, size: 20),
+        Icon(icon, color: Theme.of(context).iconTheme.color?.withOpacity(0.7), size: 20),
         const SizedBox(width: AppSpacing.sm),
-        Text(title, style: AppTextStyles.subtitle.copyWith(fontWeight: FontWeight.bold)),
+        Text(title, style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
       ],
     );
   }

@@ -18,23 +18,24 @@ class GarageCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (isCompact) return _buildCompactCard();
-    return _buildFullCard();
+    if (isCompact) return _buildCompactCard(context);
+    return _buildFullCard(context);
   }
 
-  Widget _buildFullCard() {
+  Widget _buildFullCard(BuildContext context) {
     return Container(
       margin: const EdgeInsets.only(bottom: AppSpacing.lg),
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(AppRadius.lg),
-        boxShadow: [
+        boxShadow: Theme.of(context).brightness == Brightness.dark ? [] : [
           BoxShadow(
             color: Colors.black.withOpacity(0.05),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
         ],
+        border: Border.all(color: Theme.of(context).dividerColor.withOpacity(0.1)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -203,17 +204,17 @@ class GarageCard extends StatelessWidget {
     );
   }
 
-  Widget _buildCompactCard() {
+  Widget _buildCompactCard(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
         margin: const EdgeInsets.only(bottom: AppSpacing.sm),
         padding: const EdgeInsets.all(AppSpacing.md),
         decoration: BoxDecoration(
-          color: AppColors.cardBackground,
+          color: Theme.of(context).cardColor,
           borderRadius: BorderRadius.circular(AppRadius.lg),
-          boxShadow: AppShadows.card,
-          border: Border.all(color: AppColors.divider.withOpacity(0.3)),
+          boxShadow: Theme.of(context).brightness == Brightness.dark ? [] : AppShadows.card,
+          border: Border.all(color: Theme.of(context).dividerColor.withOpacity(0.1)),
         ),
         child: Row(
           children: [
@@ -304,10 +305,10 @@ class GarageMapCard extends StatelessWidget {
         width: 280,
         margin: const EdgeInsets.only(right: AppSpacing.md),
         decoration: BoxDecoration(
-          color: AppColors.cardBackground,
+          color: Theme.of(context).cardColor,
           borderRadius: BorderRadius.circular(AppRadius.lg),
-          boxShadow: AppShadows.elevated,
-          border: Border.all(color: AppColors.divider.withOpacity(0.3)),
+          boxShadow: Theme.of(context).brightness == Brightness.dark ? [] : AppShadows.elevated,
+          border: Border.all(color: Theme.of(context).dividerColor.withOpacity(0.1)),
         ),
         child: Row(
           children: [

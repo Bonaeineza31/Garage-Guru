@@ -5,7 +5,9 @@ class AuthTheme {
   AuthTheme._();
 
   static const Color primary = Color(0xFF4DA8DA);
-  static const Color headerTint = Color(0xFFE3F2FA);
+  static Color getHeaderTint(BuildContext context) {
+    return Theme.of(context).brightness == Brightness.dark ? const Color(0xFF0F172A) : const Color(0xFFE3F2FA);
+  }
   static const Color fieldBorder = Color(0xFFE2E8F0);
   static const Color subtitle = Color(0xFF64748B);
   static const Color link = Color(0xFF4DA8DA);

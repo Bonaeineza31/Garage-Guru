@@ -55,9 +55,9 @@ class _FindGaragesScreenState extends State<FindGaragesScreen> {
     return BlocBuilder<GarageBloc, GarageState>(
       builder: (context, state) {
         return Scaffold(
-          backgroundColor: AppColors.background,
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
           appBar: AppBar(
-            backgroundColor: AppColors.surface,
+            backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
             elevation: 0,
             centerTitle: false,
             automaticallyImplyLeading: false,
@@ -72,20 +72,17 @@ class _FindGaragesScreenState extends State<FindGaragesScreen> {
                   child: const Icon(Icons.garage, color: Colors.white, size: 20),
                 ),
                 const SizedBox(width: 8),
-                const Text(
+                Text(
                   'GarageGuru',
-                  style: TextStyle(
-                    color: AppColors.textPrimary,
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                    fontFamily: 'Poppins',
                   ),
                 ),
               ],
             ),
             actions: [
               IconButton(
-                icon: const Icon(Icons.notifications_none_rounded, color: AppColors.textPrimary),
+                icon: Icon(Icons.notifications_none_rounded, color: Theme.of(context).iconTheme.color),
                 onPressed: () {
                   Navigator.of(context).push(
                     MaterialPageRoute(builder: (_) => const NotificationsScreen()),
@@ -101,7 +98,7 @@ class _FindGaragesScreenState extends State<FindGaragesScreen> {
                 padding: const EdgeInsets.all(16),
                 child: Text(
                   'Find Garages',
-                  style: AppTextStyles.heading2,
+                  style: Theme.of(context).textTheme.headlineMedium,
                 ),
               ),
               // Search bar
@@ -114,9 +111,10 @@ class _FindGaragesScreenState extends State<FindGaragesScreen> {
                   },
                   decoration: InputDecoration(
                     hintText: 'Search garage or service...',
-                    prefixIcon: const Icon(Icons.search, color: AppColors.textHint),
+                    hintStyle: TextStyle(color: Theme.of(context).hintColor),
+                    prefixIcon: Icon(Icons.search, color: Theme.of(context).hintColor),
                     filled: true,
-                    fillColor: AppColors.divider.withOpacity(0.2),
+                    fillColor: Theme.of(context).cardColor,
                     contentPadding: const EdgeInsets.symmetric(vertical: 0),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(AppRadius.md),
@@ -143,10 +141,10 @@ class _FindGaragesScreenState extends State<FindGaragesScreen> {
                             context.read<GarageBloc>().add(SortGarages(_mapFilterToSort(filter)));
                           }
                         },
-                        backgroundColor: AppColors.divider.withOpacity(0.3),
+                        backgroundColor: Theme.of(context).cardColor,
                         selectedColor: AppColors.primary,
                         labelStyle: TextStyle(
-                          color: isActive ? Colors.white : AppColors.textPrimary,
+                          color: isActive ? Colors.white : Theme.of(context).hintColor,
                           fontSize: 12,
                           fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
                         ),

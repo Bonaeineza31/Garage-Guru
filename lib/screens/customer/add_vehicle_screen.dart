@@ -23,8 +23,60 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
   final List<String> _carMakes = [
     'Toyota', 'BMW', 'Mercedes-Benz', 'Volkswagen', 'Ford', 
     'Honda', 'Hyundai', 'Nissan', 'Kia', 'Audi', 'Lexus', 
-    'Land Rover', 'Mazda', 'Chevrolet', 'Jeep'
+    'Land Rover', 'Mazda', 'Chevrolet', 'Jeep', 'Volkswagen', 'Peugeot', 'Renault'
   ];
+
+  final Map<String, List<String>> _makeToModels = {
+    'Toyota': ['Corolla', 'Camry', 'Rav4', 'Hilux', 'Land Cruiser', 'Yaris', 'Prado'],
+    'BMW': ['3 Series', '5 Series', 'X3', 'X5', 'X1', '7 Series', 'M3'],
+    'Mercedes-Benz': ['C-Class', 'E-Class', 'S-Class', 'GLE', 'GLC', 'A-Class'],
+    'Volkswagen': ['Golf', 'Polo', 'Passat', 'Tiguan', 'Touareg'],
+    'Ford': ['Focus', 'Fiesta', 'Ranger', 'Everest', 'Mustang'],
+    'Honda': ['Civic', 'Accord', 'CR-V', 'Fit'],
+    'Hyundai': ['Elantra', 'Tucson', 'Santa Fe', 'i30'],
+    'Nissan': ['Patrol', 'X-Trail', 'Navara', 'Qashqai'],
+    // Default fallback
+  };
+
+  void _showModelSelection() {
+    final make = _makeController.text;
+    if (make.isEmpty) return;
+    
+    final models = _makeToModels[make] ?? ['Other'];
+    
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Theme.of(context).cardColor,
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+      builder: (context) {
+        return Container(
+          padding: const EdgeInsets.symmetric(vertical: 20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text('Select $make Model', style: Theme.of(context).textTheme.titleLarge),
+              const SizedBox(height: 10),
+              Flexible(
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: models.length,
+                  itemBuilder: (context, index) {
+                    return ListTile(
+                      title: Text(models[index], style: Theme.of(context).textTheme.bodyLarge),
+                      onTap: () {
+                        setState(() => _modelController.text = models[index]);
+                        Navigator.pop(context);
+                      },
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
 
   @override
   void dispose() {
@@ -39,6 +91,7 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
   void _showMakeSelection() {
     showModalBottomSheet(
       context: context,
+      backgroundColor: Theme.of(context).cardColor,
       shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
       builder: (context) {
         return Container(
@@ -46,17 +99,22 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Text('Select Vehicle Make', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, fontFamily: 'Poppins')),
+              Text('Select Vehicle Make', style: Theme.of(context).textTheme.titleLarge),
               const SizedBox(height: 10),
-              Expanded(
+              Flexible(
                 child: ListView.builder(
+                  shrinkWrap: true,
                   itemCount: _carMakes.length,
                   itemBuilder: (context, index) {
                     return ListTile(
-                      title: Text(_carMakes[index], style: const TextStyle(fontFamily: 'Poppins')),
+                      title: Text(_carMakes[index], style: Theme.of(context).textTheme.bodyLarge),
                       onTap: () {
-                        setState(() => _makeController.text = _carMakes[index]);
+                        setState(() {
+                          _makeController.text = _carMakes[index];
+                          _modelController.text = ''; // Reset model
+                        });
                         Navigator.pop(context);
+                        _showModelSelection();
                       },
                     );
                   },
@@ -80,12 +138,12 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
 
     try {
       await FirebaseFirestore.instance.collection('users').doc(user.uid).collection('vehicles').add({
-        'make': _makeController.text,
-        'model': _modelController.text,
-        'year': _yearController.text,
-        'color': _colorController.text,
-        'plateNumber': _plateController.text,
-        'imageUrl': 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=800', // Default placeholder
+        'make': _makeController.text.trim(),
+        'model': _modelController.text.trim(),
+        'year': int.tryParse(_yearController.text.trim()) ?? 2020,
+        'color': _colorController.text.trim(),
+        'plateNumber': _plateController.text.trim().toUpperCase(),
+        'imageUrl': 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=800',
         'createdAt': FieldValue.serverTimestamp(),
       });
 
@@ -104,10 +162,8 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    
     return Scaffold(
-      backgroundColor: isDark ? const Color(0xFF0F172A) : Colors.white,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: GgAppBar(
         title: 'Add Vehicle',
       ),
@@ -125,11 +181,11 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
                       width: 120,
                       height: 120,
                       decoration: BoxDecoration(
-                        color: isDark ? const Color(0xFF1E293B) : AppColors.background,
+                        color: Theme.of(context).cardColor,
                         borderRadius: BorderRadius.circular(AppRadius.lg),
-                        border: Border.all(color: isDark ? Colors.white10 : AppColors.divider),
+                        border: Border.all(color: Theme.of(context).dividerColor),
                       ),
-                      child: Icon(Icons.directions_car_outlined, size: 40, color: isDark ? Colors.white : AppColors.textHint),
+                      child: Icon(Icons.directions_car_outlined, size: 40, color: Theme.of(context).brightness == Brightness.dark ? Colors.white54 : AppColors.textHint),
                     ),
                     Container(
                       padding: const EdgeInsets.all(6),
@@ -156,9 +212,12 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
               const SizedBox(height: AppSpacing.lg),
               GgTextField(
                 label: 'Model',
-                hint: 'e.g. Camry, Corolla',
+                hint: 'Select model',
                 controller: _modelController,
-                validator: (v) => v == null || v.isEmpty ? 'Please enter model' : null,
+                readOnly: true,
+                onTap: _showModelSelection,
+                suffix: const Icon(Icons.keyboard_arrow_down, color: AppColors.textHint),
+                validator: (v) => v == null || v.isEmpty ? 'Please select a model' : null,
               ),
               const SizedBox(height: AppSpacing.lg),
               Row(

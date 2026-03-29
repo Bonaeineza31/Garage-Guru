@@ -56,7 +56,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final photoUrl = _photoUrl;
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         title: Row(
           children: [
@@ -74,20 +74,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
             const SizedBox(width: AppSpacing.sm),
             Text(
               'GarageGuru',
-              style: AppTextStyles.subtitle.copyWith(
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.bold,
-                color: AppColors.textPrimary,
               ),
             ),
           ],
         ),
-        backgroundColor: Colors.white,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         elevation: 0,
         actions: [
           IconButton(
             icon: Stack(
               children: [
-                const Icon(Icons.notifications_outlined, color: AppColors.textSecondary),
+                Icon(Icons.notifications_outlined, color: Theme.of(context).iconTheme.color),
                 Positioned(
                   right: 2,
                   top: 2,
@@ -111,7 +110,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ],
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1),
-          child: Container(color: AppColors.divider, height: 1),
+          child: Container(color: Theme.of(context).dividerColor, height: 1),
         ),
       ),
       body: SingleChildScrollView(
@@ -130,8 +129,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     children: [
                       Container(
                         padding: const EdgeInsets.all(4),
-                        decoration: const BoxDecoration(
-                          color: Colors.white,
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).cardColor,
                           shape: BoxShape.circle,
                         ),
                         child: CircleAvatar(
@@ -139,14 +138,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           backgroundImage: photoUrl != null ? NetworkImage(photoUrl) : const NetworkImage('https://i.pravatar.cc/150?img=1'),
                         ),
                       ),
-                      Container(
-                        padding: const EdgeInsets.all(6),
-                        decoration: const BoxDecoration(
-                          color: Colors.white,
-                          shape: BoxShape.circle,
-                          boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 4)],
+                      Positioned(
+                        bottom: 0,
+                        right: 0,
+                        child: Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: Theme.of(context).cardColor,
+                            shape: BoxShape.circle,
+                            boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 4)],
+                          ),
+                          child: const Icon(Icons.camera_alt_outlined, color: AppColors.primary, size: 20),
                         ),
-                        child: Icon(Icons.camera_alt_outlined, color: AppColors.primary, size: 20),
                       ),
                     ],
                   ),
@@ -181,7 +184,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           const SizedBox(width: 4),
                           Text(
                             'Edit Profile',
-                            style: AppTextStyles.caption.copyWith(color: Colors.white, fontWeight: FontWeight.w600),
+                            style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600, fontSize: 11),
                           ),
                         ],
                       ),
@@ -225,10 +228,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('App Information', style: AppTextStyles.subtitle.copyWith(fontWeight: FontWeight.bold)),
+                  Text('App Information', style: Theme.of(context).textTheme.titleLarge),
                   const SizedBox(height: 8),
-                  Text('Version: 1.0.0', style: AppTextStyles.bodySmall.copyWith(color: AppColors.textSecondary)),
-                  Text('© 2026 GarageGuru', style: AppTextStyles.bodySmall.copyWith(color: AppColors.textSecondary)),
+                  Text('Version: 1.0.0', style: Theme.of(context).textTheme.bodySmall),
+                  Text('© 2026 GarageGuru', style: Theme.of(context).textTheme.bodySmall),
                 ],
               ),
             ),
@@ -243,10 +246,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return ListTile(
       onTap: onTap,
       leading: Icon(icon, color: AppColors.primary),
-      title: Text(title, style: AppTextStyles.body.copyWith(fontWeight: FontWeight.w500)),
-      trailing: const Icon(Icons.chevron_right, color: AppColors.textSecondary, size: 20),
+      title: Text(title, style: Theme.of(context).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w500)),
+      trailing: Icon(Icons.chevron_right, color: Theme.of(context).hintColor, size: 20),
       contentPadding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
-      shape: const Border(bottom: BorderSide(color: Color(0xFFEEEEEE), width: 1)),
+      shape: Border(bottom: BorderSide(color: Theme.of(context).dividerColor, width: 1)),
     );
   }
 

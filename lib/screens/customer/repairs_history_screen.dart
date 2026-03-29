@@ -38,7 +38,7 @@ class RepairsHistoryScreen extends StatelessWidget {
         }
 
         return Container(
-          color: AppColors.background,
+          color: Theme.of(context).scaffoldBackgroundColor,
           child: ListView.separated(
             padding: const EdgeInsets.all(16),
             itemCount: history.length,
@@ -61,9 +61,10 @@ class _HistoryCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(12),
-        boxShadow: AppShadows.card,
+        boxShadow: Theme.of(context).brightness == Brightness.dark ? [] : AppShadows.card,
+        border: Border.all(color: Theme.of(context).dividerColor.withOpacity(0.1)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -77,21 +78,12 @@ class _HistoryCard extends StatelessWidget {
                   children: [
                     Text(
                       item.serviceName,
-                      style: const TextStyle(
-                        fontFamily: 'Poppins',
-                        fontWeight: FontWeight.w700,
-                        fontSize: 15,
-                        color: AppColors.textPrimary,
-                      ),
+                      style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 2),
                     Text(
                       item.vehicleInfo,
-                      style: const TextStyle(
-                        fontFamily: 'Poppins',
-                        fontSize: 12,
-                        color: AppColors.textSecondary,
-                      ),
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Theme.of(context).hintColor),
                     ),
                   ],
                 ),
@@ -246,26 +238,21 @@ class _DetailItem extends StatelessWidget {
       children: [
         Text(
           label,
-          style: const TextStyle(
-            fontFamily: 'Poppins',
-            fontSize: 11,
-            color: AppColors.textSecondary,
-          ),
+          style: Theme.of(context).textTheme.labelSmall?.copyWith(color: Theme.of(context).hintColor),
         ),
         const SizedBox(height: 2),
         Row(
           children: [
             if (icon != null) ...[
-              Icon(icon, size: 12, color: AppColors.textSecondary),
+              Icon(icon, size: 12, color: Theme.of(context).hintColor),
               const SizedBox(width: 4),
             ],
-            Text(
-              value,
-              style: TextStyle(
-                fontFamily: 'Poppins',
-                fontSize: 13,
-                fontWeight: isBold ? FontWeight.w700 : FontWeight.w500,
-                color: AppColors.textPrimary,
+            Flexible(
+              child: Text(
+                value,
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  fontWeight: isBold ? FontWeight.bold : FontWeight.w500,
+                ),
               ),
             ),
           ],

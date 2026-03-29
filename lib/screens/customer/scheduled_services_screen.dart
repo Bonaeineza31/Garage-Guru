@@ -9,7 +9,7 @@ class ScheduledServicesScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: GgAppBar(
         title: 'Scheduled Services',
         actions: [
@@ -26,7 +26,7 @@ class ScheduledServicesScreen extends StatelessWidget {
           children: [
             Text(
               'Select Service Type',
-              style: AppTextStyles.heading2,
+              style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: AppSpacing.lg),
             _ServiceSelectionCard(
@@ -85,11 +85,11 @@ class _ServiceSelectionCard extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: AppSpacing.md),
       padding: const EdgeInsets.all(AppSpacing.lg),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(AppRadius.lg),
-        border: Border.all(color: AppColors.divider.withOpacity(0.5)),
-        boxShadow: [
-          BoxShadow(color: Colors.black12, blurRadius: 4, offset: Offset(0, 2)),
+        border: Border.all(color: Theme.of(context).dividerColor.withOpacity(0.1)),
+        boxShadow: Theme.of(context).brightness == Brightness.dark ? [] : [
+           const BoxShadow(color: Colors.black12, blurRadius: 4, offset: Offset(0, 2)),
         ],
       ),
       child: Column(
@@ -104,16 +104,15 @@ class _ServiceSelectionCard extends StatelessWidget {
                   children: [
                     Text(
                       title,
-                      style: AppTextStyles.subtitle.copyWith(
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.bold,
-                        fontSize: 18,
                       ),
                     ),
-                    SizedBox(height: 4),
+                    const SizedBox(height: 4),
                     Text(
                       subtitle,
-                      style: AppTextStyles.bodySmall.copyWith(
-                        color: AppColors.textSecondary,
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: Theme.of(context).hintColor,
                       ),
                     ),
                   ],

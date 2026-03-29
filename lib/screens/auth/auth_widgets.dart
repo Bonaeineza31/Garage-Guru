@@ -16,7 +16,7 @@ class AuthShell extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AuthTheme.headerTint,
+      backgroundColor: AuthTheme.getHeaderTint(context),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -54,9 +54,9 @@ class AuthShell extends StatelessWidget {
           Expanded(
             child: Container(
               width: double.infinity,
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+              decoration: BoxDecoration(
+                color: Theme.of(context).cardColor,
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
               ),
               child: body,
             ),
@@ -142,7 +142,7 @@ class _SocialTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: Colors.white,
+      color: Theme.of(context).cardColor,
       borderRadius: BorderRadius.circular(AuthTheme.fieldRadius),
       child: InkWell(
         onTap: onTap,
@@ -156,13 +156,13 @@ class _SocialTile extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              FaIcon(icon, size: 20, color: const Color(0xFF334155)),
+              FaIcon(icon, size: 20, color: Theme.of(context).brightness == Brightness.dark ? Colors.white70 : const Color(0xFF334155)),
               const SizedBox(height: 6),
               Text(
                 label,
                 style: AppTextStyles.bodySmall.copyWith(
                   fontWeight: FontWeight.w500,
-                  color: AppColors.textPrimary,
+                  color: Theme.of(context).brightness == Brightness.dark ? Colors.white : AppColors.textPrimary,
                   fontSize: 11,
                 ),
               ),
@@ -199,13 +199,13 @@ class AuthTextField extends StatelessWidget {
       keyboardType: keyboardType,
       obscureText: obscureText,
       validator: validator,
-      style: AppTextStyles.body.copyWith(color: AppColors.textPrimary),
+      style: AppTextStyles.body.copyWith(color: Theme.of(context).textTheme.bodyLarge?.color),
       decoration: InputDecoration(
         hintText: hint,
-        hintStyle: AppTextStyles.body.copyWith(color: AppColors.textHint),
+        hintStyle: AppTextStyles.body.copyWith(color: Theme.of(context).brightness == Brightness.dark ? Colors.white38 : AppColors.textHint),
         suffixIcon: suffix,
         filled: true,
-        fillColor: Colors.white,
+        fillColor: Theme.of(context).inputDecorationTheme.fillColor ?? Theme.of(context).cardColor,
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AuthTheme.fieldRadius),

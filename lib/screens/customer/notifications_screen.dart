@@ -41,7 +41,7 @@ class NotificationsScreen extends StatelessWidget {
     ];
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: GgAppBar(
         title: 'Notifications',
       ),
@@ -54,9 +54,9 @@ class NotificationsScreen extends StatelessWidget {
             margin: const EdgeInsets.only(bottom: AppSpacing.md),
             padding: const EdgeInsets.all(AppSpacing.lg),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: Theme.of(context).cardColor,
               borderRadius: BorderRadius.circular(AppRadius.lg),
-              border: Border.all(color: AppColors.divider.withOpacity(0.5)),
+              border: Border.all(color: Theme.of(context).dividerColor.withOpacity(0.1)),
             ),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -64,7 +64,7 @@ class NotificationsScreen extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: AppColors.primaryLight.withOpacity(0.3),
+                    color: AppColors.primary.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(AppRadius.sm),
                   ),
                   child: Icon(item.icon, size: 20, color: AppColors.primary),
@@ -79,7 +79,7 @@ class NotificationsScreen extends StatelessWidget {
                         children: [
                           Text(
                             item.title,
-                            style: AppTextStyles.subtitle.copyWith(fontWeight: FontWeight.bold),
+                            style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
                           ),
                           Text(
                             item.date,
@@ -90,7 +90,7 @@ class NotificationsScreen extends StatelessWidget {
                       const SizedBox(height: 4),
                       Text(
                         item.description,
-                        style: AppTextStyles.bodySmall.copyWith(color: AppColors.textSecondary),
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Theme.of(context).hintColor),
                       ),
                       if (item.showScheduleAction) ...[
                         const SizedBox(height: AppSpacing.md),

@@ -38,7 +38,7 @@ class _GarageDetailScreenState extends State<GarageDetailScreen>
     final garage = widget.garage;
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         backgroundColor: AppColors.primary,
         foregroundColor: Colors.white,
@@ -85,7 +85,7 @@ class _GarageDetailScreenState extends State<GarageDetailScreen>
               TabBar(
                 controller: _tabController,
                 labelColor: AppColors.primary,
-                unselectedLabelColor: AppColors.textSecondary,
+                unselectedLabelColor: Theme.of(context).hintColor,
                 indicatorColor: AppColors.primary,
                 indicatorWeight: 3,
                 labelStyle: const TextStyle(
@@ -116,7 +116,7 @@ class _GarageDetailScreenState extends State<GarageDetailScreen>
 
   Widget _buildHeader(BuildContext context, GarageModel garage) {
     return Container(
-      color: AppColors.surface,
+      color: Theme.of(context).scaffoldBackgroundColor,
       padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -145,7 +145,7 @@ class _GarageDetailScreenState extends State<GarageDetailScreen>
                   children: [
                     Text(
                       garage.name,
-                      style: AppTextStyles.heading2,
+                      style: Theme.of(context).textTheme.headlineMedium,
                     ),
                     const SizedBox(height: 4),
                     Row(
@@ -154,9 +154,8 @@ class _GarageDetailScreenState extends State<GarageDetailScreen>
                         const SizedBox(width: 4),
                         Text(
                           '${garage.rating.toStringAsFixed(2)} (${garage.reviewCount} reviews)',
-                          style: AppTextStyles.bodySmall.copyWith(
+                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
                             fontWeight: FontWeight.bold,
-                            color: AppColors.textPrimary,
                           ),
                         ),
                       ],
@@ -168,7 +167,7 @@ class _GarageDetailScreenState extends State<GarageDetailScreen>
                         const SizedBox(width: 4),
                         Text(
                           '${garage.distanceKm}km away • ${garage.address.split(',').last.trim()}',
-                          style: AppTextStyles.bodySmall,
+                          style: Theme.of(context).textTheme.bodySmall,
                         ),
                       ],
                     ),
@@ -253,17 +252,17 @@ class _AboutTab extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('About', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.textPrimary)),
+          Text('About', style: Theme.of(context).textTheme.titleLarge),
           const SizedBox(height: 8),
-          Text(garage.description, style: AppTextStyles.bodySmall),
+          Text(garage.description, style: Theme.of(context).textTheme.bodySmall),
           const SizedBox(height: 24),
-          const Text('Contact & Location', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.textPrimary)),
+          Text('Contact & Location', style: Theme.of(context).textTheme.titleLarge),
           const SizedBox(height: 12),
-          _buildInfoRow(Icons.location_on_outlined, 'Address', garage.address),
-          _buildInfoRow(Icons.phone_outlined, 'Phone', garage.phone),
-          _buildInfoRow(Icons.access_time_outlined, 'Hours', 'Mon-Sat: 8:00 AM - 6:00 PM'),
+          _buildInfoRow(context, Icons.location_on_outlined, 'Address', garage.address),
+          _buildInfoRow(context, Icons.phone_outlined, 'Phone', garage.phone),
+          _buildInfoRow(context, Icons.access_time_outlined, 'Hours', 'Mon-Sat: 8:00 AM - 6:00 PM'),
           const SizedBox(height: 24),
-          const Text('Gallery', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.textPrimary)),
+          Text('Gallery', style: Theme.of(context).textTheme.titleLarge),
           const SizedBox(height: 12),
           GridView.builder(
             shrinkWrap: true,
@@ -290,20 +289,20 @@ class _AboutTab extends StatelessWidget {
     );
   }
 
-  Widget _buildInfoRow(IconData icon, String label, String value) {
+  Widget _buildInfoRow(BuildContext context, IconData icon, String label, String value) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(icon, size: 20, color: AppColors.textSecondary),
+          Icon(icon, size: 20, color: Theme.of(context).iconTheme.color),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(label, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: AppColors.textPrimary)),
-                Text(value, style: AppTextStyles.bodySmall),
+                Text(label, style: Theme.of(context).textTheme.labelLarge?.copyWith(fontWeight: FontWeight.bold)),
+                Text(value, style: Theme.of(context).textTheme.bodySmall),
               ],
             ),
           ),
@@ -331,29 +330,24 @@ class _ServicesTab extends StatelessWidget {
       itemCount: serviceCategories.length,
       itemBuilder: (context, index) {
         return Container(
-          margin: const EdgeInsets.only(bottom: 12),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: Theme.of(context).cardColor,
             borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: AppColors.divider),
+            border: Border.all(color: Theme.of(context).dividerColor),
           ),
           child: ExpansionTile(
             title: Text(
               serviceCategories[index],
-              style: const TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-                color: AppColors.textPrimary,
-              ),
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
             ),
             shape: const RoundedRectangleBorder(side: BorderSide.none),
             collapsedShape: const RoundedRectangleBorder(side: BorderSide.none),
-            iconColor: AppColors.textSecondary,
-            collapsedIconColor: AppColors.textSecondary,
+            iconColor: Theme.of(context).iconTheme.color,
+            collapsedIconColor: Theme.of(context).iconTheme.color,
             childrenPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             children: [
-              _buildServiceItem('Full computer diagnostics', 'Frw 25,000'),
-              _buildServiceItem('Oil Change', 'Frw 30,000'),
+              _buildServiceItem(context, 'Full computer diagnostics', 'Frw 25,000'),
+              _buildServiceItem(context, 'Oil Change', 'Frw 30,000'),
             ],
           ),
         );
@@ -361,16 +355,16 @@ class _ServicesTab extends StatelessWidget {
     );
   }
 
-  Widget _buildServiceItem(String name, String price) {
+  Widget _buildServiceItem(BuildContext context, String name, String price) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(name, style: AppTextStyles.bodySmall),
+          Text(name, style: Theme.of(context).textTheme.bodySmall),
           Text(
             price,
-            style: AppTextStyles.bodySmall.copyWith(
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(
               fontWeight: FontWeight.bold,
               color: AppColors.primary,
             ),
@@ -398,39 +392,39 @@ class _ReviewsTab extends StatelessWidget {
                 children: [
                    Text(
                     garage.rating.toStringAsFixed(2),
-                    style: const TextStyle(fontSize: 48, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
+                    style: Theme.of(context).textTheme.headlineLarge?.copyWith(fontSize: 48, fontWeight: FontWeight.bold),
                   ),
                   Row(
                     children: List.generate(5, (index) => const Icon(Icons.star_rounded, color: AppColors.starFilled, size: 20)),
                   ),
                   const SizedBox(height: 4),
-                  Text('${garage.reviewCount} reviews', style: AppTextStyles.caption),
+                  Text('${garage.reviewCount} reviews', style: Theme.of(context).textTheme.bodySmall),
                 ],
               ),
               const SizedBox(width: 32),
               Expanded(
                 child: Column(
                   children: [
-                    _buildRatingBar(5, 0.9),
-                    _buildRatingBar(4, 0.1),
-                    _buildRatingBar(3, 0.0),
-                    _buildRatingBar(2, 0.0),
-                    _buildRatingBar(1, 0.0),
+                    _buildRatingBar(context, 5, 0.9),
+                    _buildRatingBar(context, 4, 0.1),
+                    _buildRatingBar(context, 3, 0.0),
+                    _buildRatingBar(context, 2, 0.0),
+                    _buildRatingBar(context, 1, 0.0),
                   ],
                 ),
               ),
             ],
           ),
           const SizedBox(height: 32),
-          _buildReviewCard('Jean Pierre', 'May 15, 2023', 'Excellent service! They fixed my car quickly and at a reasonable price.', 5),
-          _buildReviewCard('Marie Claire', 'May 5, 2023', 'Good service but I had to wait a bit longer than expected. The mechanics are very professional though.', 4),
-          _buildReviewCard('Emmanuel', 'April 20, 2023', 'Best garage in Kigali! They diagnosed and fixed my engine problem that other garages couldn\'t figure out.', 5),
+          _buildReviewCard(context, 'Jean Pierre', 'May 15, 2023', 'Excellent service! They fixed my car quickly and at a reasonable price.', 5),
+          _buildReviewCard(context, 'Marie Claire', 'May 5, 2023', 'Good service but I had to wait a bit longer than expected. The mechanics are very professional though.', 4),
+          _buildReviewCard(context, 'Emmanuel', 'April 20, 2023', 'Best garage in Kigali! They diagnosed and fixed my engine problem that other garages couldn\'t figure out.', 5),
         ],
       ),
     );
   }
 
-  Widget _buildRatingBar(int stars, double progress) {
+  Widget _buildRatingBar(BuildContext context, int stars, double progress) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 2),
       child: Row(
@@ -442,7 +436,7 @@ class _ReviewsTab extends StatelessWidget {
               borderRadius: BorderRadius.circular(4),
               child: LinearProgressIndicator(
                 value: progress,
-                backgroundColor: AppColors.divider,
+                backgroundColor: Theme.of(context).dividerColor.withOpacity(0.1),
                 valueColor: const AlwaysStoppedAnimation<Color>(AppColors.starFilled),
                 minHeight: 8,
               ),
@@ -453,7 +447,7 @@ class _ReviewsTab extends StatelessWidget {
     );
   }
 
-  Widget _buildReviewCard(String user, String date, String content, int rating) {
+  Widget _buildReviewCard(BuildContext context, String user, String date, String content, int rating) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 24),
       child: Column(
@@ -462,16 +456,16 @@ class _ReviewsTab extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(user, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
-              Text(date, style: AppTextStyles.caption),
+              Text(user, style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.bold)),
+              Text(date, style: Theme.of(context).textTheme.bodySmall),
             ],
           ),
           const SizedBox(height: 4),
           Row(
-            children: List.generate(5, (index) => Icon(Icons.star_rounded, color: index < rating ? AppColors.starFilled : AppColors.divider, size: 16)),
+            children: List.generate(5, (index) => Icon(Icons.star_rounded, color: index < rating ? AppColors.starFilled : Theme.of(context).dividerColor, size: 16)),
           ),
           const SizedBox(height: 8),
-          Text(content, style: AppTextStyles.bodySmall),
+          Text(content, style: Theme.of(context).textTheme.bodySmall),
         ],
       ),
     );
@@ -490,11 +484,11 @@ class _TabBarDelegate extends SliverPersistentHeaderDelegate {
   @override
   Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
     return Container(
-      color: AppColors.surface,
+      color: Theme.of(context).scaffoldBackgroundColor,
       child: Column(
         children: [
           tabBar,
-          const Divider(height: 1),
+          Divider(height: 1, color: Theme.of(context).dividerColor),
         ],
       ),
     );

@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:provider/provider.dart';
+import 'package:garage_guru/theme/theme_provider.dart';
 import 'package:garage_guru/theme/app_theme.dart';
 import 'package:garage_guru/data/mock_data.dart';
-import 'package:garage_guru/main.dart';
 import 'package:garage_guru/screens/auth/login_screen.dart';
 import 'package:garage_guru/screens/customer/personal_information_screen.dart';
 import 'package:garage_guru/screens/customer/security_screen.dart';
@@ -22,7 +23,6 @@ class AccountSettingsScreen extends StatefulWidget {
 
 class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
   // Shared Preferences variables
-  bool _darkModeEnabled = false;
   bool _emailNotifications = true;
   bool _locationServices = true;
 
@@ -40,7 +40,6 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
   Future<void> _loadPreferences() async {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
-      _darkModeEnabled = prefs.getBool('dark_mode') ?? false;
       _emailNotifications = prefs.getBool('email_notifications') ?? true;
       _locationServices = prefs.getBool('location_services') ?? true;
     });
@@ -77,9 +76,10 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final themeProvider = Provider.of<ThemeProvider>(context);
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         backgroundColor: AppColors.primary,
         foregroundColor: Colors.white,
@@ -142,6 +142,7 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
                 style: OutlinedButton.styleFrom(
                   foregroundColor: AppColors.primary,
                   side: const BorderSide(color: AppColors.primary),
+                  backgroundColor: Colors.transparent,
                   minimumSize: const Size(double.infinity, 44),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.sm)),
                 ),
@@ -176,12 +177,9 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
             _buildToggleItem(
               icon: Icons.dark_mode_outlined,
               title: 'Dark Mode',
-              value: _darkModeEnabled,
+              value: themeProvider.isDarkMode,
               onChanged: (v) {
-                setState(() => _darkModeEnabled = v);
-                _savePreference('dark_mode', v);
-                // Update global themeNotifier
-                themeNotifier.value = v ? ThemeMode.dark : ThemeMode.light;
+                themeProvider.toggleTheme(v);
               },
             ),
             _buildToggleItem(
@@ -312,14 +310,14 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
     return Container(
       color: Theme.of(context).cardColor,
       child: ListTile(
-        leading: Icon(icon, color: AppColors.textSecondary, size: 22),
-        title: Text(title, style: AppTextStyles.body.copyWith(fontWeight: FontWeight.w500)),
+        leading: Icon(icon, color: Theme.of(context).iconTheme.color, size: 22),
+        title: Text(title, style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w500)),
         trailing: Switch(
           value: value,
           onChanged: onChanged,
           activeColor: AppColors.primary,
         ),
-        shape: Border(bottom: BorderSide(color: AppColors.divider.withOpacity(0.5))),
+        shape: Border(bottom: BorderSide(color: Theme.of(context).dividerColor.withOpacity(0.1))),
       ),
     );
   }

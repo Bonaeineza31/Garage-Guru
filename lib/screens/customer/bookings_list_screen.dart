@@ -44,9 +44,9 @@ class _BookingsListScreenState extends State<BookingsListScreen>
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('My Bookings', style: AppTextStyles.heading3.copyWith(color: Colors.white)),
+        title: const Text('My Bookings', style: TextStyle(fontFamily: 'Poppins', fontWeight: FontWeight.w600, fontSize: 16)),
         backgroundColor: AppColors.primary,
-        foregroundColor: AppColors.textOnPrimary,
+        foregroundColor: Colors.white,
         automaticallyImplyLeading: false,
         elevation: 0,
         bottom: TabBar(
@@ -98,7 +98,7 @@ class _BookingsListScreenState extends State<BookingsListScreen>
 
   void _showBookingDetail(BookingModel booking) {
     showModalBottomSheet(
-      context: context,
+      backgroundColor: Theme.of(context).cardColor,
       isScrollControlled: true,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(AppRadius.xl)),
@@ -120,13 +120,13 @@ class _BookingsListScreenState extends State<BookingsListScreen>
                     width: 40,
                     height: 4,
                     decoration: BoxDecoration(
-                      color: AppColors.divider,
+                      color: Theme.of(context).dividerColor.withOpacity(0.2),
                       borderRadius: BorderRadius.circular(2),
                     ),
                   ),
                 ),
                 const SizedBox(height: AppSpacing.xl),
-                Text('Booking Details', style: AppTextStyles.heading2),
+                Text('Booking Details', style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold)),
                 const SizedBox(height: AppSpacing.xxl),
                 BookingCard(booking: booking),
                 const SizedBox(height: AppSpacing.lg),

@@ -11,7 +11,7 @@ class EditProfileScreen extends StatelessWidget {
     final user = MockData.currentUser;
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: GgAppBar(
         title: 'Edit Profile',
       ),
@@ -33,7 +33,7 @@ class EditProfileScreen extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: AppColors.primary,
                       shape: BoxShape.circle,
-                      border: Border.all(color: Colors.white, width: 2),
+                      border: Border.all(color: Theme.of(context).cardColor, width: 2),
                     ),
                     child: Icon(Icons.camera_alt, color: Colors.white, size: 16),
                   ),

@@ -6,13 +6,14 @@ class AppColors {
   static const Color primaryDark = Color(0xFF007BAB);
   static const Color primaryLight = Color(0xFFE1F5FE);
   static const Color primaryMedium = Color(0xFF2DB0E1);
-  static const Color accent = Color(0xFFFFA000);
-  static const Color accentLight = Color(0xFFFFF8E1);
+  static const Color accent = Color(0xFF0EA5E9);
+  static const Color accentLight = Color(0xFFE0F2FE);
   static const Color background = Color(0xFFF8FAFC);
   static const Color surface = Color(0xFFFFFFFF);
   static const Color cardBackground = Color(0xFFFFFFFF);
   static const Color divider = Color(0xFFE2E8F0);
   static const Color scaffoldDark = Color(0xFF0F172A);
+  static const Color surfaceDark = Color(0xFF1E293B);
   static const Color textPrimary = Color(0xFF1E293B);
   static const Color textSecondary = Color(0xFF64748B);
   static const Color textHint = Color(0xFF94A3B8);
@@ -24,6 +25,7 @@ class AppColors {
   static const Color starFilled = Color(0xFFFBBF24);
   static const Color starEmpty = Color(0xFFE2E8F0);
   static const Color shadow = Color(0x0F000000);
+
   static const LinearGradient primaryGradient = LinearGradient(
     colors: [Color(0xFF0097DA), Color(0xFF2DB0E1)],
     begin: Alignment.topLeft,
@@ -31,19 +33,13 @@ class AppColors {
   );
 
   static const LinearGradient accentGradient = LinearGradient(
-    colors: [Color(0xFFFF6B35), Color(0xFFFF8F5E)],
+    colors: [Color(0xFF0EA5E9), Color(0xFF38BDF8)],
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );
 
   static const LinearGradient heroGradient = LinearGradient(
-    colors: [Color(0xFF0097DA), Color(0xFF2DB0E1)],
-    begin: Alignment.topCenter,
-    end: Alignment.bottomCenter,
-  );
-
-  static const LinearGradient successGradient = LinearGradient(
-    colors: [Color(0xFF10B981), Color(0xFF34D399)],
+    colors: [Color(0xFF0F172A), Color(0xFF1E293B)],
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );
@@ -51,14 +47,12 @@ class AppColors {
 
 class AppTextStyles {
   AppTextStyles._();
-
   static const String _fontFamily = 'Poppins';
 
   static const TextStyle heading1 = TextStyle(
     fontFamily: _fontFamily,
     fontSize: 30,
     fontWeight: FontWeight.w700,
-    color: AppColors.textPrimary,
     height: 1.2,
     letterSpacing: -0.5,
   );
@@ -67,7 +61,6 @@ class AppTextStyles {
     fontFamily: _fontFamily,
     fontSize: 24,
     fontWeight: FontWeight.w600,
-    color: AppColors.textPrimary,
     height: 1.25,
     letterSpacing: -0.3,
   );
@@ -76,7 +69,6 @@ class AppTextStyles {
     fontFamily: _fontFamily,
     fontSize: 18,
     fontWeight: FontWeight.w600,
-    color: AppColors.textPrimary,
     height: 1.35,
   );
 
@@ -84,7 +76,6 @@ class AppTextStyles {
     fontFamily: _fontFamily,
     fontSize: 16,
     fontWeight: FontWeight.w500,
-    color: AppColors.textPrimary,
     height: 1.4,
   );
 
@@ -92,7 +83,6 @@ class AppTextStyles {
     fontFamily: _fontFamily,
     fontSize: 14,
     fontWeight: FontWeight.w400,
-    color: AppColors.textPrimary,
     height: 1.5,
   );
 
@@ -100,15 +90,13 @@ class AppTextStyles {
     fontFamily: _fontFamily,
     fontSize: 12,
     fontWeight: FontWeight.w400,
-    color: AppColors.textSecondary,
     height: 1.5,
   );
 
-  static const TextStyle caption = TextStyle(
+  static const TextStyle label = TextStyle(
     fontFamily: _fontFamily,
-    fontSize: 11,
-    fontWeight: FontWeight.w400,
-    color: AppColors.textSecondary,
+    fontSize: 13,
+    fontWeight: FontWeight.w500,
     height: 1.4,
   );
 
@@ -116,25 +104,22 @@ class AppTextStyles {
     fontFamily: _fontFamily,
     fontSize: 16,
     fontWeight: FontWeight.w600,
-    color: AppColors.textOnPrimary,
-    height: 1.2,
+    color: Colors.white,
     letterSpacing: 0.3,
   );
 
-  static const TextStyle label = TextStyle(
+  static const TextStyle caption = TextStyle(
     fontFamily: _fontFamily,
-    fontSize: 13,
-    fontWeight: FontWeight.w500,
+    fontSize: 12,
+    fontWeight: FontWeight.w400,
     color: AppColors.textSecondary,
-    height: 1.4,
   );
 
   static const TextStyle price = TextStyle(
     fontFamily: _fontFamily,
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: FontWeight.w700,
-    color: AppColors.accent,
-    height: 1.3,
+    color: AppColors.primary,
   );
 }
 
@@ -161,71 +146,42 @@ class AppRadius {
 
 class AppShadows {
   AppShadows._();
-
+  
   static List<BoxShadow> get card => [
-        BoxShadow(
-          color: AppColors.primary.withOpacity(0.06),
-          blurRadius: 16,
-          offset: const Offset(0, 4),
-          spreadRadius: 0,
-        ),
-      ];
+    BoxShadow(
+      color: Colors.black.withOpacity(0.05),
+      blurRadius: 10,
+      offset: const Offset(0, 4),
+    ),
+  ];
 
   static List<BoxShadow> get elevated => [
-        BoxShadow(
-          color: AppColors.primary.withOpacity(0.10),
-          blurRadius: 24,
-          offset: const Offset(0, 8),
-          spreadRadius: -2,
-        ),
-      ];
-
-  static List<BoxShadow> get bottomNav => [
-        BoxShadow(
-          color: AppColors.primary.withOpacity(0.08),
-          blurRadius: 16,
-          offset: const Offset(0, -4),
-        ),
-      ];
+    BoxShadow(
+      color: Colors.black.withOpacity(0.1),
+      blurRadius: 15,
+      offset: const Offset(0, 8),
+    ),
+  ];
 
   static List<BoxShadow> get button => [
-        BoxShadow(
-          color: AppColors.primary.withOpacity(0.25),
-          blurRadius: 12,
-          offset: const Offset(0, 4),
-        ),
-      ];
+    BoxShadow(
+      color: AppColors.primary.withOpacity(0.2),
+      blurRadius: 8,
+      offset: const Offset(0, 4),
+    ),
+  ];
 
-  static List<BoxShadow> get accentButton => [
-        BoxShadow(
-          color: AppColors.accent.withOpacity(0.30),
-          blurRadius: 12,
-          offset: const Offset(0, 4),
-        ),
-      ];
+  static List<BoxShadow> get bottomNav => [
+    BoxShadow(
+      color: Colors.black.withOpacity(0.05),
+      blurRadius: 10,
+      offset: const Offset(0, -4),
+    ),
+  ];
 }
 
 class AppTheme {
   AppTheme._();
-
-  static const Color primaryBlue      = AppColors.primary;
-  static const Color scheduleBlue     = Color(0xFF0284C7);
-  static const Color emergencyOrange  = AppColors.accent;
-  static const Color repairGreen      = AppColors.success;
-
-  static const Color scaffoldBackground = AppColors.background;
-  static const Color cardBackground     = AppColors.cardBackground;
-  static const Color dividerColor       = AppColors.divider;
-  static const Color iconGray           = AppColors.textSecondary;
-  static const Color textHint           = AppColors.textHint;
-
-  static const Color textPrimary   = AppColors.textPrimary;
-  static const Color textSecondary = AppColors.textSecondary;
-
-  static const Color errorRed       = AppColors.error;
-  static const Color successGreen   = AppColors.success;
-  static const Color warningYellow  = AppColors.warning;
-  static const Color infoBlue       = AppColors.info;
 
   static ThemeData get lightTheme {
     return ThemeData(
@@ -240,45 +196,26 @@ class AppTheme {
       ),
       appBarTheme: const AppBarTheme(
         backgroundColor: AppColors.primary,
-        foregroundColor: Color(0xFFFFFFFF),
+        foregroundColor: Colors.white,
         elevation: 0,
-        centerTitle: false,
-        titleTextStyle: TextStyle(
-          color: Color(0xFFFFFFFF),
-          fontSize: 18,
-          fontWeight: FontWeight.w600,
-          fontFamily: 'Poppins',
+      ),
+      dividerColor: AppColors.divider,
+      cardTheme: CardThemeData(
+        color: AppColors.cardBackground,
+        elevation: 0,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+          side: const BorderSide(color: AppColors.divider, width: 1),
         ),
       ),
-      elevatedButtonTheme: ElevatedButtonThemeData(
-        style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.primary,
-          foregroundColor: const Color(0xFFFFFFFF),
-          elevation: 0,
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-        ),
-      ),
-      inputDecorationTheme: InputDecorationTheme(
-        filled: true,
-        fillColor: AppColors.surface,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
-          borderSide: const BorderSide(color: AppColors.divider),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
-          borderSide: const BorderSide(color: AppColors.divider),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
-          borderSide: const BorderSide(color: AppColors.primary, width: 2),
-        ),
-        errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
-          borderSide: const BorderSide(color: AppColors.error),
-        ),
+      textTheme: const TextTheme(
+        headlineLarge: AppTextStyles.heading1,
+        headlineMedium: AppTextStyles.heading2,
+        titleLarge: AppTextStyles.heading3,
+        titleMedium: AppTextStyles.subtitle,
+        bodyLarge: AppTextStyles.body,
+        bodySmall: AppTextStyles.bodySmall,
+        labelLarge: AppTextStyles.label,
       ),
     );
   }
@@ -287,52 +224,47 @@ class AppTheme {
     return ThemeData(
       useMaterial3: true,
       fontFamily: 'Poppins',
-      scaffoldBackgroundColor: const Color(0xFF0F172A),
+      scaffoldBackgroundColor: AppColors.scaffoldDark,
       colorScheme: const ColorScheme.dark(
         primary: Color(0xFF0EA5E9),
         secondary: Color(0xFFFBBF24),
-        surface: Color(0xFF1E293B),
+        surface: AppColors.surfaceDark,
         error: Color(0xFFF43F5E),
         onPrimary: Colors.white,
         onSurface: Colors.white,
         onBackground: Colors.white,
       ),
       appBarTheme: const AppBarTheme(
-        backgroundColor: Color(0xFF0F172A),
+        backgroundColor: AppColors.scaffoldDark,
         foregroundColor: Colors.white,
         elevation: 0,
-        centerTitle: false,
-        titleTextStyle: TextStyle(
-          color: Colors.white,
-          fontSize: 18,
-          fontWeight: FontWeight.w600,
-          fontFamily: 'Poppins',
+      ),
+      dividerColor: Colors.white12,
+      cardTheme: CardThemeData(
+        color: AppColors.surfaceDark,
+        elevation: 0,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+          side: const BorderSide(color: Colors.white10, width: 1),
         ),
       ),
       iconTheme: const IconThemeData(color: Colors.white),
-      textTheme: const TextTheme(
-        displayLarge: TextStyle(color: Colors.white),
-        displayMedium: TextStyle(color: Colors.white),
-        displaySmall: TextStyle(color: Colors.white),
-        headlineLarge: TextStyle(color: Colors.white),
-        headlineMedium: TextStyle(color: Colors.white),
-        headlineSmall: TextStyle(color: Colors.white),
-        titleLarge: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-        titleMedium: TextStyle(color: Colors.white),
-        titleSmall: TextStyle(color: Colors.white),
-        bodyLarge: TextStyle(color: Colors.white),
-        bodyMedium: TextStyle(color: Colors.white),
-        bodySmall: TextStyle(color: Colors.white70),
-        labelLarge: TextStyle(color: Colors.white),
-        labelMedium: TextStyle(color: Colors.white),
-        labelSmall: TextStyle(color: Colors.white70),
+      textTheme: TextTheme(
+        headlineLarge: AppTextStyles.heading1.copyWith(color: Colors.white),
+        headlineMedium: AppTextStyles.heading2.copyWith(color: Colors.white),
+        titleLarge: AppTextStyles.heading3.copyWith(color: Colors.white, fontWeight: FontWeight.bold),
+        titleMedium: AppTextStyles.subtitle.copyWith(color: Colors.white),
+        bodyLarge: AppTextStyles.body.copyWith(color: Colors.white),
+        bodyMedium: AppTextStyles.body.copyWith(color: Colors.white),
+        bodySmall: AppTextStyles.bodySmall.copyWith(color: Colors.white70),
+        labelLarge: AppTextStyles.label.copyWith(color: Colors.white),
+        labelSmall: AppTextStyles.label.copyWith(color: Colors.white70),
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: const Color(0xFF1E293B),
+        fillColor: AppColors.surfaceDark,
         hintStyle: const TextStyle(color: Colors.white38),
         labelStyle: const TextStyle(color: Colors.white70),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide(color: Colors.white10),
@@ -340,14 +272,6 @@ class AppTheme {
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide(color: Colors.white10),
-        ),
-      ),
-      cardTheme: CardThemeData(
-        color: const Color(0xFF1E293B),
-        elevation: 0,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-          side: const BorderSide(color: Colors.white10, width: 1),
         ),
       ),
     );

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:garage_guru/screens/customer/customer_shell.dart';
+import 'package:garage_guru/theme/app_theme.dart';
 
 class EmergencyRepairScreen extends StatefulWidget {
   const EmergencyRepairScreen({super.key});
@@ -22,7 +23,7 @@ class _EmergencyRepairScreenState extends State<EmergencyRepairScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F5F5),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         backgroundColor: const Color(0xFFFF6B00),
         elevation: 0,
@@ -49,22 +50,22 @@ class _EmergencyRepairScreenState extends State<EmergencyRepairScreen> {
               Container(
                 width: double.infinity,
                 padding: const EdgeInsets.all(12),
-                decoration: const BoxDecoration(
-                  color: Color(0xFFFFE8D4),
-                  border: Border(left: BorderSide(color: Color(0xFFFF8A00), width: 3)),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).brightness == Brightness.dark ? const Color(0xFF431407) : const Color(0xFFFFE8D4),
+                  border: const Border(left: BorderSide(color: Color(0xFFFF8A00), width: 3)),
                 ),
-                child: const Text(
+                child: Text(
                   'Emergency repairs are prioritized and will connect you with the nearest available mechanic.',
                   style: TextStyle(
                     fontFamily: 'Poppins',
                     fontSize: 13,
-                    color: Color(0xFFC2410C),
+                    color: Theme.of(context).brightness == Brightness.dark ? const Color(0xFFFFEDD5) : const Color(0xFFC2410C),
                     height: 1.4,
                   ),
                 ),
               ),
               const SizedBox(height: 18),
-              const Text('Your Location', style: _labelStyle),
+              Text('Your Location', style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
               const SizedBox(height: 8),
               TextField(
                 controller: _locationController,
@@ -87,7 +88,7 @@ class _EmergencyRepairScreenState extends State<EmergencyRepairScreen> {
                 ),
               ),
               const SizedBox(height: 12),
-              const Text('Describe the issue', style: _labelStyle),
+              Text('Describe the issue', style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
               const SizedBox(height: 8),
               TextField(
                 controller: _issueController,
@@ -120,46 +121,41 @@ class _EmergencyRepairScreenState extends State<EmergencyRepairScreen> {
                 ),
               ),
               const SizedBox(height: 18),
-              const Text(
+              Text(
                 'Emergency Contact',
-                style: TextStyle(
-                  fontFamily: 'Poppins',
-                  fontWeight: FontWeight.w600,
-                  fontSize: 21,
-                ),
+                style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 8),
               Row(
-                children: const [
-                  Icon(Icons.phone_outlined, color: Color(0xFF0D9488)),
-                  SizedBox(width: 8),
+                children: [
+                  const Icon(Icons.phone_outlined, color: Color(0xFF0D9488)),
+                  const SizedBox(width: 8),
                   Text(
                     '+250 789 123 456',
-                    style: TextStyle(
-                      fontFamily: 'Poppins',
-                      fontSize: 18,
-                      color: Color(0xFF0D9488),
+                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                      color: const Color(0xFF0D9488),
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
                 ],
               ),
               const SizedBox(height: 8),
-              const Row(
+              Row(
                 children: [
-                  Icon(Icons.schedule_outlined, color: Color(0xFF6B7280)),
-                  SizedBox(width: 8),
+                   Icon(Icons.schedule_outlined, color: Theme.of(context).brightness == Brightness.dark ? Colors.white38 : const Color(0xFF6B7280)),
+                  const SizedBox(width: 8),
                   Text(
                     '24/7 Emergency Support',
                     style: TextStyle(
                       fontFamily: 'Poppins',
                       fontSize: 16,
-                      color: Color(0xFF4B5563),
+                      color: Theme.of(context).brightness == Brightness.dark ? Colors.white70 : const Color(0xFF4B5563),
                     ),
                   ),
                 ],
               ),
-              const Padding(
-                padding: EdgeInsets.only(left: 28),
+              Padding(
+                padding: const EdgeInsets.only(left: 28),
                 child: Text(
                   'Average response time: 15 minutes',
                   style: TextStyle(
@@ -187,7 +183,7 @@ class _EmergencyRepairScreenState extends State<EmergencyRepairScreen> {
       ),
       prefixIcon: icon == null ? null : Icon(icon, color: const Color(0xFF9CA3AF), size: 20),
       filled: true,
-      fillColor: Colors.white,
+      fillColor: Theme.of(context).cardColor,
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(10),
         borderSide: const BorderSide(color: Color(0xFFD1D5DB)),
@@ -215,6 +211,9 @@ class _EmergencyRepairScreenState extends State<EmergencyRepairScreen> {
         BottomNavigationBarItem(icon: Icon(Icons.build_outlined), label: 'Repairs'),
         BottomNavigationBarItem(icon: Icon(Icons.person_outline), label: 'Profile'),
       ],
+      backgroundColor: Theme.of(context).cardColor,
+      selectedItemColor: AppColors.primary,
+      unselectedItemColor: Theme.of(context).brightness == Brightness.dark ? Colors.white38 : AppColors.textSecondary,
     );
   }
 

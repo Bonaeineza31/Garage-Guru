@@ -42,7 +42,7 @@ class _RepairsScreenState extends State<RepairsScreen>
     return BlocBuilder<BookingBloc, BookingState>(
       builder: (context, state) {
         return Scaffold(
-          backgroundColor: AppColors.background,
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
           appBar: AppBar(
             backgroundColor: AppColors.primary,
             elevation: 0,
@@ -211,9 +211,9 @@ class _RepairCard extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(12),
-        boxShadow: AppShadows.card,
+        border: Border.all(color: Theme.of(context).dividerColor, width: 1),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -229,9 +229,9 @@ class _RepairCard extends StatelessWidget {
                       width: 52,
                       height: 52,
                       decoration: BoxDecoration(
-                        color: AppColors.background,
+                        color: Theme.of(context).brightness == Brightness.dark ? const Color(0xFF0F172A) : AppColors.background,
                         shape: BoxShape.circle,
-                        border: Border.all(color: AppColors.divider),
+                        border: Border.all(color: Theme.of(context).dividerColor),
                       ),
                       child: Icon(
                           isBooked ? Icons.calendar_today_rounded : Icons.build_rounded,
@@ -245,21 +245,12 @@ class _RepairCard extends StatelessWidget {
                         children: [
                           Text(
                             repair.serviceName,
-                            style: const TextStyle(
-                              fontFamily: 'Poppins',
-                              fontWeight: FontWeight.w700,
-                              fontSize: 15,
-                              color: AppColors.textPrimary,
-                            ),
+                            style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
                           ),
                           const SizedBox(height: 2),
                           Text(
                             repair.vehicleInfo,
-                            style: const TextStyle(
-                              fontFamily: 'Poppins',
-                              fontSize: 12,
-                              color: AppColors.textSecondary,
-                            ),
+                            style: Theme.of(context).textTheme.bodySmall,
                           ),
                           const SizedBox(height: 4),
                           Row(
@@ -304,12 +295,7 @@ class _RepairCard extends StatelessWidget {
                       ),
                       Text(
                         '${(repair.progressPercent * 100).round()}%',
-                        style: const TextStyle(
-                          fontFamily: 'Poppins',
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.textPrimary,
-                        ),
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(fontWeight: FontWeight.bold),
                       ),
                     ],
                   ),
@@ -341,12 +327,7 @@ class _RepairCard extends StatelessWidget {
                         ),
                         Text(
                           isBooked ? repair.location : repair.mechanicName,
-                          style: const TextStyle(
-                            fontFamily: 'Poppins',
-                            fontSize: 13,
-                            fontWeight: FontWeight.w600,
-                            color: AppColors.textPrimary,
-                          ),
+                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
                         ),
                       ],
                     ),
@@ -411,7 +392,7 @@ class _RepairCard extends StatelessWidget {
               child: Container(
                 height: 140,
                 width: double.infinity,
-                color: AppColors.background,
+                color: Theme.of(context).brightness == Brightness.dark ? const Color(0xFF0F172A) : AppColors.background,
                 child: const Icon(Icons.garage_rounded,
                     color: AppColors.primary, size: 60),
               ),

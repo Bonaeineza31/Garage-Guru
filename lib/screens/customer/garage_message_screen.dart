@@ -10,7 +10,7 @@ class GarageMessageScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         backgroundColor: AppColors.primary,
         elevation: 0,
@@ -53,6 +53,7 @@ class GarageMessageScreen extends StatelessWidget {
               padding: const EdgeInsets.all(16),
               children: [
                 _buildMessageBubble(
+                  context,
                   'Hello! Welcome to ${garage.name}\nGarage. How can we help you?',
                   isMe: false,
                   time: '10:30 AM',
@@ -63,8 +64,8 @@ class GarageMessageScreen extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
             decoration: BoxDecoration(
-              color: Colors.white,
-              border: Border(top: BorderSide(color: AppColors.divider.withOpacity(0.5))),
+              color: Theme.of(context).cardColor,
+              border: Border(top: BorderSide(color: Theme.of(context).dividerColor.withOpacity(0.1))),
             ),
             child: SafeArea(
               child: Row(
@@ -80,9 +81,9 @@ class GarageMessageScreen extends StatelessWidget {
                     child: TextField(
                       decoration: InputDecoration(
                         hintText: 'Type a message...',
-                        hintStyle: const TextStyle(fontSize: 14),
+                        hintStyle: TextStyle(color: Theme.of(context).hintColor, fontSize: 14),
                         filled: true,
-                        fillColor: AppColors.divider.withOpacity(0.2),
+                        fillColor: Theme.of(context).scaffoldBackgroundColor,
                         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(AppRadius.pill),
@@ -108,11 +109,12 @@ class GarageMessageScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildMessageBubble(String text, {required bool isMe, required String time}) {
+  Widget _buildMessageBubble(BuildContext context, String text, {required bool isMe, required String time}) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+        mainAxisAlignment: isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
         children: [
           if (!isMe) ...[
             CircleAvatar(
@@ -128,15 +130,16 @@ class GarageMessageScreen extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: isMe ? AppColors.primary : AppColors.divider.withOpacity(0.2),
+                    color: isMe ? AppColors.primary : Theme.of(context).dividerColor.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(12).copyWith(
                       topLeft: !isMe ? const Radius.circular(0) : null,
+                      topRight: isMe ? const Radius.circular(0) : null,
                     ),
                   ),
                   child: Text(
                     text,
                     style: TextStyle(
-                      color: isMe ? Colors.white : AppColors.textPrimary,
+                      color: isMe ? Colors.white : Theme.of(context).textTheme.bodyMedium?.color,
                       fontSize: 13,
                     ),
                   ),

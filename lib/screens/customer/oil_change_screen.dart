@@ -31,6 +31,7 @@ class _OilChangeScreenState extends State<OilChangeScreen> {
   void _showSelectionDialog(String title, List<String> items, TextEditingController controller) {
     showModalBottomSheet(
       context: context,
+      backgroundColor: Theme.of(context).cardColor,
       shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
       builder: (context) {
         return Container(
@@ -38,10 +39,10 @@ class _OilChangeScreenState extends State<OilChangeScreen> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text(title, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, fontFamily: 'Poppins')),
+              Text(title, style: Theme.of(context).textTheme.titleLarge),
               const SizedBox(height: 10),
               ...items.map((item) => ListTile(
-                title: Text(item, style: const TextStyle(fontFamily: 'Poppins')),
+                title: Text(item, style: Theme.of(context).textTheme.bodyLarge),
                 onTap: () {
                   setState(() => controller.text = item);
                   Navigator.pop(context);
@@ -75,11 +76,8 @@ class _OilChangeScreenState extends State<OilChangeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final cardColor = isDark ? const Color(0xFF1E293B) : Colors.white;
-
     return Scaffold(
-      backgroundColor: isDark ? const Color(0xFF0F172A) : const Color(0xFFF4F4F4),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         backgroundColor: const Color(0xFF1D9CE5),
         elevation: 0,
@@ -106,7 +104,7 @@ class _OilChangeScreenState extends State<OilChangeScreen> {
               width: double.infinity,
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: cardColor,
+                color: Theme.of(context).cardColor,
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: [
                   BoxShadow(
@@ -137,12 +135,7 @@ class _OilChangeScreenState extends State<OilChangeScreen> {
                           children: [
                             Text(
                               'Oil Change Services',
-                              style: TextStyle(
-                                fontFamily: 'Poppins',
-                                fontWeight: FontWeight.w600,
-                                fontSize: 16,
-                                color: isDark ? Colors.white : Colors.black,
-                              ),
+                              style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
                             ),
                             const Text(
                               'Keep your engine running smoothly',
@@ -198,12 +191,7 @@ class _OilChangeScreenState extends State<OilChangeScreen> {
             const SizedBox(height: 30),
             Text(
               'Book Oil Change',
-              style: TextStyle(
-                fontFamily: 'Poppins',
-                fontWeight: FontWeight.w700,
-                fontSize: 22,
-                color: isDark ? Colors.white : const Color(0xFF111827),
-              ),
+              style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 12),
             const Text('Service Type', style: _labelStyle),
@@ -296,13 +284,13 @@ class _OilChangeScreenState extends State<OilChangeScreen> {
           fontFamily: 'Poppins',
           fontSize: 13,
         ),
-        prefixIcon: icon == null ? null : Icon(icon, size: 18, color: const Color(0xFF9CA3AF)),
+        prefixIcon: icon == null ? null : Icon(icon, size: 18, color: Theme.of(context).hintColor),
         filled: true,
-        fillColor: Theme.of(context).brightness == Brightness.dark ? const Color(0xFF1E293B) : Colors.white,
+        fillColor: Theme.of(context).cardColor,
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: Colors.grey.withOpacity(0.2)),
+          borderSide: BorderSide(color: Theme.of(context).dividerColor.withOpacity(0.1)),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
@@ -354,21 +342,16 @@ class _ServiceChip extends StatelessWidget {
         width: 170,
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF334155) : const Color(0xFFF8FAFC),
+          color: Theme.of(context).brightness == Brightness.dark ? const Color(0xFF1E293B) : const Color(0xFFF8FAFC),
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: Colors.grey.withOpacity(0.1)),
+          border: Border.all(color: Theme.of(context).dividerColor.withOpacity(0.1)),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               label,
-              style: TextStyle(
-                fontFamily: 'Poppins',
-                fontWeight: FontWeight.w600,
-                fontSize: 13,
-                color: isDark ? Colors.white : Colors.black,
-              ),
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 4),
             Text(
