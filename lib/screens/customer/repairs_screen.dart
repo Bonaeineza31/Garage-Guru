@@ -46,14 +46,7 @@ class _RepairsScreenState extends State<RepairsScreen>
           appBar: AppBar(
             backgroundColor: AppColors.primary,
             elevation: 0,
-            leading: IconButton(
-              onPressed: () {
-                if (Navigator.canPop(context)) {
-                  Navigator.pop(context);
-                }
-              },
-              icon: const Icon(Icons.arrow_back, color: Colors.white),
-            ),
+            automaticallyImplyLeading: false,
             title: const Text(
               'GarageGuru',
               style: TextStyle(

@@ -10,6 +10,10 @@ import 'package:garage_guru/screens/customer/garage_detail_screen.dart';
 import 'package:garage_guru/screens/customer/emergency_repair_screen.dart';
 import 'package:garage_guru/screens/customer/request_repair_form_screen.dart';
 import 'package:garage_guru/screens/customer/repairs_screen.dart';
+import 'package:garage_guru/screens/customer/battery_service_screen.dart';
+import 'package:garage_guru/screens/customer/tire_service_screen.dart';
+import 'package:garage_guru/screens/customer/add_vehicle_screen.dart';
+import 'package:garage_guru/screens/owner/add_garage_screen.dart';
 import 'package:garage_guru/blocs/garage_bloc.dart';
 import 'package:garage_guru/blocs/auth_bloc.dart';
 
@@ -176,17 +180,35 @@ class _HomeScreenState extends State<HomeScreen> {
                 }
               }
 
-              return GoogleMap(
-                initialCameraPosition: CameraPosition(
-                  target: initialPosition,
-                  zoom: 13,
-                ),
-                markers: markers,
-                myLocationEnabled: true,
-                myLocationButtonEnabled: false,
-                zoomControlsEnabled: false,
-                mapToolbarEnabled: false,
-                compassEnabled: false,
+              return Stack(
+                children: [
+                  GoogleMap(
+                    initialCameraPosition: CameraPosition(
+                      target: initialPosition,
+                      zoom: 13,
+                    ),
+                    markers: markers,
+                    myLocationEnabled: true,
+                    myLocationButtonEnabled: false,
+                    zoomControlsEnabled: false,
+                    mapToolbarEnabled: false,
+                    compassEnabled: false,
+                    // disable fullscreen control so it doesn't overlap the FAB
+                    liteModeEnabled: false,
+                  ),
+                  Positioned(
+                    bottom: 12,
+                    right: 60,
+                    child: FloatingActionButton.small(
+                      heroTag: 'add_garage_fab',
+                      backgroundColor: const Color(0xFF0EA5E9),
+                      onPressed: () => Navigator.of(context).push(
+                        MaterialPageRoute(builder: (_) => const AddGarageScreen()),
+                      ),
+                      child: const Icon(Icons.add, color: Colors.white),
+                    ),
+                  ),
+                ],
               );
             },
           ),
@@ -261,10 +283,18 @@ class _HomeScreenState extends State<HomeScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              _serviceItem('Oil Change', Icons.bolt_rounded),
-              _serviceItem('Tire Service', Icons.gps_fixed_rounded),
-              _serviceItem('Battery', Icons.battery_charging_full_rounded),
-              _serviceItem('Add Vehicle', Icons.garage_outlined),
+              _serviceItem('Oil Change', Icons.bolt_rounded, () {
+                Navigator.of(context).push(MaterialPageRoute(builder: (_) => const RequestRepairFormScreen(initialRepairType: 'Oil Change')));
+              }),
+              _serviceItem('Tire Service', Icons.gps_fixed_rounded, () {
+                Navigator.of(context).push(MaterialPageRoute(builder: (_) => const TireServiceScreen()));
+              }),
+              _serviceItem('Battery', Icons.battery_charging_full_rounded, () {
+                Navigator.of(context).push(MaterialPageRoute(builder: (_) => const BatteryServiceScreen()));
+              }),
+              _serviceItem('Add Vehicle', Icons.garage_outlined, () {
+                Navigator.of(context).push(MaterialPageRoute(builder: (_) => const AddVehicleScreen()));
+              }),
             ],
           ),
         ],
@@ -272,18 +302,22 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _serviceItem(String label, IconData icon) {
-    return Column(
-      children: [
-        Container(
-          width: 56,
-          height: 56,
-          decoration: const BoxDecoration(color: Color(0xFFE0F2FE), shape: BoxShape.circle),
-          child: Icon(icon, color: const Color(0xFF0EA5E9), size: 24),
-        ),
-        const SizedBox(height: 8),
-        Text(label, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: Color(0xFF374151))),
-      ],
+  Widget _serviceItem(String label, IconData icon, VoidCallback onTap) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(28),
+      child: Column(
+        children: [
+          Container(
+            width: 56,
+            height: 56,
+            decoration: const BoxDecoration(color: Color(0xFFE0F2FE), shape: BoxShape.circle),
+            child: Icon(icon, color: const Color(0xFF0EA5E9), size: 24),
+          ),
+          const SizedBox(height: 8),
+          Text(label, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: Color(0xFF374151))),
+        ],
+      ),
     );
   }
 
@@ -421,7 +455,15 @@ class _HomeScreenState extends State<HomeScreen> {
                       const Text('Due in 2 days or 300km', style: TextStyle(color: Color(0xFF6B7280), fontSize: 12)),
                       const SizedBox(height: 8),
                       ElevatedButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (_) => const RequestRepairFormScreen(
+                                initialRepairType: 'Oil Change',
+                              ),
+                            ),
+                          );
+                        },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFFE0F2FE),
                           foregroundColor: const Color(0xFF0369A1),
