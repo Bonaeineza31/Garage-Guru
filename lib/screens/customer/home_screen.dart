@@ -345,13 +345,26 @@ class _HomeScreenState extends State<HomeScreen> {
                     Text('${garage.distanceKm}Km', style: const TextStyle(color: Color(0xFF6B7280), fontSize: 12)),
                     const SizedBox(width: 8),
                     Row(
-                      children: List.generate(5, (starIndex) {
-                        return Icon(
-                          Icons.star_rounded,
-                          color: starIndex < garage.rating.floor() ? Colors.orange : const Color(0xFFD1D5DB),
-                          size: 14,
-                        );
-                      }),
+                      children: [
+                        Row(
+                          children: List.generate(5, (starIndex) {
+                            return Icon(
+                              Icons.star_rounded,
+                              color: starIndex < garage.rating.floor() ? Colors.orange : const Color(0xFFD1D5DB),
+                              size: 14,
+                            );
+                          }),
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          garage.rating.toStringAsFixed(2),
+                          style: const TextStyle(
+                            color: Color(0xFF1F2937),
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),

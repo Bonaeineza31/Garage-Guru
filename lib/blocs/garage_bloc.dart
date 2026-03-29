@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -11,6 +12,13 @@ abstract class GarageEvent extends Equatable {
 }
 
 class LoadGarages extends GarageEvent {}
+
+class GaragesUpdated extends GarageEvent {
+  final List<GarageModel> garages;
+  const GaragesUpdated(this.garages);
+  @override
+  List<Object?> get props => [garages];
+}
 
 class SearchGarages extends GarageEvent {
   final String query;
@@ -26,13 +34,20 @@ class FilterGarages extends GarageEvent {
   List<Object?> get props => [category];
 }
 
-enum GarageSort { topRated, closest }
+enum GarageSort { all, topRated, closest }
 
 class SortGarages extends GarageEvent {
   final GarageSort sortBy;
   const SortGarages(this.sortBy);
   @override
   List<Object?> get props => [sortBy];
+}
+
+class ToggleFavorite extends GarageEvent {
+  final GarageModel garage;
+  const ToggleFavorite(this.garage);
+  @override
+  List<Object?> get props => [garage];
 }
 
 // States
@@ -52,7 +67,7 @@ class GarageState extends Equatable {
     this.filteredGarages = const [],
     this.searchQuery = '',
     this.selectedCategory = 'All',
-    this.sortBy = GarageSort.topRated,
+    this.sortBy = GarageSort.all,
   });
 
   GarageState copyWith({
@@ -83,26 +98,37 @@ class GarageBloc extends Bloc<GarageEvent, GarageState> {
 
   GarageBloc() : super(const GarageState()) {
     on<LoadGarages>(_onLoadGarages);
+    on<GaragesUpdated>(_onGaragesUpdated);
     on<SearchGarages>(_onSearchGarages);
     on<FilterGarages>(_onFilterGarages);
     on<SortGarages>(_onSortGarages);
+    on<ToggleFavorite>(_onToggleFavorite);
   }
+
+  final List<StreamSubscription> _subscriptions = [];
 
   Future<void> _onLoadGarages(LoadGarages event, Emitter<GarageState> emit) async {
     emit(state.copyWith(status: GarageStatus.loading));
-    try {
-      final snapshot = await _firestore.collection('garages').get();
+    
+    for (var sub in _subscriptions) sub.cancel();
+    _subscriptions.clear();
+
+    final sub = _firestore.collection('garages').snapshots().listen((snapshot) {
       final garages = snapshot.docs
           .map((doc) => GarageModel.fromMap(doc.data() as Map<String, dynamic>, doc.id))
           .toList();
-      emit(state.copyWith(
-        status: GarageStatus.success,
-        allGarages: garages,
-        filteredGarages: _applyFilters(garages, state.searchQuery, state.selectedCategory, state.sortBy),
-      ));
-    } catch (e) {
-      emit(state.copyWith(status: GarageStatus.failure));
-    }
+      add(GaragesUpdated(garages));
+    });
+    
+    _subscriptions.add(sub);
+  }
+
+  void _onGaragesUpdated(GaragesUpdated event, Emitter<GarageState> emit) {
+    emit(state.copyWith(
+      status: GarageStatus.success,
+      allGarages: event.garages,
+      filteredGarages: _applyFilters(event.garages, state.searchQuery, state.selectedCategory, state.sortBy),
+    ));
   }
 
   void _onSearchGarages(SearchGarages event, Emitter<GarageState> emit) {
@@ -141,5 +167,47 @@ class GarageBloc extends Bloc<GarageEvent, GarageState> {
     }
 
     return filtered;
+  }
+
+  Future<void> _onToggleFavorite(ToggleFavorite event, Emitter<GarageState> emit) async {
+    final updatedIsFavorite = !event.garage.isFavorite;
+    
+    // Optimistically update local state
+    final updatedAllGarages = state.allGarages.map((g) {
+      if (g.id == event.garage.id) {
+        return g.copyWith(isFavorite: updatedIsFavorite);
+      }
+      return g;
+    }).toList();
+
+    emit(state.copyWith(
+      allGarages: updatedAllGarages,
+      filteredGarages: _applyFilters(updatedAllGarages, state.searchQuery, state.selectedCategory, state.sortBy),
+    ));
+
+    try {
+      await _firestore.collection('garages').doc(event.garage.id).update({
+        'isFavorite': updatedIsFavorite,
+      });
+    } catch (e) {
+      // Revert if failed
+      final revertedAllGarages = state.allGarages.map((g) {
+        if (g.id == event.garage.id) {
+          return g.copyWith(isFavorite: event.garage.isFavorite);
+        }
+        return g;
+      }).toList();
+      
+      emit(state.copyWith(
+        allGarages: revertedAllGarages,
+        filteredGarages: _applyFilters(revertedAllGarages, state.searchQuery, state.selectedCategory, state.sortBy),
+      ));
+    }
+  }
+
+  @override
+  Future<void> close() {
+    for (var sub in _subscriptions) sub.cancel();
+    return super.close();
   }
 }

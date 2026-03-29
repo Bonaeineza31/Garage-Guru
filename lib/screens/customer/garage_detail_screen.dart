@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:garage_guru/theme/app_theme.dart';
 import 'package:garage_guru/data/mock_data.dart';
 import 'package:garage_guru/models/models.dart';
 import 'package:garage_guru/widgets/widgets.dart';
 import 'package:garage_guru/screens/customer/booking_screen.dart';
 import 'package:garage_guru/screens/customer/garage_message_screen.dart';
+import 'package:garage_guru/blocs/garage_bloc.dart';
 
 class GarageDetailScreen extends StatefulWidget {
   final GarageModel garage;
@@ -50,6 +52,27 @@ class _GarageDetailScreenState extends State<GarageDetailScreen>
             }
           },
         ),
+        actions: [
+          BlocBuilder<GarageBloc, GarageState>(
+            builder: (context, state) {
+              final currentGarage = state.allGarages.firstWhere(
+                (g) => g.id == garage.id,
+                orElse: () => garage,
+              );
+              bool isFavorite = currentGarage.isFavorite;
+              return IconButton(
+                icon: Icon(
+                  isFavorite ? Icons.favorite : Icons.favorite_border,
+                  color: isFavorite ? Colors.red : Colors.white70,
+                ),
+                onPressed: () {
+                  context.read<GarageBloc>().add(ToggleFavorite(currentGarage));
+                },
+              );
+            },
+          ),
+          const SizedBox(width: 8),
+        ],
       ),
       body: NestedScrollView(
         headerSliverBuilder: (context, innerBoxIsScrolled) => [
@@ -130,7 +153,7 @@ class _GarageDetailScreenState extends State<GarageDetailScreen>
                         const Icon(Icons.star_rounded, color: AppColors.starFilled, size: 20),
                         const SizedBox(width: 4),
                         Text(
-                          '${garage.rating} (${garage.reviewCount} reviews)',
+                          '${garage.rating.toStringAsFixed(2)} (${garage.reviewCount} reviews)',
                           style: AppTextStyles.bodySmall.copyWith(
                             fontWeight: FontWeight.bold,
                             color: AppColors.textPrimary,
@@ -374,7 +397,7 @@ class _ReviewsTab extends StatelessWidget {
               Column(
                 children: [
                    Text(
-                    '${garage.rating}',
+                    garage.rating.toStringAsFixed(2),
                     style: const TextStyle(fontSize: 48, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
                   ),
                   Row(

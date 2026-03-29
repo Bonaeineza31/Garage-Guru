@@ -46,6 +46,11 @@ lib/
 │   ├── booking_model.dart             # Booking with status workflow, vehicle info
 │   ├── review_model.dart              # Review with ratings, images, owner replies
 │   └── models.dart                    # Barrel export
+├── blocs/
+│   ├── auth_bloc.dart                 # Authentication & profile state
+│   ├── booking_bloc.dart              # Repairs & bookings synchronization
+│   ├── garage_bloc.dart               # Garage listings & favorites state
+│   └── bloc_events.dart               # Shared BLoC events (if applicable)
 ├── data/
 │   └── mock_data.dart                 # Development data: 4 garages, 8 services, 4 reviews, 3 bookings
 ├── widgets/
