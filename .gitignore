@@ -45,6 +45,6 @@ app.*.map.json
 /android/app/release
 
 # others
-ios/Runner/GeneratedPluginRegistrant.*
-macos/Flutter/GeneratedPluginRegistrant.swift
-windows/flutter/ephemeral/
+# ios/Runner/GeneratedPluginRegistrant.*
+# macos/Flutter/GeneratedPluginRegistrant.swift
+# windows/flutter/ephemeral/

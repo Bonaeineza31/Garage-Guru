@@ -37,6 +37,8 @@ class SubmitFeedback extends BookingEvent {
   final String garageId;
   final String repairId;
   final bool isBooking;
+  final String userName;
+  final String userPhoto;
   final String serviceName;
   final int rating;
   final String comment;
@@ -46,6 +48,8 @@ class SubmitFeedback extends BookingEvent {
     required this.garageId,
     required this.repairId,
     required this.isBooking,
+    required this.userName,
+    required this.userPhoto,
     required this.serviceName,
     required this.rating,
     required this.comment,
@@ -53,7 +57,7 @@ class SubmitFeedback extends BookingEvent {
   });
 
   @override
-  List<Object?> get props => [garageId, repairId, isBooking, serviceName, rating, comment, userId];
+  List<Object?> get props => [garageId, repairId, isBooking, userName, userPhoto, serviceName, rating, comment, userId];
 }
 
 class RepairsUpdated extends BookingEvent {
@@ -122,6 +126,19 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
         .where('userId', isEqualTo: event.userId)
         .snapshots()
         .listen((snapshot) {
+      final now = DateTime.now();
+      for (var doc in snapshot.docs) {
+        final data = doc.data();
+        final startDateStr = data['startDate'] as String?;
+        final status = data['status'] as String?;
+        if (startDateStr != null && status != 'completed' && status != 'cancelled') {
+          final startDate = DateTime.tryParse(startDateStr);
+          if (startDate != null && startDate.isBefore(now)) {
+            // Auto-complete expired repair
+            _firestore.collection('repairs').doc(doc.id).update({'status': 'completed'});
+          }
+        }
+      }
       repairsList = snapshot.docs.map((doc) => _mapRepair(doc)).toList();
       _emitCombined(repairsList, bookingsList);
     });
@@ -131,6 +148,19 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
         .where('userId', isEqualTo: event.userId)
         .snapshots()
         .listen((snapshot) {
+      final now = DateTime.now();
+       for (var doc in snapshot.docs) {
+        final data = doc.data();
+        final dateStr = data['date'] as String?;
+        final status = data['status'] as String?;
+        if (dateStr != null && status != 'Completed' && status != 'Cancelled') {
+          final date = DateTime.tryParse(dateStr);
+          if (date != null && date.isBefore(now)) {
+            // Auto-complete expired booking
+            _firestore.collection('bookings').doc(doc.id).update({'status': 'Completed'});
+          }
+        }
+      }
       bookingsList = snapshot.docs.map((doc) => _mapBookingToRepair(doc)).toList();
       _emitCombined(repairsList, bookingsList);
     });
@@ -233,14 +263,17 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
 
   Future<void> _onSubmitFeedback(SubmitFeedback event, Emitter<BookingState> emit) async {
     try {
-      // 1. Save feedback
-      await _firestore.collection('feedback').add({
+      // 1. Save feedback to reviews collection
+      await _firestore.collection('reviews').add({
         'garageId': event.garageId,
-        'serviceName': event.serviceName,
+        'repairId': event.repairId,
+        'userId': event.userId,
+        'userName': event.userName,
+        'userPhoto': event.userPhoto,
         'rating': event.rating,
         'comment': event.comment,
-        'userId': event.userId,
-        'timestamp': FieldValue.serverTimestamp(),
+        'serviceName': event.serviceName,
+        'createdAt': FieldValue.serverTimestamp(),
       });
 
       // 2. Update garage rating using a transaction
