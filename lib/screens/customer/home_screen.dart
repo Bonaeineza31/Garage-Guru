@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:maplibre_gl/maplibre_gl.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:garage_guru/theme/app_theme.dart';
 import 'package:garage_guru/models/models.dart';
 import 'package:garage_guru/widgets/customer_header.dart';
@@ -26,7 +26,6 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final TextEditingController _searchController = TextEditingController();
-  MapLibreMapController? _mapController;
 
   @override
   void dispose() {
@@ -71,54 +70,63 @@ class _HomeScreenState extends State<HomeScreen> {
             borderRadius: BorderRadius.circular(12),
             border: Border.all(color: Theme.of(context).dividerColor.withOpacity(0.1)),
           ),
-          child: Stack(
-            children: [
-              MapLibreMap(
-                styleString: 'https://api.mapbox.com/styles/v1/mapbox/streets-v12?access_token=pk.eyJ1Ijoic2Fta3dpemVyYSIsImEiOiJjbWw2dThxcHUwMW85M2ZzNml2cW16aGs1In0.eqdDYMtaD4ZQ35VVYGs01g',
-                initialCameraPosition: const CameraPosition(
-                  target: LatLng(-1.9441, 30.0619),
-                  zoom: 13,
-                ),
-                onMapCreated: (controller) {
-                  _mapController = controller;
-                },
-                onStyleLoadedCallback: () async {
-                  final snapshot = await FirebaseFirestore.instance.collection('garages').get();
-                  for (var doc in snapshot.docs) {
-                    final data = doc.data();
-                    final lat = num.tryParse(data['latitude']?.toString() ?? '0')?.toDouble() ?? 0.0;
-                    final lng = num.tryParse(data['longitude']?.toString() ?? '0')?.toDouble() ?? 0.0;
-                    if (lat != 0.0 && lng != 0.0 && _mapController != null) {
-                      await _mapController!.addSymbol(SymbolOptions(
-                        geometry: LatLng(lat, lng),
-                        iconImage: 'mapbox-marker-icon-blue',
-                        textField: data['name'] ?? '',
-                        textOffset: const Offset(0, 1.5),
-                        textSize: 11,
-                      ));
-                    }
+          child: StreamBuilder<QuerySnapshot>(
+            stream: FirebaseFirestore.instance.collection('garages').snapshots(),
+            builder: (context, snapshot) {
+              Set<Marker> markers = {};
+              LatLng initialPosition = const LatLng(-1.9441, 30.0619); // Kigali Default
+
+              if (snapshot.hasData) {
+                for (var doc in snapshot.data!.docs) {
+                  final data = doc.data() as Map<String, dynamic>;
+                  final lat = (data['latitude'] ?? 0.0).toDouble();
+                  final lng = (data['longitude'] ?? 0.0).toDouble();
+                  final name = data['name'] ?? 'Garage';
+
+                  if (lat != 0.0 && lng != 0.0) {
+                    markers.add(
+                      Marker(
+                        markerId: MarkerId(doc.id),
+                        position: LatLng(lat, lng),
+                        infoWindow: InfoWindow(title: name),
+                        icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueOrange),
+                      ),
+                    );
                   }
-                },
-                myLocationEnabled: true,
-                zoomGesturesEnabled: false,
-                scrollGesturesEnabled: false,
-                rotateGesturesEnabled: false,
-                tiltGesturesEnabled: false,
-                compassEnabled: false,
-              ),
-              Positioned(
-                bottom: 12,
-                right: 60,
-                child: FloatingActionButton.small(
-                  heroTag: 'add_garage_fab',
-                  backgroundColor: const Color(0xFF0EA5E9),
-                  onPressed: () => Navigator.of(context).push(
-                    MaterialPageRoute(builder: (_) => const AddGarageScreen()),
+                }
+              }
+
+              return Stack(
+                children: [
+                  GoogleMap(
+                    initialCameraPosition: CameraPosition(
+                      target: initialPosition,
+                      zoom: 13,
+                    ),
+                    markers: markers,
+                    myLocationEnabled: true,
+                    myLocationButtonEnabled: false,
+                    zoomControlsEnabled: false,
+                    mapToolbarEnabled: false,
+                    compassEnabled: false,
+                    // disable fullscreen control so it doesn't overlap the FAB
+                    liteModeEnabled: false,
                   ),
-                  child: const Icon(Icons.add, color: Colors.white),
-                ),
-              ),
-            ],
+                  Positioned(
+                    bottom: 12,
+                    right: 60,
+                    child: FloatingActionButton.small(
+                      heroTag: 'add_garage_fab',
+                      backgroundColor: const Color(0xFF0EA5E9),
+                      onPressed: () => Navigator.of(context).push(
+                        MaterialPageRoute(builder: (_) => const AddGarageScreen()),
+                      ),
+                      child: const Icon(Icons.add, color: Colors.white),
+                    ),
+                  ),
+                ],
+              );
+            },
           ),
         ),
       ),
