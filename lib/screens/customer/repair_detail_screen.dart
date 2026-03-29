@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:garage_guru/theme/app_theme.dart';
 import 'package:garage_guru/models/repair_model.dart';
 import 'package:garage_guru/screens/customer/mechanic_chat_screen.dart';
 import 'package:garage_guru/screens/customer/payment_success_screen.dart';
 import 'package:garage_guru/screens/customer/send_feedback_screen.dart';
+import 'package:garage_guru/blocs/booking_bloc.dart';
+import 'package:garage_guru/widgets/cancel_repair_dialog.dart';
 import 'package:intl/intl.dart';
 
 class RepairDetailScreen extends StatelessWidget {
@@ -13,7 +16,7 @@ class RepairDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bool canCancel = repair.status == RepairStatus.mechanicOnWay;
+    final bool canCancel = repair.status == RepairStatus.mechanicOnWay || repair.status == RepairStatus.booked;
     final bool isInProgress = repair.status == RepairStatus.inProgress;
 
     return Scaffold(
@@ -195,7 +198,7 @@ class RepairDetailScreen extends StatelessWidget {
                               Row(
                                 children: [
                                   Text(
-                                    '${repair.mechanicSpecialty} • ${repair.mechanicRating}',
+                                    '${repair.mechanicSpecialty} • ${repair.mechanicRating.toStringAsFixed(2)}',
                                     style: const TextStyle(
                                       fontFamily: 'Poppins',
                                       fontSize: 12,
@@ -313,7 +316,13 @@ class RepairDetailScreen extends StatelessWidget {
                 children: [
                   Expanded(
                     child: OutlinedButton(
-                      onPressed: canCancel ? () {} : null,
+                      onPressed: canCancel ? () {
+                        showDialog(
+                          context: context,
+                          barrierColor: Colors.black.withOpacity(0.5),
+                          builder: (_) => CancelRepairDialog(repair: repair),
+                        );
+                      } : null,
                       style: OutlinedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 14),
                         shape: RoundedRectangleBorder(
@@ -345,7 +354,7 @@ class RepairDetailScreen extends StatelessWidget {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (_) => const PaymentSuccessScreen(),
+                            builder: (_) => PaymentSuccessScreen(repair: repair),
                           ),
                         );
                       },
@@ -384,7 +393,7 @@ class RepairDetailScreen extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (_) => const SendFeedbackScreen(),
+                        builder: (_) => SendFeedbackScreen(repair: repair),
                       ),
                     );
                   },

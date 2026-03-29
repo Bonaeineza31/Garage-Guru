@@ -99,6 +99,52 @@ class GarageModel {
     final currentMinutes = now.hour * 60 + now.minute;
     return currentMinutes >= hours.openMinutes && currentMinutes <= hours.closeMinutes;
   }
+
+  GarageModel copyWith({
+    String? id,
+    String? ownerId,
+    String? name,
+    String? description,
+    String? address,
+    double? latitude,
+    double? longitude,
+    String? phone,
+    String? email,
+    String? website,
+    String? coverImageUrl,
+    List<String>? galleryImages,
+    List<String>? services,
+    List<String>? specializations,
+    double? rating,
+    int? reviewCount,
+    bool? isVerified,
+    bool? isFavorite,
+    Map<String, WorkingHours>? workingHours,
+    double? distanceKm,
+  }) {
+    return GarageModel(
+      id: id ?? this.id,
+      ownerId: ownerId ?? this.ownerId,
+      name: name ?? this.name,
+      description: description ?? this.description,
+      address: address ?? this.address,
+      latitude: latitude ?? this.latitude,
+      longitude: longitude ?? this.longitude,
+      phone: phone ?? this.phone,
+      email: email ?? this.email,
+      website: website ?? this.website,
+      coverImageUrl: coverImageUrl ?? this.coverImageUrl,
+      galleryImages: galleryImages ?? this.galleryImages,
+      services: services ?? this.services,
+      specializations: specializations ?? this.specializations,
+      rating: rating ?? this.rating,
+      reviewCount: reviewCount ?? this.reviewCount,
+      isVerified: isVerified ?? this.isVerified,
+      isFavorite: isFavorite ?? this.isFavorite,
+      workingHours: workingHours ?? this.workingHours,
+      distanceKm: distanceKm ?? this.distanceKm,
+    );
+  }
 }
 
 class WorkingHours {

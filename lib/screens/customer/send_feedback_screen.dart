@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:garage_guru/theme/app_theme.dart';
 import 'package:garage_guru/models/repair_model.dart';
+import 'package:garage_guru/blocs/auth_bloc.dart';
+import 'package:garage_guru/blocs/booking_bloc.dart';
 import 'package:intl/intl.dart';
 
 enum _FeedbackType { veryGood, notSatisfied, compliment, other }
 
 class SendFeedbackScreen extends StatefulWidget {
-  const SendFeedbackScreen({super.key});
+  final RepairModel repair;
+  const SendFeedbackScreen({super.key, required this.repair});
 
   @override
   State<SendFeedbackScreen> createState() => _SendFeedbackScreenState();
@@ -281,14 +285,29 @@ class _SendFeedbackScreenState extends State<SendFeedbackScreen> {
                     width: double.infinity,
                     child: ElevatedButton.icon(
                       onPressed: () {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Feedback submitted successfully!'),
-                            backgroundColor: AppColors.success,
-                          ),
-                        );
-                        if (Navigator.canPop(context)) {
-                          Navigator.pop(context);
+                        final userId = context.read<AuthBloc>().state.user?.uid;
+                        if (userId != null) {
+                          context.read<BookingBloc>().add(
+                            SubmitFeedback(
+                              garageId: widget.repair.garageId,
+                              repairId: widget.repair.id,
+                              isBooking: widget.repair.isBooking,
+                              serviceName: widget.repair.serviceName,
+                              rating: _starRating,
+                              comment: _detailsController.text,
+                              userId: userId,
+                            ),
+                          );
+                          
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Feedback submitted successfully!'),
+                              backgroundColor: AppColors.success,
+                            ),
+                          );
+                          if (Navigator.canPop(context)) {
+                            Navigator.pop(context);
+                          }
                         }
                       },
                       icon: const Icon(Icons.send_rounded,

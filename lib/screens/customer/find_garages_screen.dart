@@ -27,12 +27,14 @@ class _FindGaragesScreenState extends State<FindGaragesScreen> {
 
   GarageSort _mapFilterToSort(String filter) {
     switch (filter) {
+      case 'All Garages':
+        return GarageSort.all;
       case 'Top Rated':
         return GarageSort.topRated;
       case 'Closest':
         return GarageSort.closest;
       default:
-        return GarageSort.topRated;
+        return GarageSort.all;
     }
   }
 
@@ -42,6 +44,7 @@ class _FindGaragesScreenState extends State<FindGaragesScreen> {
         return 'Top Rated';
       case GarageSort.closest:
         return 'Closest';
+      case GarageSort.all:
       default:
         return 'All Garages';
     }
@@ -57,6 +60,7 @@ class _FindGaragesScreenState extends State<FindGaragesScreen> {
             backgroundColor: AppColors.surface,
             elevation: 0,
             centerTitle: false,
+            automaticallyImplyLeading: false,
             title: Row(
               children: [
                 Container(

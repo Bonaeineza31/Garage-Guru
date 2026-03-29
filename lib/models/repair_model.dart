@@ -1,4 +1,4 @@
-enum RepairStatus { mechanicOnWay, inProgress, completed, cancelled }
+enum RepairStatus { booked, mechanicOnWay, inProgress, completed, cancelled }
 
 class RepairUpdate {
   final DateTime timestamp;
@@ -9,6 +9,7 @@ class RepairUpdate {
 
 class RepairModel {
   final String id;
+  final String garageId;
   final String serviceName;
   final String vehicleMake;
   final String vehicleModel;
@@ -28,9 +29,11 @@ class RepairModel {
   final double laborCost;
   final List<RepairUpdate> updates;
   final bool isPaid;
+  final bool isBooking;
 
   const RepairModel({
     required this.id,
+    required this.garageId,
     required this.serviceName,
     required this.vehicleMake,
     required this.vehicleModel,
@@ -50,6 +53,7 @@ class RepairModel {
     required this.laborCost,
     required this.updates,
     this.isPaid = false,
+    this.isBooking = false,
   });
 
   double get totalCost => partsCost + laborCost;
@@ -58,6 +62,8 @@ class RepairModel {
 
   String get statusLabel {
     switch (status) {
+      case RepairStatus.booked:
+        return 'Scheduled';
       case RepairStatus.mechanicOnWay:
         return 'Mechanic on way';
       case RepairStatus.inProgress:

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:garage_guru/theme/app_theme.dart';
 import 'package:garage_guru/models/garage_model.dart';
+import 'package:garage_guru/blocs/garage_bloc.dart';
 class GarageCard extends StatelessWidget {
   final GarageModel garage;
   final VoidCallback? onTap;
@@ -96,23 +98,24 @@ class GarageCard extends StatelessWidget {
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
-                    StatefulBuilder(
-                      builder: (context, setState) {
-                        bool localFavorite = garage.isFavorite;
+                    BlocBuilder<GarageBloc, GarageState>(
+                      builder: (context, state) {
+                        // Find the current garage object in the state to get its latest favorite status
+                        final currentGarage = state.allGarages.firstWhere(
+                          (g) => g.id == garage.id,
+                          orElse: () => garage,
+                        );
+                        bool isFavorite = currentGarage.isFavorite;
                         return IconButton(
                           constraints: const BoxConstraints(),
                           padding: EdgeInsets.zero,
                           icon: Icon(
-                            localFavorite ? Icons.favorite : Icons.favorite_border,
-                            color: localFavorite ? Colors.red : AppColors.textHint,
+                            isFavorite ? Icons.favorite : Icons.favorite_border,
+                            color: isFavorite ? Colors.red : AppColors.textHint,
                             size: 24,
                           ),
-                          onPressed: () async {
-                            // Update Firestore
-                            await FirebaseFirestore.instance
-                                .collection('garages')
-                                .doc(garage.id)
-                                .update({'isFavorite': !localFavorite});
+                          onPressed: () {
+                            context.read<GarageBloc>().add(ToggleFavorite(currentGarage));
                           },
                         );
                       },
@@ -123,7 +126,7 @@ class GarageCard extends StatelessWidget {
                         const Icon(Icons.star_rounded, color: AppColors.starFilled, size: 20),
                         const SizedBox(width: 2),
                         Text(
-                          '${garage.rating} (${garage.reviewCount})',
+                          '${garage.rating.toStringAsFixed(2)} (${garage.reviewCount})',
                           style: AppTextStyles.bodySmall.copyWith(
                             color: AppColors.textPrimary,
                             fontWeight: FontWeight.w600,
@@ -256,7 +259,7 @@ class GarageCard extends StatelessWidget {
                     children: [
                       const Icon(Icons.star_rounded, color: AppColors.starFilled, size: 15),
                       const SizedBox(width: 2),
-                      Text(garage.rating.toStringAsFixed(1), style: AppTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600)),
+                      Text(garage.rating.toStringAsFixed(2), style: AppTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600)),
                       const Spacer(),
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
@@ -351,7 +354,7 @@ class GarageMapCard extends StatelessWidget {
                         const Icon(Icons.star_rounded, color: AppColors.starFilled, size: 14),
                         const SizedBox(width: 2),
                         Text(
-                          '${garage.rating} (${garage.reviewCount})',
+                          '${garage.rating.toStringAsFixed(2)} (${garage.reviewCount})',
                           style: AppTextStyles.caption,
                         ),
                       ],
