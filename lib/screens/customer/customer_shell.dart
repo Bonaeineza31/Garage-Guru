@@ -15,14 +15,13 @@ class CustomerShell extends StatefulWidget {
 }
 
 class _CustomerShellState extends State<CustomerShell> {
-  late int _currentIndex;
-
-  final _screens = const [
+  final _screens = [
     HomeScreen(),
     FindGaragesScreen(),
     RepairsScreen(),
     ProfileScreen(),
   ];
+    int _currentIndex = 0;
 
   @override
   void initState() {

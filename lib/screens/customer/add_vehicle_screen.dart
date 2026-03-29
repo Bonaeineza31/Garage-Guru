@@ -1,6 +1,8 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:garage_guru/theme/app_theme.dart';
 import 'package:garage_guru/widgets/widgets.dart';
 
@@ -19,6 +21,15 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
   final _colorController = TextEditingController();
   final _plateController = TextEditingController();
   bool _isLoading = false;
+  File? _vehicleImage;
+  final _picker = ImagePicker();
+
+  Future<void> _pickImage() async {
+    final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      setState(() => _vehicleImage = File(pickedFile.path));
+    }
+  }
 
   final List<String> _carMakes = [
     'Toyota', 'BMW', 'Mercedes-Benz', 'Volkswagen', 'Ford', 
@@ -137,13 +148,21 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
     if (user == null) return;
 
     try {
+      // Logic for adding a vehicle with an image. 
+      // Since firebase_storage is not in pubspec, we use a mock URL if an image was picked.
+      String imageUrl = 'https://images.unsplash.com/photo-1542281286-9e0a16bb7366?w=800'; // Default
+      if (_vehicleImage != null) {
+        // In a real app, upload _vehicleImage to Firebase Storage here
+        imageUrl = 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=800'; 
+      }
+
       await FirebaseFirestore.instance.collection('users').doc(user.uid).collection('vehicles').add({
         'make': _makeController.text.trim(),
         'model': _modelController.text.trim(),
         'year': int.tryParse(_yearController.text.trim()) ?? 2020,
         'color': _colorController.text.trim(),
         'plateNumber': _plateController.text.trim().toUpperCase(),
-        'imageUrl': 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=800',
+        'imageUrl': imageUrl,
         'createdAt': FieldValue.serverTimestamp(),
       });
 
@@ -174,28 +193,36 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
           child: Column(
             children: [
               Center(
-                child: Stack(
-                  alignment: Alignment.bottomRight,
-                  children: [
-                    Container(
-                      width: 120,
-                      height: 120,
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).cardColor,
-                        borderRadius: BorderRadius.circular(AppRadius.lg),
-                        border: Border.all(color: Theme.of(context).dividerColor),
+                child: GestureDetector(
+                  onTap: _pickImage,
+                  child: Stack(
+                    alignment: Alignment.bottomRight,
+                    children: [
+                      Container(
+                        width: 120,
+                        height: 120,
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).cardColor,
+                          borderRadius: BorderRadius.circular(AppRadius.lg),
+                          border: Border.all(color: Theme.of(context).dividerColor),
+                          image: _vehicleImage != null 
+                            ? DecorationImage(image: FileImage(_vehicleImage!), fit: BoxFit.cover)
+                            : null,
+                        ),
+                        child: _vehicleImage == null 
+                          ? Icon(Icons.directions_car_outlined, size: 40, color: Theme.of(context).brightness == Brightness.dark ? Colors.white54 : AppColors.textHint)
+                          : null,
                       ),
-                      child: Icon(Icons.directions_car_outlined, size: 40, color: Theme.of(context).brightness == Brightness.dark ? Colors.white54 : AppColors.textHint),
-                    ),
-                    Container(
-                      padding: const EdgeInsets.all(6),
-                      decoration: const BoxDecoration(
-                        color: AppColors.primary,
-                        shape: BoxShape.circle,
+                      Container(
+                        padding: const EdgeInsets.all(6),
+                        decoration: const BoxDecoration(
+                          color: AppColors.primary,
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(Icons.camera_alt, color: Colors.white, size: 16),
                       ),
-                      child: const Icon(Icons.camera_alt, color: Colors.white, size: 16),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
               const SizedBox(height: AppSpacing.xxxl),

@@ -17,6 +17,14 @@ class _BatteryServiceScreenState extends State<BatteryServiceScreen> {
   final TextEditingController _locationController = TextEditingController();
   final TextEditingController _vehicleController = TextEditingController();
 
+  // ✅ FIXED: moved inside the class
+  TextStyle get _labelStyle => TextStyle(
+    fontFamily: 'Poppins',
+    fontWeight: FontWeight.w500,
+    fontSize: 14,
+    color: Theme.of(context).brightness == Brightness.dark ? Colors.white70 : const Color(0xFF6B7280),
+  );
+
   @override
   void dispose() {
     _serviceTypeController.dispose();
@@ -67,7 +75,6 @@ class _BatteryServiceScreenState extends State<BatteryServiceScreen> {
     final snapshot = await FirebaseFirestore.instance.collection('users').doc(user.uid).collection('vehicles').get();
     final vehicles = snapshot.docs.map((doc) => "${doc.data()['make']} ${doc.data()['model']} (${doc.data()['plateNumber']})").toList();
     
-    // Fallback if no vehicles in backend yet
     if (vehicles.isEmpty) {
       vehicles.addAll(['Toyota Camry (RAC 881C)', 'Mercedes Benz (RAD 123A)']);
     }
@@ -80,12 +87,6 @@ class _BatteryServiceScreenState extends State<BatteryServiceScreen> {
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF1D9CE5),
-        elevation: 0,
-        leading: IconButton(
-          onPressed: () => Navigator.of(context).pop(),
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
-        ),
         title: const Text(
           'Battery Service',
           style: TextStyle(
@@ -95,6 +96,11 @@ class _BatteryServiceScreenState extends State<BatteryServiceScreen> {
             fontSize: 16,
           ),
         ),
+        leading: IconButton(
+          onPressed: () => Navigator.of(context).pop(),
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+        ),
+        backgroundColor: Theme.of(context).brightness == Brightness.dark ? const Color(0xFF0F172A) : const Color(0xFF1D9CE5),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.fromLTRB(14, 14, 14, 20),
@@ -134,18 +140,14 @@ class _BatteryServiceScreenState extends State<BatteryServiceScreen> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
-                              'Battery Services',
-                              style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
-                            ),
-                            const Text(
-                              'Professional battery care for your vehicle',
-                              style: TextStyle(
-                                fontFamily: 'Poppins',
-                                fontSize: 13,
-                                color: Color(0xFF6B7280),
+                              Text(
+                                'Battery Services',
+                                style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
                               ),
-                            ),
+                              Text(
+                                'Professional battery care for your vehicle',
+                                style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Theme.of(context).hintColor),
+                              ),
                           ],
                         ),
                       ),
@@ -195,13 +197,13 @@ class _BatteryServiceScreenState extends State<BatteryServiceScreen> {
               style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 12),
-            const Text('Service Type', style: _labelStyle),
+            Text('Service Type', style: _labelStyle),
             const SizedBox(height: 8),
             _field(_serviceTypeController, 'Select service type', onTap: () {
               _showSelectionDialog('Select Service', ['Battery Replacement', 'Battery Testing', 'Charging System', 'Jump Start'], _serviceTypeController);
             }),
             const SizedBox(height: 12),
-            const Text('Garage', style: _labelStyle),
+            Text('Garage', style: _labelStyle),
             const SizedBox(height: 8),
             _field(_garageController, 'Select a garage', onTap: _pickGarage),
             const SizedBox(height: 12),
@@ -211,7 +213,7 @@ class _BatteryServiceScreenState extends State<BatteryServiceScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text('Date', style: _labelStyle),
+                      Text('Date', style: _labelStyle),
                       const SizedBox(height: 8),
                       _field(_dateController, 'mm/dd/yyyy', icon: Icons.calendar_today_outlined, onTap: () async {
                         final date = await showDatePicker(context: context, initialDate: DateTime.now(), firstDate: DateTime.now(), lastDate: DateTime.now().add(const Duration(days: 365)));
@@ -225,7 +227,7 @@ class _BatteryServiceScreenState extends State<BatteryServiceScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text('Time', style: _labelStyle),
+                      Text('Time', style: _labelStyle),
                       const SizedBox(height: 8),
                       _field(_timeController, '--:-- --', icon: Icons.access_time_outlined, onTap: () async {
                         final time = await showTimePicker(context: context, initialTime: TimeOfDay.now());
@@ -237,11 +239,11 @@ class _BatteryServiceScreenState extends State<BatteryServiceScreen> {
               ],
             ),
             const SizedBox(height: 12),
-            const Text('Location', style: _labelStyle),
+            Text('Location', style: _labelStyle),
             const SizedBox(height: 8),
             _field(_locationController, 'Where should the service be done?', icon: Icons.location_on_outlined),
             const SizedBox(height: 12),
-            const Text('Vehicle', style: _labelStyle),
+            Text('Vehicle', style: _labelStyle),
             const SizedBox(height: 8),
             _field(_vehicleController, 'Select your vehicle', icon: Icons.directions_car_outlined, onTap: _pickVehicle),
             const SizedBox(height: 30),
@@ -343,7 +345,7 @@ class _ServiceChip extends StatelessWidget {
         width: 170,
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: Theme.of(context).brightness == Brightness.dark ? const Color(0xFF1E293B) : const Color(0xFFF8FAFC),
+          color: isDark ? const Color(0xFF1E293B) : const Color(0xFFF8FAFC),
           borderRadius: BorderRadius.circular(12),
           border: Border.all(color: Theme.of(context).dividerColor),
         ),
@@ -369,10 +371,3 @@ class _ServiceChip extends StatelessWidget {
     );
   }
 }
-
-const TextStyle _labelStyle = TextStyle(
-  fontFamily: 'Poppins',
-  fontWeight: FontWeight.w500,
-  fontSize: 14,
-  color: Color(0xFF6B7280),
-);

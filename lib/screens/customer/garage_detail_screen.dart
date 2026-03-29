@@ -428,37 +428,34 @@ class _ReviewsTabState extends State<_ReviewsTab> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
-                children: [
-                   Text(
-                    garage.rating.toStringAsFixed(2),
-                    style: Theme.of(context).textTheme.headlineLarge?.copyWith(fontSize: 48, fontWeight: FontWeight.bold),
-                  Column(
-                    children: [
-                      Text(
-                        widget.garage.rating.toStringAsFixed(2),
-                        style: const TextStyle(fontSize: 48, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
-                      ),
-                      Row(
-                        children: List.generate(5, (index) => const Icon(Icons.star_rounded, color: AppColors.starFilled, size: 20)),
-                      ),
-                      const SizedBox(height: 4),
-                      Text('${widget.garage.reviewCount} reviews', style: AppTextStyles.caption),
-                    ],
-                  ),
-                  const SizedBox(width: 32),
-                  Expanded(
-                    child: Column(
-                      children: [
-                        _buildRatingBar(5, reviews.where((r) => (r.data() as Map)['rating'] == 5).length / (reviews.isEmpty ? 1 : reviews.length)),
-                        _buildRatingBar(4, reviews.where((r) => (r.data() as Map)['rating'] == 4).length / (reviews.isEmpty ? 1 : reviews.length)),
-                        _buildRatingBar(3, reviews.where((r) => (r.data() as Map)['rating'] == 3).length / (reviews.isEmpty ? 1 : reviews.length)),
-                        _buildRatingBar(2, reviews.where((r) => (r.data() as Map)['rating'] == 2).length / (reviews.isEmpty ? 1 : reviews.length)),
-                        _buildRatingBar(1, reviews.where((r) => (r.data() as Map)['rating'] == 1).length / (reviews.isEmpty ? 1 : reviews.length)),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
+  children: [
+    Column(
+      children: [
+        Text(
+          widget.garage.rating.toStringAsFixed(2),
+          style: const TextStyle(fontSize: 48, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
+        ),
+        Row(
+          children: List.generate(5, (index) => const Icon(Icons.star_rounded, color: AppColors.starFilled, size: 20)),
+        ),
+        const SizedBox(height: 4),
+        Text('${widget.garage.reviewCount} reviews', style: AppTextStyles.caption),
+      ],
+    ),
+    const SizedBox(width: 32),
+    Expanded(
+      child: Column(
+        children: [
+          _buildRatingBar(context, 5, reviews.where((r) => (r.data() as Map)['rating'] == 5).length / (reviews.isEmpty ? 1 : reviews.length)),
+          _buildRatingBar(context, 4, reviews.where((r) => (r.data() as Map)['rating'] == 4).length / (reviews.isEmpty ? 1 : reviews.length)),
+          _buildRatingBar(context, 3, reviews.where((r) => (r.data() as Map)['rating'] == 3).length / (reviews.isEmpty ? 1 : reviews.length)),
+          _buildRatingBar(context, 2, reviews.where((r) => (r.data() as Map)['rating'] == 2).length / (reviews.isEmpty ? 1 : reviews.length)),
+          _buildRatingBar(context, 1, reviews.where((r) => (r.data() as Map)['rating'] == 1).length / (reviews.isEmpty ? 1 : reviews.length)),
+        ],
+      ),
+    ),
+  ],
+),
               const SizedBox(height: 32),
               if (reviews.isEmpty)
                 const Center(
@@ -554,7 +551,7 @@ class _ReviewsTabState extends State<_ReviewsTab> {
 
 class _TabBarDelegate extends SliverPersistentHeaderDelegate {
   final TabBar tabBar;
-  const _TabBarDelegate(this.tabBar);
+  _TabBarDelegate(this.tabBar);
 
   @override
   double get minExtent => tabBar.preferredSize.height + 1; // plus border

@@ -3,7 +3,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:garage_guru/theme/app_theme.dart';
 import 'package:garage_guru/models/repair_model.dart';
-import 'package:garage_guru/screens/customer/repairs_screen.dart';
 import 'package:garage_guru/blocs/auth_bloc.dart';
 import 'package:garage_guru/blocs/booking_bloc.dart';
 import 'package:intl/intl.dart';

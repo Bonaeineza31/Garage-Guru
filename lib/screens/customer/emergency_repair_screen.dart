@@ -13,6 +13,14 @@ class _EmergencyRepairScreenState extends State<EmergencyRepairScreen> {
   final TextEditingController _locationController = TextEditingController();
   final TextEditingController _issueController = TextEditingController();
 
+  // ✅ FIXED: moved inside the class
+  TextStyle get _labelStyle => TextStyle(
+    fontFamily: 'Poppins',
+    fontWeight: FontWeight.w600,
+    fontSize: 14,
+    color: Theme.of(context).brightness == Brightness.dark ? Colors.white70 : const Color(0xFF111827),
+  );
+
   @override
   void dispose() {
     _locationController.dispose();
@@ -25,11 +33,11 @@ class _EmergencyRepairScreenState extends State<EmergencyRepairScreen> {
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: const Color(0xFFFF6B00),
+        backgroundColor: Theme.of(context).brightness == Brightness.dark ? const Color(0xFF0F172A) : const Color(0xFFFF6B00),
         elevation: 0,
         leading: IconButton(
           onPressed: () => Navigator.of(context).pop(),
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          icon: Icon(Icons.arrow_back, color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.white),
         ),
         title: const Text(
           'Emergency Repair',
@@ -142,7 +150,7 @@ class _EmergencyRepairScreenState extends State<EmergencyRepairScreen> {
               const SizedBox(height: 8),
               Row(
                 children: [
-                   Icon(Icons.schedule_outlined, color: Theme.of(context).brightness == Brightness.dark ? Colors.white38 : const Color(0xFF6B7280)),
+                  Icon(Icons.schedule_outlined, color: Theme.of(context).brightness == Brightness.dark ? Colors.white38 : const Color(0xFF6B7280)),
                   const SizedBox(width: 8),
                   Text(
                     '24/7 Emergency Support',
@@ -234,10 +242,3 @@ class _EmergencyRepairScreenState extends State<EmergencyRepairScreen> {
     );
   }
 }
-
-const TextStyle _labelStyle = TextStyle(
-  fontFamily: 'Poppins',
-  fontWeight: FontWeight.w600,
-  fontSize: 14,
-  color: Color(0xFF111827),
-);

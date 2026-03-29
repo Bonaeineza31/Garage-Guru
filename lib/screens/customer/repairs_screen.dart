@@ -4,7 +4,7 @@ import 'package:garage_guru/theme/app_theme.dart';
 import 'package:garage_guru/models/repair_model.dart';
 import 'package:garage_guru/screens/customer/repair_detail_screen.dart';
 import 'package:garage_guru/screens/customer/repairs_history_screen.dart';
-import 'package:garage_guru/screens/customer/notifications_screen.dart';
+import 'package:garage_guru/widgets/customer_header.dart';
 import 'package:garage_guru/blocs/booking_bloc.dart';
 import 'package:garage_guru/blocs/auth_bloc.dart';
 import 'package:garage_guru/widgets/cancel_repair_dialog.dart';
@@ -43,51 +43,11 @@ class _RepairsScreenState extends State<RepairsScreen>
       builder: (context, state) {
         return Scaffold(
           backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-          appBar: AppBar(
-            backgroundColor: AppColors.primary,
-            elevation: 0,
-            automaticallyImplyLeading: false,
-            title: const Text(
-              'GarageGuru',
-              style: TextStyle(
-                fontFamily: 'Poppins',
-                fontWeight: FontWeight.w700,
-                fontSize: 18,
-                color: Colors.white,
-              ),
+          appBar: PreferredSize(
+            preferredSize: const Size.fromHeight(60),
+            child: SafeArea(
+              child: CustomerHeader(showSearch: false),
             ),
-            actions: [
-              Stack(
-                children: [
-                  IconButton(
-                    icon: const Icon(
-                      Icons.notifications_none_rounded,
-                      color: Colors.white,
-                    ),
-                    onPressed: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (_) => const NotificationsScreen(),
-                        ),
-                      );
-                    },
-                  ),
-                  Positioned(
-                    right: 12,
-                    top: 12,
-                    child: Container(
-                      width: 8,
-                      height: 8,
-                      decoration: BoxDecoration(
-                        color: AppColors.error,
-                        shape: BoxShape.circle,
-                        border: Border.all(color: AppColors.primary, width: 1.5),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ],
           ),
           body: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -128,7 +88,7 @@ class _RepairsScreenState extends State<RepairsScreen>
                   controller: _tabController,
                   children: [
                     _buildCurrentTab(state),
-                    const RepairsHistoryScreen(),
+                    RepairsHistoryScreen(),
                   ],
                 ),
               ),

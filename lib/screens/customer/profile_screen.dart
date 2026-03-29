@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:garage_guru/theme/app_theme.dart';
-import 'package:garage_guru/widgets/widgets.dart';
+import 'package:garage_guru/widgets/customer_header.dart';
 import 'package:garage_guru/screens/auth/login_screen.dart';
 import 'package:garage_guru/screens/customer/my_vehicles_screen.dart';
 import 'package:garage_guru/screens/customer/notifications_screen.dart';
@@ -57,60 +57,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      appBar: AppBar(
-        title: Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(AppSpacing.xs),
-              decoration: BoxDecoration(
-                color: AppColors.primary,
-                borderRadius: BorderRadius.circular(AppRadius.sm),
-              ),
-              child: const Text(
-                'G',
-                style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18),
-              ),
-            ),
-            const SizedBox(width: AppSpacing.sm),
-            Text(
-              'GarageGuru',
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ],
-        ),
-        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-        elevation: 0,
-        actions: [
-          IconButton(
-            icon: Stack(
-              children: [
-                Icon(Icons.notifications_outlined, color: Theme.of(context).iconTheme.color),
-                Positioned(
-                  right: 2,
-                  top: 2,
-                  child: Container(
-                    width: 10,
-                    height: 10,
-                    decoration: const BoxDecoration(
-                      color: AppColors.error,
-                      shape: BoxShape.circle,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            onPressed: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(builder: (_) => const NotificationsScreen()),
-              );
-            },
-          ),
-        ],
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(1),
-          child: Container(color: Theme.of(context).dividerColor, height: 1),
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(60),
+        child: SafeArea(
+          child: CustomerHeader(showSearch: false),
         ),
       ),
       body: SingleChildScrollView(
@@ -167,7 +117,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   GestureDetector(
                     onTap: () {
                       Navigator.of(context).push(
-                        MaterialPageRoute(builder: (_) => const EditProfileScreen()),
+                        MaterialPageRoute(builder: (_) => EditProfileScreen()),
                       );
                     },
                     child: Container(
@@ -199,7 +149,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               title: 'My Vehicles',
               onTap: () {
                 Navigator.of(context).push(
-                  MaterialPageRoute(builder: (_) => const MyVehiclesScreen()),
+                  MaterialPageRoute(builder: (_) => MyVehiclesScreen()),
                 );
               },
             ),
@@ -208,7 +158,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               title: 'Notifications',
               onTap: () {
                 Navigator.of(context).push(
-                  MaterialPageRoute(builder: (_) => const NotificationsScreen()),
+                  MaterialPageRoute(builder: (_) => NotificationsScreen()),
                 );
               },
             ),
@@ -217,7 +167,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               title: 'Account Settings',
               onTap: () {
                 Navigator.of(context).push(
-                  MaterialPageRoute(builder: (_) => const AccountSettingsScreen()),
+                  MaterialPageRoute(builder: (_) => AccountSettingsScreen()),
                 );
               },
             ),
@@ -257,7 +207,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return ListTile(
       onTap: () {
         Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(builder: (_) => const LoginScreen()),
+          MaterialPageRoute(builder: (_) => LoginScreen()),
           (route) => false,
         );
       },

@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:garage_guru/theme/app_theme.dart';
-import 'package:garage_guru/models/models.dart';
 import 'package:garage_guru/widgets/garage_card.dart';
-import 'package:garage_guru/screens/customer/notifications_screen.dart';
+import 'package:garage_guru/widgets/customer_header.dart';
 import 'package:garage_guru/screens/customer/garage_detail_screen.dart';
 import 'package:garage_guru/blocs/garage_bloc.dart';
-import 'package:garage_guru/blocs/auth_bloc.dart';
 
 class FindGaragesScreen extends StatefulWidget {
   const FindGaragesScreen({super.key});
@@ -56,40 +54,16 @@ class _FindGaragesScreenState extends State<FindGaragesScreen> {
       builder: (context, state) {
         return Scaffold(
           backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-          appBar: AppBar(
-            backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
-            elevation: 0,
-            centerTitle: false,
-            automaticallyImplyLeading: false,
-            title: Row(
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(4),
-                  decoration: BoxDecoration(
-                    color: AppColors.primary,
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                  child: const Icon(Icons.garage, color: Colors.white, size: 20),
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  'GarageGuru',
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
-            actions: [
-              IconButton(
-                icon: Icon(Icons.notifications_none_rounded, color: Theme.of(context).iconTheme.color),
-                onPressed: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(builder: (_) => const NotificationsScreen()),
-                  );
+          appBar: PreferredSize(
+            preferredSize: const Size.fromHeight(120),
+            child: SafeArea(
+              child: CustomerHeader(
+                searchController: _searchController,
+                onSearch: (value) {
+                  context.read<GarageBloc>().add(SearchGarages(value));
                 },
               ),
-            ],
+            ),
           ),
           body: Column(
             crossAxisAlignment: CrossAxisAlignment.start,

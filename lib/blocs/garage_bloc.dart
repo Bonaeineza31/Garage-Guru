@@ -115,7 +115,7 @@ class GarageBloc extends Bloc<GarageEvent, GarageState> {
 
     final sub = _firestore.collection('garages').snapshots().listen((snapshot) {
       final garages = snapshot.docs
-          .map((doc) => GarageModel.fromMap(doc.data() as Map<String, dynamic>, doc.id))
+          .map((doc) => GarageModel.fromMap(doc.data(), doc.id))
           .toList();
       add(GaragesUpdated(garages));
     });

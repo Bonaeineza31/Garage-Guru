@@ -43,6 +43,8 @@ class AppColors {
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );
+
+  static Gradient? get successGradient => null;
 }
 
 class AppTextStyles {
@@ -232,7 +234,6 @@ class AppTheme {
         error: Color(0xFFF43F5E),
         onPrimary: Colors.white,
         onSurface: Colors.white,
-        onBackground: Colors.white,
       ),
       appBarTheme: const AppBarTheme(
         backgroundColor: AppColors.scaffoldDark,

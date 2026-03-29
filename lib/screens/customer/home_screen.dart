@@ -4,19 +4,18 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:garage_guru/theme/app_theme.dart';
 import 'package:garage_guru/models/models.dart';
+import 'package:garage_guru/widgets/customer_header.dart';
 import 'package:garage_guru/screens/customer/find_garages_screen.dart';
-import 'package:garage_guru/screens/customer/notifications_screen.dart';
 import 'package:garage_guru/screens/customer/garage_detail_screen.dart';
 import 'package:garage_guru/screens/customer/emergency_repair_screen.dart';
 import 'package:garage_guru/screens/customer/request_repair_form_screen.dart';
-import 'package:garage_guru/screens/customer/repairs_screen.dart';
 import 'package:garage_guru/screens/customer/battery_service_screen.dart';
 import 'package:garage_guru/screens/customer/tire_service_screen.dart';
 import 'package:garage_guru/screens/customer/oil_change_screen.dart';
 import 'package:garage_guru/screens/customer/add_vehicle_screen.dart';
+import 'package:garage_guru/screens/customer/customer_shell.dart';
 import 'package:garage_guru/screens/owner/add_garage_screen.dart';
 import 'package:garage_guru/blocs/garage_bloc.dart';
-import 'package:garage_guru/blocs/auth_bloc.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -43,8 +42,7 @@ class _HomeScreenState extends State<HomeScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildAppBar(),
-              _buildSearchBar(),
+              CustomerHeader(),
               _buildMapPreview(),
               _buildActionButtons(),
               _buildQuickServices(),
@@ -58,92 +56,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildAppBar() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(6),
-            decoration: BoxDecoration(
-              color: AppColors.primary,
-              borderRadius: BorderRadius.circular(6),
-            ),
-            child: const Icon(Icons.garage_rounded, color: Colors.white, size: 24),
-          ),
-          const SizedBox(width: 10),
-          Text(
-            'GarageGuru',
-            style: TextStyle(
-              fontSize: 22,
-              fontWeight: FontWeight.bold,
-              color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Color(0xFF1F2937),
-            ),
-          ),
-          const Spacer(),
-          Stack(
-            children: [
-              Container(
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.surface,
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: Theme.of(context).dividerColor.withOpacity(0.1)),
-                ),
-                child: IconButton(
-                  icon: Icon(Icons.notifications_none_rounded, color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Color(0xFF4B5563)),
-                  onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const NotificationsScreen())),
-                ),
-              ),
-              Positioned(
-                right: 12,
-                top: 12,
-                child: Container(
-                  width: 8,
-                  height: 8,
-                  decoration: BoxDecoration(
-                    color: Colors.red,
-                    shape: BoxShape.circle,
-                    border: Border.all(color: Colors.white, width: 1.5),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
 
-  Widget _buildSearchBar() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.surface,
-          borderRadius: BorderRadius.circular(30),
-          border: Border.all(color: Theme.of(context).dividerColor.withOpacity(0.1)),
-        ),
-        child: Row(
-          children: [
-            Icon(Icons.search_rounded, color: Theme.of(context).brightness == Brightness.dark ? Colors.white54 : const Color(0xFF9CA3AF)),
-            const SizedBox(width: 8),
-            Expanded(
-              child: TextField(
-                decoration: InputDecoration(
-                  hintText: 'Find nearby repair shops',
-                  hintStyle: TextStyle(color: Theme.of(context).brightness == Brightness.dark ? Colors.white38 : const Color(0xFF9CA3AF)),
-                  border: InputBorder.none,
-                  isDense: true,
-                ),
-                style: TextStyle(color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
 
   Widget _buildMapPreview() {
     return Padding(
@@ -229,21 +142,21 @@ class _HomeScreenState extends State<HomeScreen> {
             'Emergency Repair',
             const Color(0xFFF05138),
             Icons.warning_amber_rounded,
-            () => Navigator.push(context, MaterialPageRoute(builder: (_) => const EmergencyRepairScreen())),
+            () => Navigator.push(context, MaterialPageRoute(builder: (_) => EmergencyRepairScreen())),
           ),
           const SizedBox(width: 8),
           _actionBtn(
             'Schedule Repair',
             const Color(0xFF038DDB),
             Icons.calendar_today_rounded,
-            () => Navigator.push(context, MaterialPageRoute(builder: (_) => const RequestRepairFormScreen())),
+            () => Navigator.push(context, MaterialPageRoute(builder: (_) => RequestRepairFormScreen())),
           ),
           const SizedBox(width: 8),
           _actionBtn(
             'Repair Updates',
             const Color(0xFF19B25A),
             Icons.shield_outlined,
-            () => Navigator.push(context, MaterialPageRoute(builder: (_) => const RepairsScreen())),
+            () => Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => CustomerShell(initialTab: 2))),
           ),
         ],
       ),
@@ -287,16 +200,16 @@ class _HomeScreenState extends State<HomeScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               _serviceItem('Oil Change', Icons.oil_barrel_rounded, () {
-                Navigator.of(context).push(MaterialPageRoute(builder: (_) => const OilChangeScreen()));
+                Navigator.of(context).push(MaterialPageRoute(builder: (_) => OilChangeScreen()));
               }),
               _serviceItem('Tire Service', Icons.settings_input_component_rounded, () {
-                Navigator.of(context).push(MaterialPageRoute(builder: (_) => const TireServiceScreen()));
+                Navigator.of(context).push(MaterialPageRoute(builder: (_) => TireServiceScreen()));
               }),
               _serviceItem('Battery', Icons.battery_charging_full_rounded, () {
-                Navigator.of(context).push(MaterialPageRoute(builder: (_) => const BatteryServiceScreen()));
+                Navigator.of(context).push(MaterialPageRoute(builder: (_) => BatteryServiceScreen()));
               }),
               _serviceItem('Add Vehicle', Icons.add_circle_outline_rounded, () {
-                Navigator.of(context).push(MaterialPageRoute(builder: (_) => const AddVehicleScreen()));
+                Navigator.of(context).push(MaterialPageRoute(builder: (_) => AddVehicleScreen()));
               }),
             ],
           ),
@@ -339,7 +252,7 @@ class _HomeScreenState extends State<HomeScreen> {
             children: [
               const Text('Nearby Garages', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
               TextButton(
-                onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const FindGaragesScreen())),
+                onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => FindGaragesScreen())),
                 child: const Text('View All', style: TextStyle(color: Color(0xFF038DDB), fontWeight: FontWeight.bold)),
               ),
             ],
@@ -449,9 +362,10 @@ class _HomeScreenState extends State<HomeScreen> {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: const Color(0xFFF0F9FF),
+              color: Theme.of(context).cardColor,
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: const Color(0xFFE0F2FE)),
+              border: Border.all(color: Theme.of(context).dividerColor.withOpacity(0.1)),
+              boxShadow: Theme.of(context).brightness == Brightness.dark ? [] : AppShadows.card,
             ),
             child: Row(
               children: [
@@ -465,9 +379,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text('Oil Change Due', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-                      const Text('Toyota Camry • RAC 881C', style: TextStyle(color: Color(0xFF6B7280), fontSize: 12)),
-                      const Text('Due in 2 days or 300km', style: TextStyle(color: Color(0xFF6B7280), fontSize: 12)),
+                      Text('Oil Change Due', style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
+                      Text('Toyota Camry • RAC 881C', style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Theme.of(context).hintColor)),
+                      Text('Due in 2 days or 300km', style: Theme.of(context).textTheme.bodySmall?.copyWith(color: AppColors.error, fontWeight: FontWeight.bold)),
                       const SizedBox(height: 8),
                       ElevatedButton(
                         onPressed: () {

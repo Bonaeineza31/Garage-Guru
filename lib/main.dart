@@ -69,7 +69,7 @@ class AuthWrapper extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<AuthBloc, AuthState>(
       builder: (context, state) {
-        return const LandingScreen();
+        return LandingScreen();
       },
     );
   }

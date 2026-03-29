@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:garage_guru/theme/app_theme.dart';
 import 'package:garage_guru/models/garage_model.dart';
 import 'package:garage_guru/blocs/garage_bloc.dart';

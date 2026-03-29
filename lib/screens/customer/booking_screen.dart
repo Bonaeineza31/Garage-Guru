@@ -257,7 +257,7 @@ class _BookingScreenState extends State<BookingScreen> {
 
   Widget _buildDropdown(String hint, String? value, List<String> items, Function(String?) onChanged) {
     return DropdownButtonFormField<String>(
-      value: value,
+      initialValue: value,
       dropdownColor: Theme.of(context).cardColor,
       hint: Text(hint, style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Theme.of(context).hintColor)),
       decoration: InputDecoration(

@@ -136,7 +136,7 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
               child: OutlinedButton(
                 onPressed: () {
                   Navigator.of(context).push(
-                    MaterialPageRoute(builder: (_) => const PersonalInformationScreen()),
+                    MaterialPageRoute(builder: (_) => PersonalInformationScreen()),
                   );
                 },
                 style: OutlinedButton.styleFrom(
@@ -157,21 +157,21 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
               icon: Icons.person_outline,
               title: 'Personal Information',
               onTap: () => Navigator.of(context).push(
-                MaterialPageRoute(builder: (_) => const PersonalInformationScreen()),
+                MaterialPageRoute(builder: (_) => PersonalInformationScreen()),
               ),
             ),
             _buildNavItem(
               icon: Icons.shield_outlined,
               title: 'Security',
               onTap: () => Navigator.of(context).push(
-                MaterialPageRoute(builder: (_) => const SecurityScreen()),
+                MaterialPageRoute(builder: (_) => SecurityScreen()),
               ),
             ),
             _buildNavItem(
               icon: Icons.notifications_none_outlined,
               title: 'Notifications',
               onTap: () => Navigator.of(context).push(
-                MaterialPageRoute(builder: (_) => const NotificationsScreen()),
+                MaterialPageRoute(builder: (_) => NotificationsScreen()),
               ),
             ),
             _buildToggleItem(
@@ -204,7 +204,7 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
               icon: Icons.favorite_border_rounded,
               title: 'Favorited Garages',
               onTap: () => Navigator.of(context).push(
-                MaterialPageRoute(builder: (_) => const FavoriteGaragesScreen()),
+                MaterialPageRoute(builder: (_) => FavoriteGaragesScreen()),
               ),
             ),
             const SizedBox(height: AppSpacing.md),
@@ -220,14 +220,14 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
               icon: Icons.article_outlined,
               title: 'Terms of Service',
               onTap: () => Navigator.of(context).push(
-                MaterialPageRoute(builder: (_) => const TermsOfServiceScreen()),
+                MaterialPageRoute(builder: (_) => TermsOfServiceScreen()),
               ),
             ),
             _buildNavItem(
               icon: Icons.privacy_tip_outlined,
               title: 'Privacy Policy',
               onTap: () => Navigator.of(context).push(
-                MaterialPageRoute(builder: (_) => const PrivacyPolicyScreen()),
+                MaterialPageRoute(builder: (_) => PrivacyPolicyScreen()),
               ),
             ),
             const SizedBox(height: AppSpacing.lg),
@@ -250,7 +250,7 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
                         TextButton(
                           onPressed: () {
                             Navigator.of(context).pushAndRemoveUntil(
-                              MaterialPageRoute(builder: (_) => const LoginScreen()),
+                              MaterialPageRoute(builder: (_) => LoginScreen()),
                               (route) => false,
                             );
                           },
@@ -315,7 +315,7 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
         trailing: Switch(
           value: value,
           onChanged: onChanged,
-          activeColor: AppColors.primary,
+          activeThumbColor: AppColors.primary,
         ),
         shape: Border(bottom: BorderSide(color: Theme.of(context).dividerColor.withOpacity(0.1))),
       ),

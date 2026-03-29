@@ -85,7 +85,7 @@ class MyVehiclesScreen extends StatelessWidget {
         icon: Icons.add,
         onPressed: () {
           Navigator.of(context).push(
-            MaterialPageRoute(builder: (_) => const AddVehicleScreen()),
+            MaterialPageRoute(builder: (_) => AddVehicleScreen()),
           );
         },
       ),
@@ -206,7 +206,7 @@ class _VehicleCard extends StatelessWidget {
                   child: TextButton(
                     onPressed: () {
                       Navigator.of(context).push(
-                        MaterialPageRoute(builder: (_) => const ScheduledServicesScreen()),
+                        MaterialPageRoute(builder: (_) => ScheduledServicesScreen()),
                       );
                     },
                     child: Row(

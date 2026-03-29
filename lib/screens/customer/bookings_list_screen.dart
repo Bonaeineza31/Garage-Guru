@@ -44,7 +44,11 @@ class _BookingsListScreenState extends State<BookingsListScreen>
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('My Bookings', style: TextStyle(fontFamily: 'Poppins', fontWeight: FontWeight.w600, fontSize: 16)),
+        title: const Text('My Bookings',
+            style: TextStyle(
+                fontFamily: 'Poppins',
+                fontWeight: FontWeight.w600,
+                fontSize: 16)),
         backgroundColor: AppColors.primary,
         foregroundColor: Colors.white,
         automaticallyImplyLeading: false,
@@ -72,7 +76,8 @@ class _BookingsListScreenState extends State<BookingsListScreen>
     );
   }
 
-  Widget _buildBookingsList(List<BookingModel> bookings, {required bool isUpcoming}) {
+  Widget _buildBookingsList(List<BookingModel> bookings,
+      {required bool isUpcoming}) {
     if (bookings.isEmpty) {
       return EmptyState(
         icon: isUpcoming ? Icons.calendar_month_rounded : Icons.history_rounded,
@@ -98,6 +103,7 @@ class _BookingsListScreenState extends State<BookingsListScreen>
 
   void _showBookingDetail(BookingModel booking) {
     showModalBottomSheet(
+      context: context,
       backgroundColor: Theme.of(context).cardColor,
       isScrollControlled: true,
       shape: const RoundedRectangleBorder(
@@ -126,7 +132,11 @@ class _BookingsListScreenState extends State<BookingsListScreen>
                   ),
                 ),
                 const SizedBox(height: AppSpacing.xl),
-                Text('Booking Details', style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold)),
+                Text('Booking Details',
+                    style: Theme.of(context)
+                        .textTheme
+                        .headlineSmall
+                        ?.copyWith(fontWeight: FontWeight.bold)),
                 const SizedBox(height: AppSpacing.xxl),
                 BookingCard(booking: booking),
                 const SizedBox(height: AppSpacing.lg),

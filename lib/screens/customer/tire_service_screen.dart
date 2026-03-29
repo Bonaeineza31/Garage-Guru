@@ -17,6 +17,16 @@ class _TireServiceScreenState extends State<TireServiceScreen> {
   final TextEditingController _locationController = TextEditingController();
   final TextEditingController _vehicleController = TextEditingController();
 
+  // ✅ FIX: _labelStyle moved INSIDE the class
+  TextStyle get _labelStyle => TextStyle(
+    fontFamily: 'Poppins',
+    fontWeight: FontWeight.w500,
+    fontSize: 14,
+    color: Theme.of(context).brightness == Brightness.dark
+        ? Colors.white70
+        : const Color(0xFF6B7280),
+  );
+
   @override
   void dispose() {
     _serviceTypeController.dispose();
@@ -64,13 +74,19 @@ class _TireServiceScreenState extends State<TireServiceScreen> {
   Future<void> _pickVehicle() async {
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) return;
-    final snapshot = await FirebaseFirestore.instance.collection('users').doc(user.uid).collection('vehicles').get();
-    final vehicles = snapshot.docs.map((doc) => "${doc.data()['make']} ${doc.data()['model']} (${doc.data()['plateNumber']})").toList();
-    
+    final snapshot = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(user.uid)
+        .collection('vehicles')
+        .get();
+    final vehicles = snapshot.docs
+        .map((doc) => "${doc.data()['make']} ${doc.data()['model']} (${doc.data()['plateNumber']})")
+        .toList();
+
     if (vehicles.isEmpty) {
       vehicles.addAll(['Toyota Camry (RAC 881C)', 'Mercedes Benz (RAD 123A)']);
     }
-    
+
     _showSelectionDialog('Select Vehicle', vehicles, _vehicleController);
   }
 
@@ -79,12 +95,6 @@ class _TireServiceScreenState extends State<TireServiceScreen> {
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF1D9CE5),
-        elevation: 0,
-        leading: IconButton(
-          onPressed: () => Navigator.of(context).pop(),
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
-        ),
         title: const Text(
           'Tire Service',
           style: TextStyle(
@@ -94,6 +104,13 @@ class _TireServiceScreenState extends State<TireServiceScreen> {
             fontSize: 16,
           ),
         ),
+        leading: IconButton(
+          onPressed: () => Navigator.of(context).pop(),
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+        ),
+        backgroundColor: Theme.of(context).brightness == Brightness.dark
+            ? const Color(0xFF0F172A)
+            : const Color(0xFF1D9CE5),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.fromLTRB(14, 14, 14, 20),
@@ -119,7 +136,7 @@ class _TireServiceScreenState extends State<TireServiceScreen> {
                 children: [
                   Row(
                     children: [
-                       Container(
+                      Container(
                         width: 48,
                         height: 48,
                         decoration: BoxDecoration(
@@ -156,32 +173,24 @@ class _TireServiceScreenState extends State<TireServiceScreen> {
                     runSpacing: 12,
                     children: [
                       _ServiceChip(
-                        label: 'Tire Replacement', 
+                        label: 'Tire Replacement',
                         price: 'From Rw 20,000',
-                        onTap: () {
-                          setState(() => _serviceTypeController.text = 'Tire Replacement');
-                        },
+                        onTap: () => setState(() => _serviceTypeController.text = 'Tire Replacement'),
                       ),
                       _ServiceChip(
-                        label: 'Tire Rotation', 
+                        label: 'Tire Rotation',
                         price: 'From Rw 15,000',
-                        onTap: () {
-                          setState(() => _serviceTypeController.text = 'Tire Rotation');
-                        },
+                        onTap: () => setState(() => _serviceTypeController.text = 'Tire Rotation'),
                       ),
                       _ServiceChip(
-                        label: 'Wheel Alignment', 
+                        label: 'Wheel Alignment',
                         price: 'From Rw 25,000',
-                        onTap: () {
-                          setState(() => _serviceTypeController.text = 'Wheel Alignment');
-                        },
+                        onTap: () => setState(() => _serviceTypeController.text = 'Wheel Alignment'),
                       ),
                       _ServiceChip(
-                        label: 'Tire Pressure', 
+                        label: 'Tire Pressure',
                         price: 'From Rw 5,000',
-                        onTap: () {
-                          setState(() => _serviceTypeController.text = 'Tire Pressure');
-                        },
+                        onTap: () => setState(() => _serviceTypeController.text = 'Tire Pressure'),
                       ),
                     ],
                   ),
@@ -194,13 +203,17 @@ class _TireServiceScreenState extends State<TireServiceScreen> {
               style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 12),
-            const Text('Service Type', style: _labelStyle),
+            Text('Service Type', style: _labelStyle),
             const SizedBox(height: 8),
             _field(_serviceTypeController, 'Select service type', onTap: () {
-              _showSelectionDialog('Select Service', ['Tire Replacement', 'Tire Rotation', 'Wheel Alignment', 'Tire Pressure'], _serviceTypeController);
+              _showSelectionDialog(
+                'Select Service',
+                ['Tire Replacement', 'Tire Rotation', 'Wheel Alignment', 'Tire Pressure'],
+                _serviceTypeController,
+              );
             }),
             const SizedBox(height: 12),
-            const Text('Garage', style: _labelStyle),
+            Text('Garage', style: _labelStyle),
             const SizedBox(height: 8),
             _field(_garageController, 'Select a garage', onTap: _pickGarage),
             const SizedBox(height: 12),
@@ -210,11 +223,18 @@ class _TireServiceScreenState extends State<TireServiceScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text('Date', style: _labelStyle),
+                      Text('Date', style: _labelStyle),
                       const SizedBox(height: 8),
                       _field(_dateController, 'mm/dd/yyyy', icon: Icons.calendar_today_outlined, onTap: () async {
-                        final date = await showDatePicker(context: context, initialDate: DateTime.now(), firstDate: DateTime.now(), lastDate: DateTime.now().add(const Duration(days: 365)));
-                        if (date != null) setState(() => _dateController.text = "${date.month}/${date.day}/${date.year}");
+                        final date = await showDatePicker(
+                          context: context,
+                          initialDate: DateTime.now(),
+                          firstDate: DateTime.now(),
+                          lastDate: DateTime.now().add(const Duration(days: 365)),
+                        );
+                        if (date != null) {
+                          setState(() => _dateController.text = "${date.month}/${date.day}/${date.year}");
+                        }
                       }),
                     ],
                   ),
@@ -224,11 +244,16 @@ class _TireServiceScreenState extends State<TireServiceScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text('Time', style: _labelStyle),
+                      Text('Time', style: _labelStyle),
                       const SizedBox(height: 8),
                       _field(_timeController, '--:-- --', icon: Icons.access_time_outlined, onTap: () async {
-                        final time = await showTimePicker(context: context, initialTime: TimeOfDay.now());
-                        if (time != null) setState(() => _timeController.text = time.format(context));
+                        final time = await showTimePicker(
+                          context: context,
+                          initialTime: TimeOfDay.now(),
+                        );
+                        if (time != null) {
+                          setState(() => _timeController.text = time.format(context));
+                        }
                       }),
                     ],
                   ),
@@ -236,11 +261,11 @@ class _TireServiceScreenState extends State<TireServiceScreen> {
               ],
             ),
             const SizedBox(height: 12),
-            const Text('Location', style: _labelStyle),
+            Text('Location', style: _labelStyle),
             const SizedBox(height: 8),
             _field(_locationController, 'Where should the service be done?', icon: Icons.location_on_outlined),
             const SizedBox(height: 12),
-            const Text('Vehicle', style: _labelStyle),
+            Text('Vehicle', style: _labelStyle),
             const SizedBox(height: 8),
             _field(_vehicleController, 'Select your vehicle', icon: Icons.directions_car_outlined, onTap: _pickVehicle),
             const SizedBox(height: 30),
@@ -334,7 +359,6 @@ class _ServiceChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(12),
@@ -342,7 +366,9 @@ class _ServiceChip extends StatelessWidget {
         width: 170,
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: Theme.of(context).brightness == Brightness.dark ? const Color(0xFF1E293B) : const Color(0xFFF8FAFC),
+          color: Theme.of(context).brightness == Brightness.dark
+              ? const Color(0xFF1E293B)
+              : const Color(0xFFF8FAFC),
           borderRadius: BorderRadius.circular(12),
           border: Border.all(color: Theme.of(context).dividerColor),
         ),
@@ -368,10 +394,3 @@ class _ServiceChip extends StatelessWidget {
     );
   }
 }
-
-const TextStyle _labelStyle = TextStyle(
-  fontFamily: 'Poppins',
-  fontWeight: FontWeight.w500,
-  fontSize: 14,
-  color: Color(0xFF6B7280),
-);
