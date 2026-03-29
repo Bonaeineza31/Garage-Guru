@@ -55,7 +55,7 @@ class _FindGaragesScreenState extends State<FindGaragesScreen> {
         return Scaffold(
           backgroundColor: Theme.of(context).scaffoldBackgroundColor,
           appBar: PreferredSize(
-            preferredSize: const Size.fromHeight(120),
+            preferredSize: const Size.fromHeight(90),
              child: SafeArea(
               child: CustomerHeader(
               ),
