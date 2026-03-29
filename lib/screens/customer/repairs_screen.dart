@@ -44,8 +44,10 @@ class _RepairsScreenState extends State<RepairsScreen>
         return Scaffold(
           backgroundColor: Theme.of(context).scaffoldBackgroundColor,
           appBar: PreferredSize(
-            preferredSize: const Size.fromHeight(60),
-            child: CustomerHeader(showSearch: false),
+            preferredSize: const Size.fromHeight(80),
+               child: SafeArea(
+              child: CustomerHeader(showSearch: false),
+            ),
           ),
           body: Column(
             crossAxisAlignment: CrossAxisAlignment.start,

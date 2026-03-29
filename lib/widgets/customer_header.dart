@@ -59,23 +59,23 @@ class CustomerHeader extends StatelessWidget {
                 boxShadow: Theme.of(context).brightness == Brightness.dark ? [] : AppShadows.card,
               ),
               child: Row(
-                children: [
-                  Icon(Icons.search_rounded, color: Theme.of(context).brightness == Brightness.dark ? Colors.white54 : const Color(0xFF9CA3AF)),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: TextField(
-                      controller: searchController,
-                      onChanged: onSearch,
-                      decoration: InputDecoration(
-                        hintText: 'Find nearby repair shops',
-                        hintStyle: TextStyle(color: Theme.of(context).brightness == Brightness.dark ? Colors.white38 : const Color(0xFF9CA3AF)),
-                        border: InputBorder.none,
-                        isDense: true,
-                      ),
-                      style: TextStyle(color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black),
-                    ),
-                  ),
-                ],
+                // children: [
+                //   Icon(Icons.search_rounded, color: Theme.of(context).brightness == Brightness.dark ? Colors.white54 : const Color(0xFF9CA3AF)),
+                //   const SizedBox(width: 8),
+                //   Expanded(
+                //     child: TextField(
+                //       controller: searchController,
+                //       onChanged: onSearch,
+                //       decoration: InputDecoration(
+                //         hintText: 'Find nearby repair shops',
+                //         hintStyle: TextStyle(color: Theme.of(context).brightness == Brightness.dark ? Colors.white38 : const Color(0xFF9CA3AF)),
+                //         border: InputBorder.none,
+                //         isDense: true,
+                //       ),
+                //       style: TextStyle(color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black),
+                //     ),
+                //   ),
+                // ],
               ),
             ),
           ),

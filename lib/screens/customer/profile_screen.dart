@@ -58,8 +58,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(60),
-        child: CustomerHeader(showSearch: false),
+        preferredSize: const Size.fromHeight(80),
+          child: SafeArea(
+          child: CustomerHeader(showSearch: false),
+        ),
       ),
       body: SingleChildScrollView(
         child: Column(
