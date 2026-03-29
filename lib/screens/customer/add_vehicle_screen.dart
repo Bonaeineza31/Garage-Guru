@@ -12,6 +12,7 @@ class AddVehicleScreen extends StatefulWidget {
 }
 
 class _AddVehicleScreenState extends State<AddVehicleScreen> {
+  final _formKey = GlobalKey<FormState>();
   final _makeController = TextEditingController();
   final _modelController = TextEditingController();
   final _yearController = TextEditingController();
@@ -69,8 +70,7 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
   }
 
   Future<void> _addVehicle() async {
-    if (_makeController.text.isEmpty || _modelController.text.isEmpty || _plateController.text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Please fill all required fields')));
+    if (!(_formKey.currentState?.validate() ?? false)) {
       return;
     }
 
@@ -111,79 +111,86 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
       appBar: GgAppBar(
         title: 'Add Vehicle',
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(AppSpacing.lg),
-        child: Column(
-          children: [
-            Center(
-              child: Stack(
-                alignment: Alignment.bottomRight,
+      body: Form(
+        key: _formKey,
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(AppSpacing.lg),
+          child: Column(
+            children: [
+              Center(
+                child: Stack(
+                  alignment: Alignment.bottomRight,
+                  children: [
+                    Container(
+                      width: 120,
+                      height: 120,
+                      decoration: BoxDecoration(
+                        color: isDark ? const Color(0xFF1E293B) : AppColors.background,
+                        borderRadius: BorderRadius.circular(AppRadius.lg),
+                        border: Border.all(color: isDark ? Colors.white10 : AppColors.divider),
+                      ),
+                      child: Icon(Icons.directions_car_outlined, size: 40, color: isDark ? Colors.white : AppColors.textHint),
+                    ),
+                    Container(
+                      padding: const EdgeInsets.all(6),
+                      decoration: const BoxDecoration(
+                        color: AppColors.primary,
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(Icons.camera_alt, color: Colors.white, size: 16),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: AppSpacing.xxxl),
+  
+              GgTextField(
+                label: 'Make',
+                hint: 'Select make',
+                controller: _makeController,
+                readOnly: true,
+                onTap: _showMakeSelection,
+                suffix: const Icon(Icons.keyboard_arrow_down, color: AppColors.textHint),
+                validator: (v) => v == null || v.isEmpty ? 'Please select a make' : null,
+              ),
+              const SizedBox(height: AppSpacing.lg),
+              GgTextField(
+                label: 'Model',
+                hint: 'e.g. Camry, Corolla',
+                controller: _modelController,
+                validator: (v) => v == null || v.isEmpty ? 'Please enter model' : null,
+              ),
+              const SizedBox(height: AppSpacing.lg),
+              Row(
                 children: [
-                  Container(
-                    width: 120,
-                    height: 120,
-                    decoration: BoxDecoration(
-                      color: isDark ? const Color(0xFF1E293B) : AppColors.background,
-                      borderRadius: BorderRadius.circular(AppRadius.lg),
-                      border: Border.all(color: isDark ? Colors.white10 : AppColors.divider),
+                  Expanded(
+                    child: GgTextField(
+                      label: 'Year',
+                      hint: 'e.g. 2020',
+                      controller: _yearController,
+                      keyboardType: TextInputType.number,
+                      validator: (v) => v == null || v.isEmpty ? 'Required' : null,
                     ),
-                    child: Icon(Icons.directions_car_outlined, size: 40, color: isDark ? Colors.white : AppColors.textHint),
                   ),
-                  Container(
-                    padding: const EdgeInsets.all(6),
-                    decoration: const BoxDecoration(
-                      color: AppColors.primary,
-                      shape: BoxShape.circle,
+                  const SizedBox(width: AppSpacing.lg),
+                  Expanded(
+                    child: GgTextField(
+                      label: 'Color',
+                      hint: 'e.g. Silver',
+                      controller: _colorController,
+                      validator: (v) => v == null || v.isEmpty ? 'Required' : null,
                     ),
-                    child: const Icon(Icons.camera_alt, color: Colors.white, size: 16),
                   ),
                 ],
               ),
-            ),
-            const SizedBox(height: AppSpacing.xxxl),
-
-            GgTextField(
-              label: 'Make',
-              hint: 'Select make',
-              controller: _makeController,
-              readOnly: true,
-              onTap: _showMakeSelection,
-              suffix: const Icon(Icons.keyboard_arrow_down, color: AppColors.textHint),
-            ),
-            const SizedBox(height: AppSpacing.lg),
-            GgTextField(
-              label: 'Model',
-              hint: 'e.g. Camry, Corolla',
-              controller: _modelController,
-            ),
-            const SizedBox(height: AppSpacing.lg),
-            Row(
-              children: [
-                Expanded(
-                  child: GgTextField(
-                    label: 'Year',
-                    hint: 'e.g. 2020',
-                    controller: _yearController,
-                    keyboardType: TextInputType.number,
-                  ),
-                ),
-                const SizedBox(width: AppSpacing.lg),
-                Expanded(
-                  child: GgTextField(
-                    label: 'Color',
-                    hint: 'e.g. Silver',
-                    controller: _colorController,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: AppSpacing.lg),
-            GgTextField(
-              label: 'License Plate Number',
-              hint: 'e.g. RAA123A',
-              controller: _plateController,
-            ),
-            const SizedBox(height: AppSpacing.xxxl),
+              const SizedBox(height: AppSpacing.lg),
+              GgTextField(
+                label: 'License Plate Number',
+                hint: 'e.g. RAA123A',
+                controller: _plateController,
+                validator: (v) => v == null || v.isEmpty ? 'Please enter plate number' : null,
+              ),
+              const SizedBox(height: AppSpacing.xxxl),
 
             if (_isLoading)
               const CircularProgressIndicator()
@@ -192,7 +199,8 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
                 label: 'Add Vehicle',
                 onPressed: _addVehicle,
               ),
-          ],
+            ],
+          ),
         ),
       ),
     );

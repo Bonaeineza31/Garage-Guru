@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:garage_guru/theme/app_theme.dart';
-import 'package:garage_guru/data/mock_data.dart';
-import 'package:garage_guru/models/models.dart';
 import 'package:garage_guru/models/vehicle_model.dart';
 import 'package:garage_guru/widgets/widgets.dart';
 import 'package:intl/intl.dart';
 
 import 'package:garage_guru/screens/customer/scheduled_services_screen.dart';
-
 import 'package:garage_guru/screens/customer/service_history_screen.dart';
 import 'package:garage_guru/screens/customer/add_vehicle_screen.dart';
 
@@ -16,37 +15,79 @@ class MyVehiclesScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final vehicles = MockData.vehicles;
+    final user = FirebaseAuth.instance.currentUser;
 
     return Scaffold(
-      appBar: GgAppBar(
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      appBar: const GgAppBar(
         title: 'My Vehicles',
       ),
-      body: Column(
-        children: [
-          Expanded(
-            child: ListView.builder(
-              padding: const EdgeInsets.all(AppSpacing.lg),
-              itemCount: vehicles.length,
-              itemBuilder: (context, index) {
-                final vehicle = vehicles[index];
-                return _VehicleCard(vehicle: vehicle, index: index);
-              },
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(AppSpacing.lg),
-            child: GgButton(
-              label: 'Add New Vehicle',
-              icon: Icons.add,
-              onPressed: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(builder: (_) => const AddVehicleScreen()),
+      body: user == null
+          ? const Center(child: Text('Please log in to see your vehicles'))
+          : StreamBuilder<QuerySnapshot>(
+              stream: FirebaseFirestore.instance
+                  .collection('users')
+                  .doc(user.uid)
+                  .collection('vehicles')
+                  .orderBy('createdAt', descending: true)
+                  .snapshots(),
+              builder: (context, snapshot) {
+                if (snapshot.hasError) {
+                  return Center(child: Text('Error: ${snapshot.error}'));
+                }
+
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+
+                final docs = snapshot.data?.docs ?? [];
+                
+                if (docs.isEmpty) {
+                  return Column(
+                    children: [
+                      const Expanded(
+                        child: EmptyState(
+                          icon: Icons.directions_car_outlined,
+                          title: 'No Vehicles Added',
+                          subtitle: 'Add your first vehicle to start scheduling services.',
+                        ),
+                      ),
+                      _buildAddButton(context),
+                    ],
+                  );
+                }
+
+                return Column(
+                  children: [
+                    Expanded(
+                      child: ListView.builder(
+                        padding: const EdgeInsets.all(AppSpacing.lg),
+                        itemCount: docs.length,
+                        itemBuilder: (context, index) {
+                          final vehicle = VehicleModel.fromFirestore(docs[index]);
+                          return _VehicleCard(vehicle: vehicle, index: index);
+                        },
+                      ),
+                    ),
+                    _buildAddButton(context),
+                  ],
                 );
               },
             ),
-          ),
-        ],
+    );
+  }
+
+  Widget _buildAddButton(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(AppSpacing.lg),
+      child: GgButton(
+        label: 'Add New Vehicle',
+        icon: Icons.add,
+        onPressed: () {
+          Navigator.of(context).push(
+            MaterialPageRoute(builder: (_) => const AddVehicleScreen()),
+          );
+        },
       ),
     );
   }
@@ -60,13 +101,15 @@ class _VehicleCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Container(
       margin: const EdgeInsets.only(bottom: AppSpacing.lg),
       decoration: BoxDecoration(
         color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(AppRadius.lg),
-        boxShadow: AppShadows.card,
-        border: Border.all(color: AppColors.divider.withOpacity(0.5)),
+        boxShadow: isDark ? [] : AppShadows.card,
+        border: Border.all(color: isDark ? Colors.white10 : AppColors.divider.withOpacity(0.5)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -85,8 +128,8 @@ class _VehicleCard extends StatelessWidget {
                     errorBuilder: (context, error, stackTrace) => Container(
                       width: 100,
                       height: 80,
-                      color: AppColors.primaryLight,
-                      child: const Icon(Icons.directions_car, color: AppColors.primary),
+                      color: isDark ? const Color(0xFF1E293B) : AppColors.primaryLight,
+                      child: Icon(Icons.directions_car, color: isDark ? Colors.white54 : AppColors.primary),
                     ),
                   ),
                 ),
@@ -98,21 +141,24 @@ class _VehicleCard extends StatelessWidget {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(
-                            vehicle.fullName,
-                            style: AppTextStyles.subtitle.copyWith(fontWeight: FontWeight.w700),
+                          Expanded(
+                            child: Text(
+                              vehicle.fullName,
+                              style: (isDark ? const TextStyle(color: Colors.white) : AppTextStyles.subtitle).copyWith(fontWeight: FontWeight.w700),
+                              overflow: TextOverflow.ellipsis,
+                            ),
                           ),
-                          Icon(Icons.settings_outlined, color: AppColors.textSecondary, size: 18),
+                          Icon(Icons.settings_outlined, color: isDark ? Colors.white54 : AppColors.textSecondary, size: 18),
                         ],
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        '${vehicle.year} • ${vehicle.plateNumber}',
-                        style: AppTextStyles.bodySmall,
+                        '${vehicle.year} • ${vehicle.plateNumber ?? "N/A"}',
+                        style: isDark ? const TextStyle(color: Colors.white70, fontSize: 12) : AppTextStyles.bodySmall,
                       ),
                       Text(
                         'Color: ${vehicle.color}',
-                        style: AppTextStyles.bodySmall,
+                        style: isDark ? const TextStyle(color: Colors.white70, fontSize: 12) : AppTextStyles.bodySmall,
                       ),
                     ],
                   ),
@@ -120,40 +166,21 @@ class _VehicleCard extends StatelessWidget {
               ],
             ),
           ),
-          const Divider(height: 1),
+          Divider(height: 1, color: isDark ? Colors.white10 : null),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.sm),
             child: Row(
               children: [
-                Icon(Icons.calendar_today_outlined, size: 16, color: AppColors.textSecondary),
+                Icon(Icons.calendar_today_outlined, size: 16, color: isDark ? Colors.white54 : AppColors.textSecondary),
                 const SizedBox(width: 8),
                 Text(
                   'Next service: ${vehicle.nextServiceDate != null ? DateFormat('MMMM d, yyyy').format(vehicle.nextServiceDate!) : 'Not scheduled'}',
-                  style: AppTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w500),
+                  style: (isDark ? const TextStyle(color: Colors.white70) : AppTextStyles.bodySmall).copyWith(fontWeight: FontWeight.w500),
                 ),
-                const Spacer(),
-                if (index == 1) // Match image design (Honda Civic has the warning)
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                    decoration: BoxDecoration(
-                      color: Colors.orange.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(AppRadius.pill),
-                    ),
-                    child: Row(
-                      children: [
-                        const Icon(Icons.warning_amber_rounded, size: 14, color: Colors.orange),
-                        const SizedBox(width: 4),
-                        const Text(
-                          'Service due soon',
-                          style: TextStyle(color: Colors.orange, fontSize: 10, fontWeight: FontWeight.bold),
-                        ),
-                      ],
-                    ),
-                  ),
               ],
             ),
           ),
-          const Divider(height: 1),
+          Divider(height: 1, color: isDark ? Colors.white10 : null),
           Padding(
             padding: const EdgeInsets.all(AppSpacing.sm),
             child: Row(
@@ -167,8 +194,7 @@ class _VehicleCard extends StatelessWidget {
                     },
                     child: Text(
                       'View Service History',
-                      style: AppTextStyles.bodySmall.copyWith(
-                        color: AppColors.primary,
+                      style: (isDark ? const TextStyle(color: Color(0xFF0EA5E9)) : AppTextStyles.bodySmall).copyWith(
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -187,13 +213,12 @@ class _VehicleCard extends StatelessWidget {
                       children: [
                         Text(
                           'Schedule Service',
-                          style: AppTextStyles.bodySmall.copyWith(
-                            color: AppColors.primary,
+                          style: (isDark ? const TextStyle(color: Color(0xFF0EA5E9)) : AppTextStyles.bodySmall).copyWith(
                             fontWeight: FontWeight.w600,
                           ),
                         ),
                         const SizedBox(width: 4),
-                        const Icon(Icons.chevron_right, size: 16, color: AppColors.primary),
+                        const Icon(Icons.chevron_right, size: 16, color: Color(0xFF0EA5E9)),
                       ],
                     ),
                   ),

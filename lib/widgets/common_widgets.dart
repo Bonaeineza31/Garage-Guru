@@ -27,8 +27,8 @@ class GgAppBar extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     return AppBar(
       title: Text(title),
-      backgroundColor: backgroundColor ?? AppColors.primary,
-      foregroundColor: foregroundColor ?? AppColors.textOnPrimary,
+      backgroundColor: backgroundColor ?? (Theme.of(context).brightness == Brightness.dark ? const Color(0xFF0F172A) : AppColors.primary),
+      foregroundColor: foregroundColor ?? Colors.white,
       elevation: elevation ?? 0,
       leading: showBack
           ? (leading ??
@@ -52,6 +52,9 @@ class GgAppBar extends StatelessWidget implements PreferredSizeWidget {
     );
   }
 }
+
+
+
 class SectionHeader extends StatelessWidget {
   final String title;
   final String? actionText;
@@ -199,7 +202,7 @@ class UserAvatar extends StatelessWidget {
           ),
           child: CircleAvatar(
             radius: radius,
-            backgroundColor: AppColors.primaryLight,
+            backgroundColor: Theme.of(context).scaffoldBackgroundColor,
             backgroundImage: imageUrl != null ? NetworkImage(imageUrl!) : null,
             child: imageUrl == null
                 ? Text(

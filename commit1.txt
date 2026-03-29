@@ -1,0 +1,38 @@
+﻿commit 79be7763a4df13c01b7f8b1fab7658d7a9b6dedc
+Author: Ntare-GAMA <a.mugisha1@alustudent.com>
+Date:   Sat Mar 28 15:48:36 2026 +0200
+
+    Send a verification email when someone finishes sign-up
+    
+    Firebase only sends mail when we ask it to. After creating the account and saving the user profile in Firestore, we call sendEmailVerification and let people know the message might land in spam.
+    
+
+diff --git a/lib/screens/auth/register_screen.dart b/lib/screens/auth/register_screen.dart
+index 6630a72..0f2b864 100644
+--- a/lib/screens/auth/register_screen.dart
++++ b/lib/screens/auth/register_screen.dart
+@@ -67,6 +67,24 @@ class _RegisterScreenState extends State<RegisterScreen> {
+           'createdAt': FieldValue.serverTimestamp(),
+         });
+ 
++        // Firebase does not send sign-up emails by default; this sends the verification template.
++        try {
++          await user.sendEmailVerification();
++          if (mounted) {
++            ScaffoldMessenger.of(context).showSnackBar(
++              const SnackBar(
++                content: Text('We sent a verification link to your email. Check spam if you donÔÇÖt see it.'),
++              ),
++            );
++          }
++        } on FirebaseAuthException catch (e) {
++          if (mounted) {
++            ScaffoldMessenger.of(context).showSnackBar(
++              SnackBar(content: Text(e.message ?? 'Could not send verification email')),
++            );
++          }
++        }
++
+         if (!mounted) return;
+         final destination =
+             _selectedRole == 'garage_owner' ? const OwnerShell() : const CustomerShell();

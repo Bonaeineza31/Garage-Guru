@@ -40,7 +40,12 @@ class GgTextField extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: AppTextStyles.label.copyWith(fontWeight: FontWeight.w600)),
+        Text(
+          label, 
+          style: (Theme.of(context).brightness == Brightness.dark 
+            ? AppTextStyles.label.copyWith(color: Colors.white, fontWeight: FontWeight.bold) 
+            : AppTextStyles.label).copyWith(fontWeight: FontWeight.w600)
+        ),
         const SizedBox(height: AppSpacing.sm),
         TextFormField(
           controller: controller,
@@ -53,15 +58,20 @@ class GgTextField extends StatelessWidget {
           onChanged: onChanged,
           inputFormatters: inputFormatters,
           enabled: enabled,
-          style: AppTextStyles.body,
+          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+            color: Theme.of(context).brightness == Brightness.dark ? Colors.white : AppColors.textPrimary,
+          ),
           decoration: InputDecoration(
             hintText: hint,
+            hintStyle: TextStyle(color: Theme.of(context).brightness == Brightness.dark ? Colors.white38 : AppColors.textHint),
             prefixIcon: prefixIcon != null
-                ? Icon(prefixIcon, color: AppColors.textHint, size: 20)
+                ? Icon(prefixIcon, color: Theme.of(context).brightness == Brightness.dark ? Colors.white38 : AppColors.textHint, size: 20)
                 : null,
-            suffixIcon: suffix,
+            suffixIcon: Theme.of(context).brightness == Brightness.dark && suffix is Icon 
+                ? Icon((suffix as Icon).icon, color: Colors.white70) 
+                : suffix,
             filled: true,
-            fillColor: AppColors.background,
+            fillColor: Theme.of(context).brightness == Brightness.dark ? const Color(0xFF1E293B) : Theme.of(context).colorScheme.surface,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(AppRadius.md),
               borderSide: BorderSide.none,
@@ -110,7 +120,7 @@ class GgSearchBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(AppRadius.lg),
         boxShadow: AppShadows.elevated,
       ),
@@ -121,12 +131,12 @@ class GgSearchBar extends StatelessWidget {
               controller: controller,
               onChanged: onChanged,
               style: AppTextStyles.body,
-              decoration: InputDecoration(
+            decoration: InputDecoration(
                 hintText: hint,
-                hintStyle: AppTextStyles.body.copyWith(color: AppColors.textHint),
-                prefixIcon: const Padding(
-                  padding: EdgeInsets.only(left: 12, right: 4),
-                  child: Icon(Icons.search_rounded, color: AppColors.textHint, size: 22),
+                hintStyle: TextStyle(color: Theme.of(context).brightness == Brightness.dark ? Colors.white38 : AppColors.textHint),
+                prefixIcon: Padding(
+                  padding: const EdgeInsets.only(left: 12, right: 4),
+                  child: Icon(Icons.search_rounded, color: Theme.of(context).brightness == Brightness.dark ? Colors.white38 : AppColors.textHint, size: 22),
                 ),
                 prefixIconConstraints: const BoxConstraints(minWidth: 40),
                 border: InputBorder.none,

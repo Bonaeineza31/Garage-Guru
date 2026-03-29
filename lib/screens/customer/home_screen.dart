@@ -37,7 +37,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
         child: SingleChildScrollView(
           child: Column(
@@ -72,12 +72,12 @@ class _HomeScreenState extends State<HomeScreen> {
             child: const Icon(Icons.garage_rounded, color: Colors.white, size: 24),
           ),
           const SizedBox(width: 10),
-          const Text(
+          Text(
             'GarageGuru',
             style: TextStyle(
               fontSize: 22,
               fontWeight: FontWeight.bold,
-              color: Color(0xFF1F2937),
+              color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Color(0xFF1F2937),
             ),
           ),
           const Spacer(),
@@ -85,11 +85,12 @@ class _HomeScreenState extends State<HomeScreen> {
             children: [
               Container(
                 decoration: BoxDecoration(
-                  color: const Color(0xFFF3F4F6),
+                  color: Theme.of(context).colorScheme.surface,
                   borderRadius: BorderRadius.circular(20),
+                  border: Border.all(color: Theme.of(context).dividerColor.withOpacity(0.1)),
                 ),
                 child: IconButton(
-                  icon: const Icon(Icons.notifications_none_rounded, color: Color(0xFF4B5563)),
+                  icon: Icon(Icons.notifications_none_rounded, color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Color(0xFF4B5563)),
                   onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const NotificationsScreen())),
                 ),
               ),
@@ -119,22 +120,23 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16),
         decoration: BoxDecoration(
-          color: const Color(0xFFF3F4F6),
+          color: Theme.of(context).colorScheme.surface,
           borderRadius: BorderRadius.circular(30),
+          border: Border.all(color: Theme.of(context).dividerColor.withOpacity(0.1)),
         ),
         child: Row(
           children: [
-            const Icon(Icons.location_on_outlined, color: Color(0xFF9CA3AF), size: 20),
-            const SizedBox(width: 10),
-            const Expanded(
+            Icon(Icons.search_rounded, color: Theme.of(context).brightness == Brightness.dark ? Colors.white54 : const Color(0xFF9CA3AF)),
+            const SizedBox(width: 8),
+            Expanded(
               child: TextField(
                 decoration: InputDecoration(
                   hintText: 'Find nearby repair shops',
-                  hintStyle: TextStyle(color: Color(0xFF9CA3AF), fontSize: 14),
+                  hintStyle: TextStyle(color: Theme.of(context).brightness == Brightness.dark ? Colors.white38 : const Color(0xFF9CA3AF)),
                   border: InputBorder.none,
-                  enabledBorder: InputBorder.none,
-                  focusedBorder: InputBorder.none,
+                  isDense: true,
                 ),
+                style: TextStyle(color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black),
               ),
             ),
           ],
@@ -312,11 +314,15 @@ class _HomeScreenState extends State<HomeScreen> {
           Container(
             width: 56,
             height: 56,
-            decoration: const BoxDecoration(color: Color(0xFFE0F2FE), shape: BoxShape.circle),
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.surface, 
+              shape: BoxShape.circle,
+              border: Border.all(color: Theme.of(context).dividerColor.withOpacity(0.1)),
+            ),
             child: Icon(icon, color: const Color(0xFF0EA5E9), size: 24),
           ),
           const SizedBox(height: 8),
-          Text(label, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: Color(0xFF374151))),
+          Text(label, style: Theme.of(context).textTheme.labelSmall),
         ],
       ),
     );
@@ -443,8 +449,8 @@ class _HomeScreenState extends State<HomeScreen> {
               children: [
                 Container(
                   padding: const EdgeInsets.all(10),
-                  decoration: const BoxDecoration(color: Color(0xFFE0F2FE), shape: BoxShape.circle),
-                  child: const Icon(Icons.calendar_today_rounded, color: Color(0xFF0EA5E9), size: 24),
+                  decoration: BoxDecoration(color: Theme.of(context).colorScheme.primaryContainer, shape: BoxShape.circle),
+                  child: Icon(Icons.calendar_today_rounded, color: Theme.of(context).colorScheme.primary, size: 24),
                 ),
                 const SizedBox(width: 16),
                 Expanded(

@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class VehicleModel {
   final String id;
   final String make;
@@ -66,7 +68,25 @@ class VehicleModel {
       plateNumber: map['plateNumber'] as String?,
       imageUrl: map['imageUrl'] as String?,
       nextServiceDate: map['nextServiceDate'] != null
-          ? DateTime.parse(map['nextServiceDate'] as String)
+          ? (map['nextServiceDate'] is Timestamp 
+              ? (map['nextServiceDate'] as Timestamp).toDate() 
+              : DateTime.parse(map['nextServiceDate'] as String))
+          : null,
+    );
+  }
+
+  factory VehicleModel.fromFirestore(DocumentSnapshot doc) {
+    final data = doc.data() as Map<String, dynamic>;
+    return VehicleModel(
+      id: doc.id,
+      make: data['make'] ?? 'Unknown',
+      model: data['model'] ?? 'Unknown',
+      year: int.tryParse(data['year']?.toString() ?? '2020') ?? 2020,
+      color: data['color'] ?? 'Unknown',
+      plateNumber: data['plateNumber'],
+      imageUrl: data['imageUrl'],
+      nextServiceDate: data['nextServiceDate'] != null 
+          ? (data['nextServiceDate'] as Timestamp).toDate() 
           : null,
     );
   }

@@ -13,17 +13,19 @@ class AuthTheme {
   static const double fieldRadius = 8;
 
   static TextStyle title(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Theme.of(context).textTheme.titleLarge!.copyWith(
           fontWeight: FontWeight.w700,
           fontSize: 22,
-          color: const Color(0xFF0F172A),
+          color: isDark ? Colors.white : const Color(0xFF0F172A),
           letterSpacing: -0.3,
         );
   }
 
   static TextStyle subtitleStyle(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Theme.of(context).textTheme.bodyMedium!.copyWith(
-          color: subtitle,
+          color: isDark ? Colors.white70 : subtitle,
           height: 1.45,
           fontSize: 14,
         );

@@ -102,7 +102,7 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
           children: [
             // User header card
             Container(
-              color: Colors.white,
+              color: Theme.of(context).cardColor,
               padding: const EdgeInsets.all(AppSpacing.lg),
               child: Row(
                 children: [
@@ -117,12 +117,12 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
                       children: [
                         Text(
                           _userName,
-                          style: AppTextStyles.subtitle.copyWith(fontWeight: FontWeight.bold),
+                          style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
                         ),
                         const SizedBox(height: 2),
                         Text(
                           _userEmail,
-                          style: AppTextStyles.bodySmall.copyWith(color: AppColors.textSecondary),
+                          style: Theme.of(context).textTheme.bodySmall,
                         ),
                       ],
                     ),
@@ -131,7 +131,7 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
               ),
             ),
             Container(
-              color: Colors.white,
+              color: Theme.of(context).cardColor,
               padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: AppSpacing.sm),
               child: OutlinedButton(
                 onPressed: () {
@@ -236,7 +236,7 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
 
             // Log Out button
             Container(
-              color: Colors.white,
+              color: Theme.of(context).cardColor,
               child: ListTile(
                 onTap: () {
                   showDialog(
@@ -282,8 +282,7 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
       padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: AppSpacing.sm),
       child: Text(
         title,
-        style: AppTextStyles.label.copyWith(
-          color: AppColors.textSecondary,
+        style: Theme.of(context).textTheme.labelSmall?.copyWith(
           fontWeight: FontWeight.w600,
           fontSize: 11,
         ),
@@ -293,13 +292,13 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
 
   Widget _buildNavItem({required IconData icon, required String title, required VoidCallback onTap}) {
     return Container(
-      color: Colors.white,
+      color: Theme.of(context).cardColor,
       child: ListTile(
         onTap: onTap,
-        leading: Icon(icon, color: AppColors.textSecondary, size: 22),
-        title: Text(title, style: AppTextStyles.body.copyWith(fontWeight: FontWeight.w500)),
-        trailing: const Icon(Icons.chevron_right, color: AppColors.textSecondary, size: 20),
-        shape: Border(bottom: BorderSide(color: AppColors.divider.withOpacity(0.5))),
+        leading: Icon(icon, color: Theme.of(context).iconTheme.color, size: 22),
+        title: Text(title, style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w500)),
+        trailing: Icon(Icons.chevron_right, color: Theme.of(context).iconTheme.color?.withOpacity(0.5), size: 20),
+        shape: Border(bottom: BorderSide(color: Theme.of(context).dividerColor.withOpacity(0.1))),
       ),
     );
   }
@@ -311,7 +310,7 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
     required ValueChanged<bool> onChanged,
   }) {
     return Container(
-      color: Colors.white,
+      color: Theme.of(context).cardColor,
       child: ListTile(
         leading: Icon(icon, color: AppColors.textSecondary, size: 22),
         title: Text(title, style: AppTextStyles.body.copyWith(fontWeight: FontWeight.w500)),
