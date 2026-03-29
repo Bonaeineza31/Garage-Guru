@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:flutter_map/flutter_map.dart';
 import 'package:garage_guru/theme/app_theme.dart';
 import 'package:garage_guru/models/models.dart';
 import 'package:garage_guru/widgets/customer_header.dart';
@@ -16,6 +15,8 @@ import 'package:garage_guru/screens/customer/add_vehicle_screen.dart';
 import 'package:garage_guru/screens/customer/customer_shell.dart';
 import 'package:garage_guru/screens/owner/add_garage_screen.dart';
 import 'package:garage_guru/blocs/garage_bloc.dart';
+import 'package:garage_guru/screens/customer/full_screen_osm_map_screen.dart';
+import 'package:garage_guru/widgets/garage_osm_map.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -26,6 +27,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final TextEditingController _searchController = TextEditingController();
+  final MapController _mapController = MapController();
 
   @override
   void dispose() {
@@ -68,65 +70,89 @@ class _HomeScreenState extends State<HomeScreen> {
           width: double.infinity,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: Theme.of(context).dividerColor.withOpacity(0.1)),
+            border: Border.all(color: Theme.of(context).dividerColor.withValues(alpha: 0.1)),
           ),
-          child: StreamBuilder<QuerySnapshot>(
-            stream: FirebaseFirestore.instance.collection('garages').snapshots(),
-            builder: (context, snapshot) {
-              Set<Marker> markers = {};
-              LatLng initialPosition = const LatLng(-1.9441, 30.0619); // Kigali Default
+          child: Stack(
+            children: [
+              BlocBuilder<GarageBloc, GarageState>(
+                builder: (context, state) {
+                  final markers = garagesToMarkers(state.allGarages);
 
-              if (snapshot.hasData) {
-                for (var doc in snapshot.data!.docs) {
-                  final data = doc.data() as Map<String, dynamic>;
-                  final lat = (data['latitude'] ?? 0.0).toDouble();
-                  final lng = (data['longitude'] ?? 0.0).toDouble();
-                  final name = data['name'] ?? 'Garage';
-
-                  if (lat != 0.0 && lng != 0.0) {
-                    markers.add(
-                      Marker(
-                        markerId: MarkerId(doc.id),
-                        position: LatLng(lat, lng),
-                        infoWindow: InfoWindow(title: name),
-                        icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueOrange),
+                  return FlutterMap(
+                    mapController: _mapController,
+                    options: const MapOptions(
+                      initialCenter: kDefaultMapCenter,
+                      initialZoom: 13,
+                      minZoom: 3,
+                      maxZoom: 19,
+                      interactionOptions: InteractionOptions(
+                        flags: InteractiveFlag.all,
                       ),
-                    );
-                  }
-                }
-              }
-
-              return Stack(
-                children: [
-                  GoogleMap(
-                    initialCameraPosition: CameraPosition(
-                      target: initialPosition,
-                      zoom: 13,
                     ),
-                    markers: markers,
-                    myLocationEnabled: true,
-                    myLocationButtonEnabled: false,
-                    zoomControlsEnabled: false,
-                    mapToolbarEnabled: false,
-                    compassEnabled: false,
-                    // disable fullscreen control so it doesn't overlap the FAB
-                    liteModeEnabled: false,
+                    children: [
+                      buildOsmTileLayer(),
+                      MarkerLayer(markers: markers),
+                    ],
+                  );
+                },
+              ),
+              BlocBuilder<GarageBloc, GarageState>(
+                builder: (context, state) {
+                  return MapControlOverlay(
+                    mapController: _mapController,
+                    onFitAll: state.allGarages.any(
+                          (g) => g.latitude != 0.0 || g.longitude != 0.0,
+                        )
+                        ? () => fitMapToGarages(_mapController, state.allGarages)
+                        : null,
+                    padding: const EdgeInsets.only(right: 8, top: 8),
+                  );
+                },
+              ),
+              Positioned(
+                left: 8,
+                top: 8,
+                child: Material(
+                  color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.92),
+                  shape: const CircleBorder(),
+                  elevation: 2,
+                  child: IconButton(
+                    tooltip: 'Full screen map',
+                    icon: const Icon(Icons.open_in_full),
+                    onPressed: () {
+                      final garages =
+                          context.read<GarageBloc>().state.allGarages;
+                      FullScreenOsmMapScreen.openGarages(
+                        context,
+                        garages: garages,
+                      );
+                    },
                   ),
-                  Positioned(
-                    bottom: 12,
-                    right: 60,
-                    child: FloatingActionButton.small(
-                      heroTag: 'add_garage_fab',
-                      backgroundColor: const Color(0xFF0EA5E9),
-                      onPressed: () => Navigator.of(context).push(
-                        MaterialPageRoute(builder: (_) => const AddGarageScreen()),
-                      ),
-                      child: const Icon(Icons.add, color: Colors.white),
-                    ),
+                ),
+              ),
+              ExpandMapHint(
+                onTap: () {
+                  final garages =
+                      context.read<GarageBloc>().state.allGarages;
+                  FullScreenOsmMapScreen.openGarages(
+                    context,
+                    garages: garages,
+                  );
+                },
+              ),
+              Positioned(
+                bottom: 12,
+                right: 60,
+                child: FloatingActionButton.small(
+                  heroTag: 'add_garage_fab',
+                  backgroundColor: const Color(0xFF0EA5E9),
+                  onPressed: () => Navigator.of(context).push(
+                    MaterialPageRoute(builder: (_) => const AddGarageScreen()),
                   ),
-                ],
-              );
-            },
+                  child: const Icon(Icons.add, color: Colors.white),
+                ),
+              ),
+            ],
           ),
         ),
       ),
@@ -230,7 +256,7 @@ class _HomeScreenState extends State<HomeScreen> {
             decoration: BoxDecoration(
               color: Theme.of(context).colorScheme.surface, 
               shape: BoxShape.circle,
-              border: Border.all(color: Theme.of(context).dividerColor.withOpacity(0.1)),
+              border: Border.all(color: Theme.of(context).dividerColor.withValues(alpha: 0.1)),
             ),
             child: Icon(icon, color: const Color(0xFF0EA5E9), size: 24),
           ),
@@ -263,15 +289,17 @@ class _HomeScreenState extends State<HomeScreen> {
             if (state.status == GarageStatus.loading) return const SizedBox(height: 100, child: Center(child: CircularProgressIndicator()));
             if (state.status == GarageStatus.failure) return const Padding(padding: EdgeInsets.all(16), child: Text('Failed to load garages'));
             
-            final garages = state.allGarages.take(3).toList();
+            final garages = [...state.allGarages]
+              ..sort((a, b) => a.distanceKm.compareTo(b.distanceKm));
+            final topNearby = garages.take(3).toList();
 
-            if (garages.isEmpty) return const Padding(padding: EdgeInsets.all(16), child: Text('No garages found nearby'));
+            if (topNearby.isEmpty) return const Padding(padding: EdgeInsets.all(16), child: Text('No garages found nearby'));
 
             return ListView.builder(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
-              itemCount: garages.length,
-              itemBuilder: (context, index) => _buildGarageTile(garages[index]),
+              itemCount: topNearby.length,
+              itemBuilder: (context, index) => _buildGarageTile(topNearby[index]),
             );
           },
         ),
@@ -296,7 +324,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 Text(garage.name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
                 Row(
                   children: [
-                    Text('${garage.distanceKm}Km', style: const TextStyle(color: Color(0xFF6B7280), fontSize: 12)),
+                    Text('${garage.distanceKm.toStringAsFixed(1)} km', style: const TextStyle(color: Color(0xFF6B7280), fontSize: 12)),
                     const SizedBox(width: 8),
                     Row(
                       children: [
@@ -364,7 +392,7 @@ class _HomeScreenState extends State<HomeScreen> {
             decoration: BoxDecoration(
               color: Theme.of(context).cardColor,
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Theme.of(context).dividerColor.withOpacity(0.1)),
+              border: Border.all(color: Theme.of(context).dividerColor.withValues(alpha: 0.1)),
               boxShadow: Theme.of(context).brightness == Brightness.dark ? [] : AppShadows.card,
             ),
             child: Row(
