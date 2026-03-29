@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:garage_guru/theme/app_theme.dart';
 import 'package:garage_guru/data/mock_data.dart';
 import 'package:garage_guru/models/models.dart';
 import 'package:garage_guru/widgets/widgets.dart';
+import 'package:intl/intl.dart';
 import 'package:garage_guru/screens/customer/booking_screen.dart';
 import 'package:garage_guru/screens/customer/garage_message_screen.dart';
 import 'package:garage_guru/blocs/garage_bloc.dart';
@@ -375,52 +377,112 @@ class _ServicesTab extends StatelessWidget {
   }
 }
 
-class _ReviewsTab extends StatelessWidget {
+class _ReviewsTab extends StatefulWidget {
   final GarageModel garage;
   const _ReviewsTab({required this.garage});
 
   @override
+  State<_ReviewsTab> createState() => _ReviewsTabState();
+}
+
+class _ReviewsTabState extends State<_ReviewsTab> {
+  late Stream<QuerySnapshot> _reviewsStream;
+
+  @override
+  void initState() {
+    super.initState();
+    _reviewsStream = FirebaseFirestore.instance
+        .collection('reviews')
+        .where('garageId', isEqualTo: widget.garage.id)
+        .snapshots();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
+    return StreamBuilder<QuerySnapshot>(
+      stream: _reviewsStream,
+      builder: (context, snapshot) {
+        if (snapshot.hasError) {
+          return Center(child: Text('Error: ${snapshot.error}'));
+        }
+        
+        if (snapshot.connectionState == ConnectionState.waiting && !snapshot.hasData) {
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        final reviews = (snapshot.data?.docs ?? []).toList();
+        // In-memory sorting to avoid composite index requirements
+        reviews.sort((a, b) {
+          final aData = a.data() as Map<String, dynamic>;
+          final bData = b.data() as Map<String, dynamic>;
+          final aTime = aData['createdAt'] as Timestamp?;
+          final bTime = bData['createdAt'] as Timestamp?;
+          if (aTime == null) return 1;
+          if (bTime == null) return -1;
+          return bTime.compareTo(aTime);
+        });
+
+        return SingleChildScrollView(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Column(
+              Row(
                 children: [
                    Text(
                     garage.rating.toStringAsFixed(2),
                     style: Theme.of(context).textTheme.headlineLarge?.copyWith(fontSize: 48, fontWeight: FontWeight.bold),
+                  Column(
+                    children: [
+                      Text(
+                        widget.garage.rating.toStringAsFixed(2),
+                        style: const TextStyle(fontSize: 48, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
+                      ),
+                      Row(
+                        children: List.generate(5, (index) => const Icon(Icons.star_rounded, color: AppColors.starFilled, size: 20)),
+                      ),
+                      const SizedBox(height: 4),
+                      Text('${widget.garage.reviewCount} reviews', style: AppTextStyles.caption),
+                    ],
                   ),
-                  Row(
-                    children: List.generate(5, (index) => const Icon(Icons.star_rounded, color: AppColors.starFilled, size: 20)),
+                  const SizedBox(width: 32),
+                  Expanded(
+                    child: Column(
+                      children: [
+                        _buildRatingBar(5, reviews.where((r) => (r.data() as Map)['rating'] == 5).length / (reviews.isEmpty ? 1 : reviews.length)),
+                        _buildRatingBar(4, reviews.where((r) => (r.data() as Map)['rating'] == 4).length / (reviews.isEmpty ? 1 : reviews.length)),
+                        _buildRatingBar(3, reviews.where((r) => (r.data() as Map)['rating'] == 3).length / (reviews.isEmpty ? 1 : reviews.length)),
+                        _buildRatingBar(2, reviews.where((r) => (r.data() as Map)['rating'] == 2).length / (reviews.isEmpty ? 1 : reviews.length)),
+                        _buildRatingBar(1, reviews.where((r) => (r.data() as Map)['rating'] == 1).length / (reviews.isEmpty ? 1 : reviews.length)),
+                      ],
+                    ),
                   ),
-                  const SizedBox(height: 4),
-                  Text('${garage.reviewCount} reviews', style: Theme.of(context).textTheme.bodySmall),
                 ],
               ),
-              const SizedBox(width: 32),
-              Expanded(
-                child: Column(
-                  children: [
-                    _buildRatingBar(context, 5, 0.9),
-                    _buildRatingBar(context, 4, 0.1),
-                    _buildRatingBar(context, 3, 0.0),
-                    _buildRatingBar(context, 2, 0.0),
-                    _buildRatingBar(context, 1, 0.0),
-                  ],
-                ),
-              ),
+              const SizedBox(height: 32),
+              if (reviews.isEmpty)
+                const Center(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(vertical: 20),
+                    child: Text('No reviews yet. Be the first to review!', style: TextStyle(color: AppColors.textSecondary)),
+                  ),
+                )
+              else
+                ...reviews.map((doc) {
+                  final data = doc.data() as Map<String, dynamic>;
+                  final date = (data['createdAt'] as Timestamp?)?.toDate() ?? DateTime.now();
+                  return _buildReviewCard(
+                    data['userName'] ?? 'User',
+                    data['userPhoto'],
+                    DateFormat('MMM dd, yyyy').format(date),
+                    data['comment'] ?? '',
+                    (data['rating'] ?? 0).toInt(),
+                  );
+                }).toList(),
             ],
           ),
-          const SizedBox(height: 32),
-          _buildReviewCard(context, 'Jean Pierre', 'May 15, 2023', 'Excellent service! They fixed my car quickly and at a reasonable price.', 5),
-          _buildReviewCard(context, 'Marie Claire', 'May 5, 2023', 'Good service but I had to wait a bit longer than expected. The mechanics are very professional though.', 4),
-          _buildReviewCard(context, 'Emmanuel', 'April 20, 2023', 'Best garage in Kigali! They diagnosed and fixed my engine problem that other garages couldn\'t figure out.', 5),
-        ],
-      ),
+        );
+      },
     );
   }
 
@@ -447,22 +509,40 @@ class _ReviewsTab extends StatelessWidget {
     );
   }
 
-  Widget _buildReviewCard(BuildContext context, String user, String date, String content, int rating) {
+  Widget _buildReviewCard(String user, String? userPhoto, String date, String content, int rating) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(user, style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.bold)),
-              Text(date, style: Theme.of(context).textTheme.bodySmall),
+              CircleAvatar(
+                radius: 18,
+                backgroundColor: AppColors.primaryLight,
+                backgroundImage: userPhoto != null ? NetworkImage(userPhoto) : null,
+                child: userPhoto == null ? const Icon(Icons.person, size: 18, color: AppColors.primary) : null,
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(user, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+                        Text(date, style: AppTextStyles.caption),
+                      ],
+                    ),
+                    const SizedBox(height: 2),
+                    Row(
+                      children: List.generate(5, (index) => Icon(Icons.star_rounded, color: index < rating ? AppColors.starFilled : AppColors.divider, size: 16)),
+                    ),
+                  ],
+                ),
+              ),
             ],
-          ),
-          const SizedBox(height: 4),
-          Row(
-            children: List.generate(5, (index) => Icon(Icons.star_rounded, color: index < rating ? AppColors.starFilled : Theme.of(context).dividerColor, size: 16)),
           ),
           const SizedBox(height: 8),
           Text(content, style: Theme.of(context).textTheme.bodySmall),

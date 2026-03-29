@@ -412,7 +412,15 @@ class _HomeScreenState extends State<HomeScreen> {
               ],
             ),
           ),
-          Icon(garage.isFavorite ? Icons.favorite_rounded : Icons.favorite_outline_rounded, color: garage.isFavorite ? Colors.red : const Color(0xFFD1D5DB)),
+          IconButton(
+            icon: Icon(
+              garage.isFavorite ? Icons.favorite_rounded : Icons.favorite_outline_rounded, 
+              color: garage.isFavorite ? Colors.red : const Color(0xFFD1D5DB)
+            ),
+            onPressed: () {
+              context.read<GarageBloc>().add(ToggleFavorite(garage));
+            },
+          ),
           const SizedBox(width: 12),
           ElevatedButton(
             onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => GarageDetailScreen(garage: garage))),
