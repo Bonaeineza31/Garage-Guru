@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-class BatteryServiceScreen extends StatefulWidget {
-  const BatteryServiceScreen({super.key});
+class OilChangeScreen extends StatefulWidget {
+  const OilChangeScreen({super.key});
 
   @override
-  State<BatteryServiceScreen> createState() => _BatteryServiceScreenState();
+  State<OilChangeScreen> createState() => _OilChangeScreenState();
 }
 
-class _BatteryServiceScreenState extends State<BatteryServiceScreen> {
+class _OilChangeScreenState extends State<OilChangeScreen> {
   final TextEditingController _serviceTypeController = TextEditingController();
   final TextEditingController _garageController = TextEditingController();
   final TextEditingController _dateController = TextEditingController();
@@ -66,7 +66,6 @@ class _BatteryServiceScreenState extends State<BatteryServiceScreen> {
     final snapshot = await FirebaseFirestore.instance.collection('users').doc(user.uid).collection('vehicles').get();
     final vehicles = snapshot.docs.map((doc) => "${doc.data()['make']} ${doc.data()['model']} (${doc.data()['plateNumber']})").toList();
     
-    // Fallback if no vehicles in backend yet
     if (vehicles.isEmpty) {
       vehicles.addAll(['Toyota Camry (RAC 881C)', 'Mercedes Benz (RAD 123A)']);
     }
@@ -89,7 +88,7 @@ class _BatteryServiceScreenState extends State<BatteryServiceScreen> {
           icon: const Icon(Icons.arrow_back, color: Colors.white),
         ),
         title: const Text(
-          'Battery Service',
+          'Oil Change',
           style: TextStyle(
             color: Colors.white,
             fontFamily: 'Poppins',
@@ -129,7 +128,7 @@ class _BatteryServiceScreenState extends State<BatteryServiceScreen> {
                           color: const Color(0xFFE0F2FE),
                           borderRadius: BorderRadius.circular(10),
                         ),
-                        child: const Icon(Icons.battery_charging_full_outlined, size: 28, color: Color(0xFF0EA5E9)),
+                        child: const Icon(Icons.oil_barrel_outlined, size: 28, color: Color(0xFF0EA5E9)),
                       ),
                       const SizedBox(width: 12),
                       Expanded(
@@ -137,7 +136,7 @@ class _BatteryServiceScreenState extends State<BatteryServiceScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Battery Services',
+                              'Oil Change Services',
                               style: TextStyle(
                                 fontFamily: 'Poppins',
                                 fontWeight: FontWeight.w600,
@@ -146,7 +145,7 @@ class _BatteryServiceScreenState extends State<BatteryServiceScreen> {
                               ),
                             ),
                             const Text(
-                              'Professional battery care for your vehicle',
+                              'Keep your engine running smoothly',
                               style: TextStyle(
                                 fontFamily: 'Poppins',
                                 fontSize: 13,
@@ -164,31 +163,31 @@ class _BatteryServiceScreenState extends State<BatteryServiceScreen> {
                     runSpacing: 12,
                     children: [
                       _ServiceChip(
-                        label: 'Battery Replacement', 
-                        price: 'From Rw 45,000',
+                        label: 'Full Synthetic', 
+                        price: 'From Rw 35,000',
                         onTap: () {
-                          setState(() => _serviceTypeController.text = 'Battery Replacement');
+                          setState(() => _serviceTypeController.text = 'Full Synthetic');
                         },
                       ),
                       _ServiceChip(
-                        label: 'Battery Testing', 
-                        price: 'From Rw 10,000',
+                        label: 'Synthetic Blend', 
+                        price: 'From Rw 25,000',
                         onTap: () {
-                          setState(() => _serviceTypeController.text = 'Battery Testing');
+                          setState(() => _serviceTypeController.text = 'Synthetic Blend');
                         },
                       ),
                       _ServiceChip(
-                        label: 'Charging System', 
+                        label: 'High Mileage', 
+                        price: 'From Rw 30,000',
+                        onTap: () {
+                          setState(() => _serviceTypeController.text = 'High Mileage');
+                        },
+                      ),
+                      _ServiceChip(
+                        label: 'Standard Oil', 
                         price: 'From Rw 15,000',
                         onTap: () {
-                          setState(() => _serviceTypeController.text = 'Charging System');
-                        },
-                      ),
-                      _ServiceChip(
-                        label: 'Jump Start', 
-                        price: 'From Rw 5,000',
-                        onTap: () {
-                          setState(() => _serviceTypeController.text = 'Jump Start');
+                          setState(() => _serviceTypeController.text = 'Standard Oil');
                         },
                       ),
                     ],
@@ -198,7 +197,7 @@ class _BatteryServiceScreenState extends State<BatteryServiceScreen> {
             ),
             const SizedBox(height: 30),
             Text(
-              'Book Battery Service',
+              'Book Oil Change',
               style: TextStyle(
                 fontFamily: 'Poppins',
                 fontWeight: FontWeight.w700,
@@ -210,7 +209,7 @@ class _BatteryServiceScreenState extends State<BatteryServiceScreen> {
             const Text('Service Type', style: _labelStyle),
             const SizedBox(height: 8),
             _field(_serviceTypeController, 'Select service type', onTap: () {
-              _showSelectionDialog('Select Service', ['Battery Replacement', 'Battery Testing', 'Charging System', 'Jump Start'], _serviceTypeController);
+              _showSelectionDialog('Select Service', ['Full Synthetic', 'Synthetic Blend', 'High Mileage', 'Standard Oil'], _serviceTypeController);
             }),
             const SizedBox(height: 12),
             const Text('Garage', style: _labelStyle),
@@ -330,7 +329,7 @@ class _BatteryServiceScreenState extends State<BatteryServiceScreen> {
 
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
-        content: Text('Battery service booked successfully'),
+        content: Text('Oil change service booked successfully'),
         backgroundColor: Color(0xFF1D9CE5),
         duration: Duration(seconds: 2),
       ),

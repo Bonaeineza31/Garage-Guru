@@ -12,6 +12,7 @@ import 'package:garage_guru/screens/customer/request_repair_form_screen.dart';
 import 'package:garage_guru/screens/customer/repairs_screen.dart';
 import 'package:garage_guru/screens/customer/battery_service_screen.dart';
 import 'package:garage_guru/screens/customer/tire_service_screen.dart';
+import 'package:garage_guru/screens/customer/oil_change_screen.dart';
 import 'package:garage_guru/screens/customer/add_vehicle_screen.dart';
 import 'package:garage_guru/screens/owner/add_garage_screen.dart';
 import 'package:garage_guru/blocs/garage_bloc.dart';
@@ -283,16 +284,16 @@ class _HomeScreenState extends State<HomeScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              _serviceItem('Oil Change', Icons.bolt_rounded, () {
-                Navigator.of(context).push(MaterialPageRoute(builder: (_) => const RequestRepairFormScreen(initialRepairType: 'Oil Change')));
+              _serviceItem('Oil Change', Icons.oil_barrel_rounded, () {
+                Navigator.of(context).push(MaterialPageRoute(builder: (_) => const OilChangeScreen()));
               }),
-              _serviceItem('Tire Service', Icons.gps_fixed_rounded, () {
+              _serviceItem('Tire Service', Icons.settings_input_component_rounded, () {
                 Navigator.of(context).push(MaterialPageRoute(builder: (_) => const TireServiceScreen()));
               }),
               _serviceItem('Battery', Icons.battery_charging_full_rounded, () {
                 Navigator.of(context).push(MaterialPageRoute(builder: (_) => const BatteryServiceScreen()));
               }),
-              _serviceItem('Add Vehicle', Icons.garage_outlined, () {
+              _serviceItem('Add Vehicle', Icons.add_circle_outline_rounded, () {
                 Navigator.of(context).push(MaterialPageRoute(builder: (_) => const AddVehicleScreen()));
               }),
             ],
@@ -458,9 +459,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         onPressed: () {
                           Navigator.of(context).push(
                             MaterialPageRoute(
-                              builder: (_) => const RequestRepairFormScreen(
-                                initialRepairType: 'Oil Change',
-                              ),
+                              builder: (_) => const OilChangeScreen(),
                             ),
                           );
                         },

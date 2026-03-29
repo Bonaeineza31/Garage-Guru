@@ -1,12 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:garage_guru/theme/app_theme.dart';
 import 'package:garage_guru/data/mock_data.dart';
+import 'package:garage_guru/main.dart';
 import 'package:garage_guru/screens/auth/login_screen.dart';
 import 'package:garage_guru/screens/customer/personal_information_screen.dart';
 import 'package:garage_guru/screens/customer/security_screen.dart';
 import 'package:garage_guru/screens/customer/notifications_screen.dart';
 import 'package:garage_guru/screens/customer/privacy_policy_screen.dart';
 import 'package:garage_guru/screens/customer/terms_of_service_screen.dart';
+import 'package:garage_guru/screens/customer/favorite_garages_screen.dart';
 
 class AccountSettingsScreen extends StatefulWidget {
   const AccountSettingsScreen({super.key});
@@ -16,13 +21,62 @@ class AccountSettingsScreen extends StatefulWidget {
 }
 
 class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
-  // These are placeholders — not yet implemented
+  // Shared Preferences variables
   bool _darkModeEnabled = false;
-  bool _biometricEnabled = false;
+  bool _emailNotifications = true;
+  bool _locationServices = true;
+
+  String _userName = 'Loading...';
+  String _userEmail = 'Loading...';
+  String _profileImageUrl = 'https://i.pravatar.cc/150?img=1';
+
+  @override
+  void initState() {
+    super.initState();
+    _loadPreferences();
+    _loadUserData();
+  }
+
+  Future<void> _loadPreferences() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _darkModeEnabled = prefs.getBool('dark_mode') ?? false;
+      _emailNotifications = prefs.getBool('email_notifications') ?? true;
+      _locationServices = prefs.getBool('location_services') ?? true;
+    });
+  }
+
+  Future<void> _savePreference(String key, bool value) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(key, value);
+  }
+
+  Future<void> _loadUserData() async {
+    final currentUser = FirebaseAuth.instance.currentUser;
+    if (currentUser != null) {
+      setState(() {
+        _userEmail = currentUser.email ?? 'No email';
+        _userName = currentUser.displayName ?? 'Loading...';
+        if (currentUser.photoURL != null) {
+          _profileImageUrl = currentUser.photoURL!;
+        }
+      });
+      try {
+        final doc = await FirebaseFirestore.instance.collection('users').doc(currentUser.uid).get();
+        if (doc.exists && mounted) {
+          final data = doc.data()!;
+          setState(() {
+            _userName = data['name'] ?? _userName;
+          });
+        }
+      } catch (e) {
+        // ignore
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    final user = MockData.currentUser;
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -54,9 +108,7 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
                 children: [
                   CircleAvatar(
                     radius: 32,
-                    backgroundImage: NetworkImage(
-                      user.profileImageUrl ?? 'https://i.pravatar.cc/150?img=1',
-                    ),
+                    backgroundImage: NetworkImage(_profileImageUrl),
                   ),
                   const SizedBox(width: AppSpacing.md),
                   Expanded(
@@ -64,16 +116,12 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          user.fullName,
+                          _userName,
                           style: AppTextStyles.subtitle.copyWith(fontWeight: FontWeight.bold),
                         ),
                         const SizedBox(height: 2),
                         Text(
-                          user.email,
-                          style: AppTextStyles.bodySmall.copyWith(color: AppColors.textSecondary),
-                        ),
-                        Text(
-                          user.phone,
+                          _userEmail,
                           style: AppTextStyles.bodySmall.copyWith(color: AppColors.textSecondary),
                         ),
                       ],
@@ -130,18 +178,36 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
               title: 'Dark Mode',
               value: _darkModeEnabled,
               onChanged: (v) {
-                // Dark mode will be implemented later
                 setState(() => _darkModeEnabled = v);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Dark mode will be available in a future update')),
-                );
+                _savePreference('dark_mode', v);
+                // Update global themeNotifier
+                themeNotifier.value = v ? ThemeMode.dark : ThemeMode.light;
               },
             ),
             _buildToggleItem(
-              icon: Icons.fingerprint,
-              title: 'Biometric Login',
-              value: _biometricEnabled,
-              onChanged: (v) => setState(() => _biometricEnabled = v),
+              icon: Icons.email_outlined,
+              title: 'Email Notifications',
+              value: _emailNotifications,
+              onChanged: (v) {
+                setState(() => _emailNotifications = v);
+                _savePreference('email_notifications', v);
+              },
+            ),
+            _buildToggleItem(
+              icon: Icons.location_on_outlined,
+              title: 'Location Services',
+              value: _locationServices,
+              onChanged: (v) {
+                setState(() => _locationServices = v);
+                _savePreference('location_services', v);
+              },
+            ),
+            _buildNavItem(
+              icon: Icons.favorite_border_rounded,
+              title: 'Favorited Garages',
+              onTap: () => Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const FavoriteGaragesScreen()),
+              ),
             ),
             const SizedBox(height: AppSpacing.md),
 
