@@ -56,13 +56,11 @@ class _FindGaragesScreenState extends State<FindGaragesScreen> {
           backgroundColor: Theme.of(context).scaffoldBackgroundColor,
           appBar: PreferredSize(
             preferredSize: const Size.fromHeight(120),
-            child: SafeArea(
-              child: CustomerHeader(
-                searchController: _searchController,
-                onSearch: (value) {
-                  context.read<GarageBloc>().add(SearchGarages(value));
-                },
-              ),
+            child: CustomerHeader(
+              searchController: _searchController,
+              onSearch: (value) {
+                context.read<GarageBloc>().add(SearchGarages(value));
+              },
             ),
           ),
           body: Column(
