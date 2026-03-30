@@ -238,17 +238,10 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
                           child: const Text('Cancel'),
                         ),
                         TextButton(
-<<<<<<< HEAD
-                          onPressed: () {
-                            Navigator.of(context).pushAndRemoveUntil(
-                              MaterialPageRoute(builder: (_) => LoginScreen()),
-                              (route) => false,
-                            );
-=======
                           onPressed: () async {
                             Navigator.pop(ctx);
                             await AuthService.signOut();
->>>>>>> 5d9c514 (firebase data)
+                          },
                           },
                           child: Text('Log Out', style: TextStyle(color: AppColors.error)),
                         ),
