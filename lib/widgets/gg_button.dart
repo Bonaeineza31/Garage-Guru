@@ -24,6 +24,15 @@ class GgButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Add semantic label for accessibility
+    return Semantics(
+      button: true,
+      label: label,
+      child: _buildButton(context),
+    );
+  }
+
+  Widget _buildButton(BuildContext context) {
     final buttonColor = color ?? AppColors.primary;
     final isDisabled = onPressed == null || isLoading;
 
