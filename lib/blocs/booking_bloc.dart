@@ -131,7 +131,6 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
         if (startDateStr != null && status != 'completed' && status != 'cancelled') {
           final startDate = DateTime.tryParse(startDateStr);
           if (startDate != null && startDate.isBefore(now)) {
-            // Auto-complete expired repair
             _firestore.collection('repairs').doc(doc.id).update({'status': 'completed'});
           }
         }
@@ -153,7 +152,6 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
         if (dateStr != null && status != 'Completed' && status != 'Cancelled') {
           final date = DateTime.tryParse(dateStr);
           if (date != null && date.isBefore(now)) {
-            // Auto-complete expired booking
             _firestore.collection('bookings').doc(doc.id).update({'status': 'Completed'});
           }
         }
