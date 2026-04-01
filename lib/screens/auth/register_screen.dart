@@ -1,3 +1,5 @@
+// TODO: Add password strength validation for registration.
+  // TODO: Add more robust error handling for registration.
 /// Registration screen for GarageGuru.
 /// Handles user sign-up and email verification logic.
 
@@ -28,6 +30,7 @@ class RegisterScreen extends StatefulWidget {
     }
     if (!_formKey.currentState!.validate()) return;
     setState(() => _isLoading = true);
+    // Email verification logic: send verification email after registration.
     try {
       final userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: _emailController.text.trim(),
@@ -68,6 +71,8 @@ class RegisterScreen extends StatefulWidget {
         );
       }
     } on FirebaseAuthException catch (e) {
+      // Debug print for registration failures
+      debugPrint('Registration failed: \\${e.code} - \\${e.message}');
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(e.message ?? 'Registration failed')),
