@@ -71,7 +71,6 @@ class _FindGaragesScreenState extends State<FindGaragesScreen> {
                   style: Theme.of(context).textTheme.headlineMedium,
                 ),
               ),
-              // Search bar
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: TextField(
@@ -94,7 +93,6 @@ class _FindGaragesScreenState extends State<FindGaragesScreen> {
                 ),
               ),
 
-              // Filter Chips
               SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -129,7 +127,6 @@ class _FindGaragesScreenState extends State<FindGaragesScreen> {
                 ),
               ),
 
-              // Garage List
               Expanded(
                 child: state.status == GarageStatus.loading
                     ? const Center(child: CircularProgressIndicator())

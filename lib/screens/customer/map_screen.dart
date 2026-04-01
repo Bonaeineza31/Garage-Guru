@@ -56,7 +56,6 @@ class _MapScreenState extends State<MapScreen> {
                 ),
               ),
               Positioned(
-                // Place above the bottom horizontal garage list.
                 bottom: 190,
                 right: AppSpacing.lg,
                 child: FloatingActionButton.small(

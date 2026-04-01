@@ -8,7 +8,6 @@ class NotificationsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Mock notifications
     final notifications = [
       _NotificationItem(
         icon: Icons.calendar_today_outlined,

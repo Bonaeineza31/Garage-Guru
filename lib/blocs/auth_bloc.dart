@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-// Events
 abstract class AuthEvent extends Equatable {
   const AuthEvent();
   @override
@@ -21,7 +20,6 @@ class AuthUserChanged extends AuthEvent {
 
 class AuthLogoutRequested extends AuthEvent {}
 
-// States
 enum AuthStatus { unknown, authenticated, unauthenticated }
 
 class AuthState extends Equatable {
@@ -45,7 +43,6 @@ class AuthState extends Equatable {
   List<Object?> get props => [status, user];
 }
 
-// BLoC
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final FirebaseAuth _firebaseAuth;
   StreamSubscription<User?>? _userSubscription;

@@ -70,7 +70,6 @@ class _SendFeedbackScreenState extends State<SendFeedbackScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Rate section
             Container(
               color: Colors.white,
               padding: const EdgeInsets.all(20),
@@ -297,7 +296,6 @@ class _SendFeedbackScreenState extends State<SendFeedbackScreen> {
                             userName = userDoc.data()?['name'] ?? user.email?.split('@').first ?? 'GarageGuru User';
                           }
 
-                          // 1. Submit feedback via Bloc (handles reviews collection and garage rating)
                           context.read<BookingBloc>().add(
                             SubmitFeedback(
                               garageId: widget.repair.garageId,
@@ -312,7 +310,6 @@ class _SendFeedbackScreenState extends State<SendFeedbackScreen> {
                             ),
                           );
 
-                          // 2. Directly update repair status to completed as requested
                           final collection = widget.repair.isBooking ? 'bookings' : 'repairs';
                           final statusValue = widget.repair.isBooking ? 'Completed' : 'completed';
                           
@@ -329,7 +326,6 @@ class _SendFeedbackScreenState extends State<SendFeedbackScreen> {
                               ),
                             );
                             
-                            // 3. Go back
                             if (mounted && Navigator.canPop(context)) {
                               Navigator.pop(context);
                             }
@@ -362,7 +358,6 @@ class _SendFeedbackScreenState extends State<SendFeedbackScreen> {
             ),
             const SizedBox(height: 8),
 
-            // Previous Feedback
             Container(
               color: Colors.white,
               padding: const EdgeInsets.all(20),
@@ -385,7 +380,6 @@ class _SendFeedbackScreenState extends State<SendFeedbackScreen> {
             ),
             const SizedBox(height: 8),
 
-            // Contact Support
             Container(
               color: Colors.white,
               padding: const EdgeInsets.all(20),

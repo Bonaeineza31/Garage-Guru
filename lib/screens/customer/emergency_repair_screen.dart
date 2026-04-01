@@ -13,7 +13,6 @@ class _EmergencyRepairScreenState extends State<EmergencyRepairScreen> {
   final TextEditingController _locationController = TextEditingController();
   final TextEditingController _issueController = TextEditingController();
 
-  // ✅ FIXED: moved inside the class
   TextStyle get _labelStyle => TextStyle(
     fontFamily: 'Poppins',
     fontWeight: FontWeight.w600,

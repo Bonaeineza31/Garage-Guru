@@ -17,7 +17,6 @@ class _TireServiceScreenState extends State<TireServiceScreen> {
   final TextEditingController _locationController = TextEditingController();
   final TextEditingController _vehicleController = TextEditingController();
 
-  // ✅ FIX: _labelStyle moved INSIDE the class
   TextStyle get _labelStyle => TextStyle(
     fontFamily: 'Poppins',
     fontWeight: FontWeight.w500,

@@ -47,7 +47,6 @@ class RepairDetailScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Tabs header
                   Container(
                     color: Theme.of(context).cardColor,
                     padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
@@ -160,7 +159,6 @@ class RepairDetailScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 8),
 
-                  // Assigned Mechanic
                   _Section(
                     title: 'Assigned Mechanic',
                     child: Row(
@@ -235,7 +233,6 @@ class RepairDetailScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 8),
 
-                  // Repair Description
                   _Section(
                     title: 'Repair Description',
                     titleIcon: Icons.build_circle_outlined,
@@ -251,7 +248,6 @@ class RepairDetailScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 8),
 
-                  // Cost Breakdown
                   _Section(
                     title: 'Cost Breakdown',
                     titleIcon: Icons.attach_money_rounded,
@@ -277,7 +273,6 @@ class RepairDetailScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 8),
 
-                  // Repair Updates
                   _Section(
                     title: 'Repair Updates',
                     titleIcon: Icons.article_outlined,
@@ -294,7 +289,6 @@ class RepairDetailScreen extends StatelessWidget {
             ),
           ),
 
-          // Bottom CTA
           if (repair.status != RepairStatus.completed)
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),

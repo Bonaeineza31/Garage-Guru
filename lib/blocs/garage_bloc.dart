@@ -4,7 +4,6 @@ import 'package:equatable/equatable.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:garage_guru/models/garage_model.dart';
 
-// Events
 abstract class GarageEvent extends Equatable {
   const GarageEvent();
   @override
@@ -50,7 +49,6 @@ class ToggleFavorite extends GarageEvent {
   List<Object?> get props => [garage];
 }
 
-// States
 enum GarageStatus { initial, loading, success, failure }
 
 class GarageState extends Equatable {
@@ -92,7 +90,6 @@ class GarageState extends Equatable {
   List<Object?> get props => [status, allGarages, filteredGarages, searchQuery, selectedCategory, sortBy];
 }
 
-// BLoC
 class GarageBloc extends Bloc<GarageEvent, GarageState> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
@@ -172,7 +169,6 @@ class GarageBloc extends Bloc<GarageEvent, GarageState> {
   Future<void> _onToggleFavorite(ToggleFavorite event, Emitter<GarageState> emit) async {
     final updatedIsFavorite = !event.garage.isFavorite;
     
-    // Optimistically update local state
     final updatedAllGarages = state.allGarages.map((g) {
       if (g.id == event.garage.id) {
         return g.copyWith(isFavorite: updatedIsFavorite);
@@ -190,7 +186,6 @@ class GarageBloc extends Bloc<GarageEvent, GarageState> {
         'isFavorite': updatedIsFavorite,
       });
     } catch (e) {
-      // Revert if failed
       final revertedAllGarages = state.allGarages.map((g) {
         if (g.id == event.garage.id) {
           return g.copyWith(isFavorite: event.garage.isFavorite);

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:garage_guru/theme/app_theme.dart';
 
-/// Customer "Request Repair" form (Figma: blue header, repair type, date/time, location, vehicle, issue).
+/// Lets the customer describe their repair need: type, date/time, location, vehicle, and issue.
 class RequestRepairFormScreen extends StatefulWidget {
   final String? initialRepairType;
 
@@ -55,7 +55,6 @@ class _RequestRepairFormScreenState extends State<RequestRepairFormScreen> {
     super.dispose();
   }
 
-  // ✅ FIX 1: _labelStyle moved INSIDE the class, uses context correctly
   TextStyle get _labelStyle => TextStyle(
     fontFamily: 'Poppins',
     fontWeight: FontWeight.w500,
@@ -78,7 +77,6 @@ class _RequestRepairFormScreenState extends State<RequestRepairFormScreen> {
           onPressed: () => Navigator.of(context).pop(),
           icon: const Icon(Icons.arrow_back, color: Colors.white),
         ),
-        // ✅ FIX 2: Removed const + Theme.of(context) from TextStyle (can't mix)
         title: const Text(
           'Request Repair',
           style: TextStyle(

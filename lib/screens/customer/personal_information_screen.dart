@@ -63,7 +63,6 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
           });
         }
       } catch (e) {
-        // Log Error
       }
     }
   }
@@ -137,7 +136,6 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
         padding: const EdgeInsets.all(AppSpacing.lg),
         child: Column(
           children: [
-            // Profile Image Section
             Center(
               child: Stack(
                 children: [
