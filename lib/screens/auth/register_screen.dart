@@ -17,33 +17,6 @@ import 'package:garage_guru/screens/owner/owner_shell.dart';
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
 
-  @override
-  State<RegisterScreen> createState() => _RegisterScreenState();
-}
-
-class _RegisterScreenState extends State<RegisterScreen> {
-  final _formKey = GlobalKey<FormState>();
-  final _nameController = TextEditingController();
-  final _emailController = TextEditingController();
-  final _phoneController = TextEditingController();
-  final _passwordController = TextEditingController();
-  final _confirmPasswordController = TextEditingController();
-  bool _obscurePassword = true;
-  bool _obscureConfirm = true;
-  bool _isLoading = false;
-  bool _agreedToTerms = false;
-  String _selectedRole = 'customer';
-
-  @override
-  void dispose() {
-    _nameController.dispose();
-    _emailController.dispose();
-    _phoneController.dispose();
-    _passwordController.dispose();
-    _confirmPasswordController.dispose();
-    super.dispose();
-  }
-
   Future<void> _handleRegister() async {
     if (!_agreedToTerms) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -53,13 +26,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
     }
     if (!_formKey.currentState!.validate()) return;
     setState(() => _isLoading = true);
-
     try {
       final userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: _emailController.text.trim(),
-        password: _passwordController.text,
+        password: _passwordController.text.trim(),
       );
-
       final user = userCredential.user;
       if (user != null) {
         await user.updateDisplayName(_nameController.text.trim());
@@ -70,16 +41,44 @@ class _RegisterScreenState extends State<RegisterScreen> {
           'role': _selectedRole,
           'createdAt': FieldValue.serverTimestamp(),
         });
-        // AuthGate will navigate to the correct shell when auth state updates.
-<<<<<<< HEAD
-=======
-=======
-
-        // Firebase does not send sign-up emails by default; this sends the verification template.
         try {
           await user.sendEmailVerification();
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('We sent a verification link to your email. Check spam if you don’t see it.'),
+              ),
+            );
+          }
+        } on FirebaseAuthException catch (e) {
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text(e.message ?? 'Could not send verification email')),
+            );
+          }
+        }
+        if (!mounted) return;
+        final destination =
+            _selectedRole == 'garage_owner' ? const OwnerShell() : const CustomerShell();
+        Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute<void>(builder: (_) => destination),
+          (route) => false,
+        );
+      }
+    } on FirebaseAuthException catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.message ?? 'Registration failed')),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: $e')),
+      );
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
+  }
               const SnackBar(
                 content: Text('We sent a verification link to your email. Check spam if you don’t see it.'),
               ),
@@ -115,6 +114,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       );
     } finally {
       if (mounted) setState(() => _isLoading = false);
+>>>>>>> origin/main
     }
   }
 

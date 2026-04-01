@@ -1,6 +1,10 @@
 {
   "project_info": {
     "project_number": "331669988324",
+<<<<<<< HEAD
+    "firebase_url": "https://garageguru-8438b-default-rtdb.firebaseio.com",
+=======
+>>>>>>> origin/main
     "project_id": "garageguru-8438b",
     "storage_bucket": "garageguru-8438b.firebasestorage.app"
   },
@@ -29,6 +33,16 @@
             {
               "client_id": "331669988324-808hvrt92kdeltrmpr79n66vn79up1k1.apps.googleusercontent.com",
               "client_type": 3
+<<<<<<< HEAD
+            },
+            {
+              "client_id": "331669988324-ogtm1min3ea797nhpsqaoevettqmkdbl.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.garageGuru"
+              }
+=======
+>>>>>>> origin/main
             }
           ]
         }

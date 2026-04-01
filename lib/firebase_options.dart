@@ -23,6 +23,13 @@ class DefaultFirebaseOptions {
       case TargetPlatform.android:
         return android;
       case TargetPlatform.iOS:
+<<<<<<< HEAD
+        return ios;
+      case TargetPlatform.macOS:
+        return macos;
+      case TargetPlatform.windows:
+        return windows;
+=======
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for ios - '
           'you can reconfigure this by running the FlutterFire CLI again.',
@@ -37,6 +44,7 @@ class DefaultFirebaseOptions {
           'DefaultFirebaseOptions have not been configured for windows - '
           'you can reconfigure this by running the FlutterFire CLI again.',
         );
+>>>>>>> origin/main
       case TargetPlatform.linux:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for linux - '
@@ -55,6 +63,10 @@ class DefaultFirebaseOptions {
     messagingSenderId: '331669988324',
     projectId: 'garageguru-8438b',
     authDomain: 'garageguru-8438b.firebaseapp.com',
+<<<<<<< HEAD
+    databaseURL: 'https://garageguru-8438b-default-rtdb.firebaseio.com',
+=======
+>>>>>>> origin/main
     storageBucket: 'garageguru-8438b.firebasestorage.app',
     measurementId: 'G-98T6R4NK5M',
   );
@@ -64,7 +76,46 @@ class DefaultFirebaseOptions {
     appId: '1:331669988324:android:6c4c25444b2a72f6ad9df1',
     messagingSenderId: '331669988324',
     projectId: 'garageguru-8438b',
+<<<<<<< HEAD
+    databaseURL: 'https://garageguru-8438b-default-rtdb.firebaseio.com',
     storageBucket: 'garageguru-8438b.firebasestorage.app',
   );
 
+  static const FirebaseOptions ios = FirebaseOptions(
+    apiKey: 'AIzaSyDpuPpiXMsaHucqaRlk7qCEeEOqxfZ8DFw',
+    appId: '1:331669988324:ios:dee6c7cdaa55591fad9df1',
+    messagingSenderId: '331669988324',
+    projectId: 'garageguru-8438b',
+    databaseURL: 'https://garageguru-8438b-default-rtdb.firebaseio.com',
+    storageBucket: 'garageguru-8438b.firebasestorage.app',
+    iosClientId: '331669988324-ogtm1min3ea797nhpsqaoevettqmkdbl.apps.googleusercontent.com',
+    iosBundleId: 'com.example.garageGuru',
+  );
+
+  static const FirebaseOptions macos = FirebaseOptions(
+    apiKey: 'AIzaSyDpuPpiXMsaHucqaRlk7qCEeEOqxfZ8DFw',
+    appId: '1:331669988324:ios:dee6c7cdaa55591fad9df1',
+    messagingSenderId: '331669988324',
+    projectId: 'garageguru-8438b',
+    databaseURL: 'https://garageguru-8438b-default-rtdb.firebaseio.com',
+    storageBucket: 'garageguru-8438b.firebasestorage.app',
+    iosClientId: '331669988324-ogtm1min3ea797nhpsqaoevettqmkdbl.apps.googleusercontent.com',
+    iosBundleId: 'com.example.garageGuru',
+  );
+
+  static const FirebaseOptions windows = FirebaseOptions(
+    apiKey: 'AIzaSyC8LkUl2-HwBPpC5YsnhsipOpLIvYV3Cpg',
+    appId: '1:331669988324:web:5397be2ffc2b2eecad9df1',
+    messagingSenderId: '331669988324',
+    projectId: 'garageguru-8438b',
+    authDomain: 'garageguru-8438b.firebaseapp.com',
+    databaseURL: 'https://garageguru-8438b-default-rtdb.firebaseio.com',
+    storageBucket: 'garageguru-8438b.firebasestorage.app',
+    measurementId: 'G-LJ4WHQVZ3P',
+  );
+=======
+    storageBucket: 'garageguru-8438b.firebasestorage.app',
+  );
+
+>>>>>>> origin/main
 }
