@@ -1,3 +1,5 @@
+// TODO: Add localization support for multi-language users.
+// The MultiProvider below injects global state (theme, auth, garage, booking) for the entire app.
 /// Main entry point for the GarageGuru app.
 /// Handles Firebase initialization, theme, and global providers.
 import 'package:flutter/material.dart';
@@ -43,6 +45,7 @@ Future<void> main() async {
 }
 
 class GarageGuruApp extends StatelessWidget {
+    // The AuthGate widget controls navigation based on authentication state.
   const GarageGuruApp({super.key});
 
   @override
