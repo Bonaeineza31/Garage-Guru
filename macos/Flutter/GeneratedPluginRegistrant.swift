@@ -10,7 +10,11 @@ import file_selector_macos
 import firebase_auth
 import firebase_core
 import geolocator_apple
+<<<<<<< HEAD
 import google_sign_in_ios
+=======
+import shared_preferences_foundation
+>>>>>>> 4022811fcd9f3b11667f026fa510b591aedd21d2
 import sqflite_darwin
 import url_launcher_macos
 
@@ -20,7 +24,11 @@ func RegisterGeneratedPlugins(registry: FlutterPluginRegistry) {
   FLTFirebaseAuthPlugin.register(with: registry.registrar(forPlugin: "FLTFirebaseAuthPlugin"))
   FLTFirebaseCorePlugin.register(with: registry.registrar(forPlugin: "FLTFirebaseCorePlugin"))
   GeolocatorPlugin.register(with: registry.registrar(forPlugin: "GeolocatorPlugin"))
+<<<<<<< HEAD
   FLTGoogleSignInPlugin.register(with: registry.registrar(forPlugin: "FLTGoogleSignInPlugin"))
+=======
+  SharedPreferencesPlugin.register(with: registry.registrar(forPlugin: "SharedPreferencesPlugin"))
+>>>>>>> 4022811fcd9f3b11667f026fa510b591aedd21d2
   SqflitePlugin.register(with: registry.registrar(forPlugin: "SqflitePlugin"))
   UrlLauncherPlugin.register(with: registry.registrar(forPlugin: "UrlLauncherPlugin"))
 }
