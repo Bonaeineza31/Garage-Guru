@@ -17,7 +17,6 @@ class _BatteryServiceScreenState extends State<BatteryServiceScreen> {
   final TextEditingController _locationController = TextEditingController();
   final TextEditingController _vehicleController = TextEditingController();
 
-  // ✅ FIXED: moved inside the class
   TextStyle get _labelStyle => TextStyle(
     fontFamily: 'Poppins',
     fontWeight: FontWeight.w500,

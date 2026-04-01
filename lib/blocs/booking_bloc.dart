@@ -4,7 +4,6 @@ import 'package:equatable/equatable.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:garage_guru/models/repair_model.dart';
 
-// Events
 abstract class BookingEvent extends Equatable {
   const BookingEvent();
   @override
@@ -67,7 +66,6 @@ class RepairsUpdated extends BookingEvent {
   List<Object?> get props => [repairs];
 }
 
-// States
 enum BookingStatus { initial, loading, success, failure }
 
 class BookingState extends Equatable {
@@ -97,7 +95,6 @@ class BookingState extends Equatable {
   List<Object?> get props => [status, activeRepairs, errorMessage];
 }
 
-// BLoC
 class BookingBloc extends Bloc<BookingEvent, BookingState> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final List<dynamic> _subscriptions = [];
@@ -171,7 +168,6 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
 
   void _emitCombined(List<RepairModel> repairs, List<RepairModel> bookings) {
     final combined = [...repairs, ...bookings];
-    // Sort by date (descending)
     combined.sort((a, b) => b.startDate.compareTo(a.startDate));
     add(RepairsUpdated(combined));
   }
@@ -234,7 +230,6 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
     try {
       await _firestore.collection('bookings').add(event.bookingData);
     } catch (e) {
-      // Handle error
     }
   }
 
@@ -246,7 +241,6 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
         'status': statusString,
       });
     } catch (e) {
-      // Handle error
     }
   }
 
@@ -263,7 +257,6 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
 
   Future<void> _onSubmitFeedback(SubmitFeedback event, Emitter<BookingState> emit) async {
     try {
-      // 1. Save feedback to reviews collection
       await _firestore.collection('reviews').add({
         'garageId': event.garageId,
         'repairId': event.repairId,
@@ -276,7 +269,6 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
         'createdAt': FieldValue.serverTimestamp(),
       });
 
-      // 2. Update garage rating using a transaction
       final garageRef = _firestore.collection('garages').doc(event.garageId);
       
       await _firestore.runTransaction((transaction) async {
@@ -289,7 +281,6 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
 
         final newCount = currentCount + 1;
         final calculatedRating = ((currentRating * currentCount) + event.rating) / newCount;
-        // Round to 2 decimal places
         final newRating = double.parse(calculatedRating.toStringAsFixed(2));
 
         transaction.update(garageRef, {
@@ -298,13 +289,11 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
         });
       });
 
-      // 3. Mark repair as completed so it moves to history
       final collection = event.isBooking ? 'bookings' : 'repairs';
       await _firestore.collection(collection).doc(event.repairId).update({
         'status': 'completed',
       });
     } catch (e) {
-      // Handle error
     }
   }
 

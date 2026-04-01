@@ -9,7 +9,6 @@ class AccountSettingsScreen extends StatefulWidget {
 }
 
 class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
-  // Shared Preferences variables
   bool _emailNotifications = true;
   bool _locationServices = true;
 
@@ -56,7 +55,6 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
           });
         }
       } catch (e) {
-        // ignore
       }
     }
   }
@@ -87,7 +85,6 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            // User header card
             Container(
               color: Theme.of(context).cardColor,
               padding: const EdgeInsets.all(AppSpacing.lg),
@@ -138,7 +135,6 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
             ),
             const SizedBox(height: AppSpacing.md),
 
-            // Account Settings section
             _buildSectionHeader('Account Settings'),
             _buildNavItem(
               icon: Icons.person_outline,
@@ -193,7 +189,6 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
             ),
             const SizedBox(height: AppSpacing.md),
 
-            // About & Legal section
             _buildSectionHeader('About & Legal'),
             _buildNavItem(
               icon: Icons.info_outline,
@@ -216,7 +211,6 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
             ),
             const SizedBox(height: AppSpacing.lg),
 
-            // Log Out button
             Container(
               color: Theme.of(context).cardColor,
               child: ListTile(

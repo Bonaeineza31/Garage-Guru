@@ -17,7 +17,6 @@ class _OilChangeScreenState extends State<OilChangeScreen> {
   final TextEditingController _locationController = TextEditingController();
   final TextEditingController _vehicleController = TextEditingController();
 
-  // ✅ FIXED: moved inside the class
   TextStyle get _labelStyle => TextStyle(
     fontFamily: 'Poppins',
     fontWeight: FontWeight.w500,

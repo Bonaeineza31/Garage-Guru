@@ -19,7 +19,6 @@ class EditProfileScreen extends StatelessWidget {
         padding: const EdgeInsets.all(AppSpacing.lg),
         child: Column(
           children: [
-            // Profile image with edit icon
             Center(
               child: Stack(
                 alignment: Alignment.bottomRight,
@@ -42,7 +41,6 @@ class EditProfileScreen extends StatelessWidget {
             ),
             const SizedBox(height: AppSpacing.xxxl),
             
-            // Form fields
             GgTextField(
               label: 'Full Name',
               hint: 'e.g. Kelly Johnson',

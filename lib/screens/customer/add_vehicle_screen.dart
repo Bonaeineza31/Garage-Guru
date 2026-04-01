@@ -46,7 +46,6 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
     'Honda': ['Civic', 'Accord', 'CR-V', 'Fit'],
     'Hyundai': ['Elantra', 'Tucson', 'Santa Fe', 'i30'],
     'Nissan': ['Patrol', 'X-Trail', 'Navara', 'Qashqai'],
-    // Default fallback
   };
 
   void _showModelSelection() {
@@ -122,7 +121,7 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
                       onTap: () {
                         setState(() {
                           _makeController.text = _carMakes[index];
-                          _modelController.text = ''; // Reset model
+                          _modelController.text = '';
                         });
                         Navigator.pop(context);
                         _showModelSelection();
@@ -150,7 +149,7 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
     try {
       // Logic for adding a vehicle with an image. 
       // Since firebase_storage is not in pubspec, we use a mock URL if an image was picked.
-      String imageUrl = 'https://images.unsplash.com/photo-1542281286-9e0a16bb7366?w=800'; // Default
+      String imageUrl = 'https://images.unsplash.com/photo-1542281286-9e0a16bb7366?w=800';
       if (_vehicleImage != null) {
         // In a real app, upload _vehicleImage to Firebase Storage here
         imageUrl = 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=800'; 

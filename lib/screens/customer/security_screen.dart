@@ -49,7 +49,6 @@ class _SecurityScreenState extends State<SecurityScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // SECURITY STATUS
             _buildCard(
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -102,7 +101,6 @@ class _SecurityScreenState extends State<SecurityScreen> {
             ),
             SizedBox(height: AppSpacing.lg),
 
-            // PASSWORD MANAGEMENT
             _buildCard(
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -161,7 +159,6 @@ class _SecurityScreenState extends State<SecurityScreen> {
             ),
             SizedBox(height: AppSpacing.lg),
 
-            // TWO-FACTOR AUTHENTICATION
             _buildCard(
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -189,7 +186,6 @@ class _SecurityScreenState extends State<SecurityScreen> {
             ),
             SizedBox(height: AppSpacing.lg),
 
-            // ACCOUNT ACTIVITY
             _buildCard(
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -217,7 +213,6 @@ class _SecurityScreenState extends State<SecurityScreen> {
             ),
             SizedBox(height: AppSpacing.lg),
 
-            // ADVANCED SECURITY
             _buildCard(
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,

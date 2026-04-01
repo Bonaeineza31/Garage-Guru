@@ -55,7 +55,6 @@ class _RequestRepairFormScreenState extends State<RequestRepairFormScreen> {
     super.dispose();
   }
 
-  // ✅ FIX 1: _labelStyle moved INSIDE the class, uses context correctly
   TextStyle get _labelStyle => TextStyle(
     fontFamily: 'Poppins',
     fontWeight: FontWeight.w500,
@@ -78,7 +77,6 @@ class _RequestRepairFormScreenState extends State<RequestRepairFormScreen> {
           onPressed: () => Navigator.of(context).pop(),
           icon: const Icon(Icons.arrow_back, color: Colors.white),
         ),
-        // ✅ FIX 2: Removed const + Theme.of(context) from TextStyle (can't mix)
         title: const Text(
           'Request Repair',
           style: TextStyle(
