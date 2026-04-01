@@ -1,7 +1,18 @@
 
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:garage_guru/core/theme/app_theme.dart';
 import 'package:garage_guru/widgets/widgets.dart';
+import 'package:garage_guru/screens/auth/auth_theme.dart';
+import 'package:garage_guru/screens/auth/auth_widgets.dart';
+import 'package:garage_guru/screens/auth/login_screen.dart';
+import 'package:garage_guru/screens/customer/customer_shell.dart';
+import 'package:garage_guru/screens/customer/privacy_policy_screen.dart';
+import 'package:garage_guru/screens/customer/terms_of_service_screen.dart';
+import 'package:garage_guru/screens/owner/owner_shell.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -60,6 +71,37 @@ class _RegisterScreenState extends State<RegisterScreen> {
           'createdAt': FieldValue.serverTimestamp(),
         });
         // AuthGate will navigate to the correct shell when auth state updates.
+<<<<<<< HEAD
+=======
+=======
+
+        // Firebase does not send sign-up emails by default; this sends the verification template.
+        try {
+          await user.sendEmailVerification();
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('We sent a verification link to your email. Check spam if you don’t see it.'),
+              ),
+            );
+          }
+        } on FirebaseAuthException catch (e) {
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text(e.message ?? 'Could not send verification email')),
+            );
+          }
+        }
+
+        if (!mounted) return;
+        final destination =
+            _selectedRole == 'garage_owner' ? const OwnerShell() : const CustomerShell();
+        Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute<void>(builder: (_) => destination),
+          (route) => false,
+        );
+>>>>>>> c0b7a48c9430978b1a6d6587b5dcf3f5a6e3937e
+>>>>>>> 2f8307a (refactor(auth): migrate authentication screens to new theme system)
       }
     } on FirebaseAuthException catch (e) {
       if (!mounted) return;
