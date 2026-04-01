@@ -1,3 +1,5 @@
+/// Main entry point for the GarageGuru app.
+/// Handles Firebase initialization, theme, and global providers.
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:firebase_core/firebase_core.dart';

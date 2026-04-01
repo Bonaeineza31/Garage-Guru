@@ -1,3 +1,5 @@
+/// Registration screen for GarageGuru.
+/// Handles user sign-up and email verification logic.
 
 
 import 'package:cloud_firestore/cloud_firestore.dart';
