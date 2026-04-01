@@ -1,10 +1,15 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 // TODO: Add password strength validation for registration.
   // TODO: Add more robust error handling for registration.
 /// Registration screen for GarageGuru.
 /// Handles user sign-up and email verification logic.
 >>>>>>> c3e5200 (docs(register): add TODO for password strength validation)
+=======
+/// Registration screen for GarageGuru.
+/// Handles user sign-up and email verification logic.
+>>>>>>> c70b76e (docs: add file-level doc comments to main.dart, login_screen.dart, and register_screen.dart)
 
 
 import 'package:cloud_firestore/cloud_firestore.dart';

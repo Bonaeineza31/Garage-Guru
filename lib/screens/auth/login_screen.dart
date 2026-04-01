@@ -1,9 +1,14 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 // TODO: Add password strength validation for login.
 /// Login screen for GarageGuru.
 /// Handles user authentication and email verification logic.
 >>>>>>> bede56d (docs(login): add TODO for password strength validation)
+=======
+/// Login screen for GarageGuru.
+/// Handles user authentication and email verification logic.
+>>>>>>> c70b76e (docs: add file-level doc comments to main.dart, login_screen.dart, and register_screen.dart)
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';

@@ -1,10 +1,15 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 // TODO: Add localization support for multi-language users.
 // The MultiProvider below injects global state (theme, auth, garage, booking) for the entire app.
 /// Main entry point for the GarageGuru app.
 /// Handles Firebase initialization, theme, and global providers.
 >>>>>>> b5bf330 (docs(main): add TODO for localization support)
+=======
+/// Main entry point for the GarageGuru app.
+/// Handles Firebase initialization, theme, and global providers.
+>>>>>>> c70b76e (docs: add file-level doc comments to main.dart, login_screen.dart, and register_screen.dart)
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:firebase_core/firebase_core.dart';
