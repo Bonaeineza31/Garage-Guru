@@ -1,15 +1,13 @@
-/// Registration screen for GarageGuru.
-/// Handles user sign-up and email verification logic.
-
+/// Creates an account and sends a verification email before letting the user in.
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:garage_guru/core/theme/app_theme.dart';
+import 'package:garage_guru/theme/app_theme.dart';
 import 'package:garage_guru/widgets/widgets.dart';
 import 'package:garage_guru/screens/auth/auth_theme.dart';
 import 'package:garage_guru/screens/auth/auth_widgets.dart';
-import 'package:garage_guru/screens/auth/login_screen.dart';
+import 'package:garage_guru/screens/auth/login_screen.dart' show LoginScreen;
 import 'package:garage_guru/screens/customer/customer_shell.dart';
 import 'package:garage_guru/screens/customer/privacy_policy_screen.dart';
 import 'package:garage_guru/screens/customer/terms_of_service_screen.dart';
@@ -17,6 +15,33 @@ import 'package:garage_guru/screens/owner/owner_shell.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
+
+  @override
+  State<RegisterScreen> createState() => _RegisterScreenState();
+}
+
+class _RegisterScreenState extends State<RegisterScreen> {
+  final _formKey = GlobalKey<FormState>();
+  final _nameController = TextEditingController();
+  final _emailController = TextEditingController();
+  final _phoneController = TextEditingController();
+  final _passwordController = TextEditingController();
+  final _confirmPasswordController = TextEditingController();
+  bool _obscurePassword = true;
+  bool _obscureConfirm = true;
+  bool _isLoading = false;
+  bool _agreedToTerms = false;
+  String _selectedRole = 'customer';
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _emailController.dispose();
+    _phoneController.dispose();
+    _passwordController.dispose();
+    _confirmPasswordController.dispose();
+    super.dispose();
+  }
 
   Future<void> _handleRegister() async {
     if (!_agreedToTerms) {
@@ -27,7 +52,6 @@ class RegisterScreen extends StatefulWidget {
     }
     if (!_formKey.currentState!.validate()) return;
     setState(() => _isLoading = true);
-    // Email verification logic: send verification email after registration.
     try {
       final userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: _emailController.text.trim(),
@@ -43,12 +67,13 @@ class RegisterScreen extends StatefulWidget {
           'role': _selectedRole,
           'createdAt': FieldValue.serverTimestamp(),
         });
+        // Firebase doesn't send verification emails by default — we trigger it manually here.
         try {
           await user.sendEmailVerification();
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
-                content: Text('We sent a verification link to your email. Check spam if you don’t see it.'),
+                content: Text("We sent a verification link to your email. Check spam if you don't see it."),
               ),
             );
           }
@@ -79,44 +104,6 @@ class RegisterScreen extends StatefulWidget {
       );
     } finally {
       if (mounted) setState(() => _isLoading = false);
-    }
-  }
-              const SnackBar(
-                content: Text('We sent a verification link to your email. Check spam if you don’t see it.'),
-              ),
-            );
-          }
-        } on FirebaseAuthException catch (e) {
-          if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(e.message ?? 'Could not send verification email')),
-            );
-          }
-        }
-
-        if (!mounted) return;
-        final destination =
-            _selectedRole == 'garage_owner' ? const OwnerShell() : const CustomerShell();
-        Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute<void>(builder: (_) => destination),
-          (route) => false,
-        );
->>>>>>> c0b7a48c9430978b1a6d6587b5dcf3f5a6e3937e
->>>>>>> 2f8307a (refactor(auth): migrate authentication screens to new theme system)
-      }
-    } on FirebaseAuthException catch (e) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(e.message ?? 'Registration failed')),
-      );
-    } catch (e) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: $e')),
-      );
-    } finally {
-      if (mounted) setState(() => _isLoading = false);
->>>>>>> origin/main
     }
   }
 
@@ -217,7 +204,7 @@ class RegisterScreen extends StatefulWidget {
                     onPressed: () => setState(() => _obscureConfirm = !_obscureConfirm),
                   ),
                   validator: (value) {
-                    if (value != _passwordController.text) return 'Passwords don\'t match';
+                    if (value != _passwordController.text) return "Passwords don't match";
                     return null;
                   },
                 ),
