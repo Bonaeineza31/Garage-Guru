@@ -1,8 +1,5 @@
-// TODO: Add password strength validation for registration.
-  // TODO: Add more robust error handling for registration.
 /// Registration screen for GarageGuru.
 /// Handles user sign-up and email verification logic.
-
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -71,8 +68,6 @@ class RegisterScreen extends StatefulWidget {
         );
       }
     } on FirebaseAuthException catch (e) {
-      // Debug print for registration failures
-      debugPrint('Registration failed: \\${e.code} - \\${e.message}');
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(e.message ?? 'Registration failed')),
