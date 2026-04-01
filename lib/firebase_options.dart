@@ -23,11 +23,28 @@ class DefaultFirebaseOptions {
       case TargetPlatform.android:
         return android;
       case TargetPlatform.iOS:
+<<<<<<< HEAD
         return ios;
       case TargetPlatform.macOS:
         return macos;
       case TargetPlatform.windows:
         return windows;
+=======
+        throw UnsupportedError(
+          'DefaultFirebaseOptions have not been configured for ios - '
+          'you can reconfigure this by running the FlutterFire CLI again.',
+        );
+      case TargetPlatform.macOS:
+        throw UnsupportedError(
+          'DefaultFirebaseOptions have not been configured for macos - '
+          'you can reconfigure this by running the FlutterFire CLI again.',
+        );
+      case TargetPlatform.windows:
+        throw UnsupportedError(
+          'DefaultFirebaseOptions have not been configured for windows - '
+          'you can reconfigure this by running the FlutterFire CLI again.',
+        );
+>>>>>>> origin/main
       case TargetPlatform.linux:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for linux - '
@@ -46,7 +63,10 @@ class DefaultFirebaseOptions {
     messagingSenderId: '331669988324',
     projectId: 'garageguru-8438b',
     authDomain: 'garageguru-8438b.firebaseapp.com',
+<<<<<<< HEAD
     databaseURL: 'https://garageguru-8438b-default-rtdb.firebaseio.com',
+=======
+>>>>>>> origin/main
     storageBucket: 'garageguru-8438b.firebasestorage.app',
     measurementId: 'G-98T6R4NK5M',
   );
@@ -56,6 +76,7 @@ class DefaultFirebaseOptions {
     appId: '1:331669988324:android:6c4c25444b2a72f6ad9df1',
     messagingSenderId: '331669988324',
     projectId: 'garageguru-8438b',
+<<<<<<< HEAD
     databaseURL: 'https://garageguru-8438b-default-rtdb.firebaseio.com',
     storageBucket: 'garageguru-8438b.firebasestorage.app',
   );
@@ -92,4 +113,9 @@ class DefaultFirebaseOptions {
     storageBucket: 'garageguru-8438b.firebasestorage.app',
     measurementId: 'G-LJ4WHQVZ3P',
   );
+=======
+    storageBucket: 'garageguru-8438b.firebasestorage.app',
+  );
+
+>>>>>>> origin/main
 }

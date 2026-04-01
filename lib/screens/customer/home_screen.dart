@@ -1,204 +1,155 @@
 import 'package:flutter/material.dart';
-import '../../core/theme/app_theme.dart';
-import 'battery_service_screen.dart';
-import 'emergency_repair_screen.dart';
-import 'request_repair_screen.dart';
-import 'tire_service_screen.dart';
-import 'map_screen.dart';
-import 'find_garages_screen.dart';
-import 'add_vehicle_screen.dart';
-import 'notifications_screen.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:garage_guru/theme/app_theme.dart';
+import 'package:garage_guru/models/models.dart';
+import 'package:garage_guru/widgets/customer_header.dart';
+import 'package:garage_guru/screens/customer/find_garages_screen.dart';
+import 'package:garage_guru/screens/customer/garage_detail_screen.dart';
+import 'package:garage_guru/screens/customer/emergency_repair_screen.dart';
+import 'package:garage_guru/screens/customer/request_repair_form_screen.dart';
+import 'package:garage_guru/screens/customer/battery_service_screen.dart';
+import 'package:garage_guru/screens/customer/tire_service_screen.dart';
+import 'package:garage_guru/screens/customer/oil_change_screen.dart';
+import 'package:garage_guru/screens/customer/add_vehicle_screen.dart';
+import 'package:garage_guru/screens/customer/customer_shell.dart';
+import 'package:garage_guru/screens/owner/add_garage_screen.dart';
+import 'package:garage_guru/blocs/garage_bloc.dart';
+import 'package:garage_guru/screens/customer/full_screen_osm_map_screen.dart';
+import 'package:garage_guru/widgets/garage_osm_map.dart';
 
-/// Main home screen displaying map, quick services, nearby garages, and maintenance
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  final TextEditingController _searchController = TextEditingController();
+  final MapController _mapController = MapController();
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.scaffoldBackground,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
-        child: Column(
-          children: [
-            // App header with logo and notification
-            _buildHeader(context),
-
-            // Scrollable content
-            Expanded(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.only(bottom: 16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Search bar
-                    _buildSearchBar(),
-
-                    // Map section
-                    _buildMapSection(context),
-
-                    // Quick action buttons
-                    _buildQuickActions(context),
-
-                    // Quick Services section
-                    _buildQuickServices(context),
-
-                    // Nearby Garages section
-                    _buildNearbyGarages(context),
-
-                    // Upcoming Maintenance section
-                    _buildUpcomingMaintenance(context),
-                  ],
-                ),
-              ),
-            ),
-          ],
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              CustomerHeader(),
+              _buildMapPreview(),
+              _buildActionButtons(),
+              _buildQuickServices(),
+              _buildNearbyGarages(),
+              _buildUpcomingMaintenance(),
+              const SizedBox(height: 24),
+            ],
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildHeader(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      color: Colors.white,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          // Logo and app name
-          Row(
-            children: [
-              Container(
-                width: 36,
-                height: 36,
-                decoration: BoxDecoration(
-                  color: AppTheme.primaryBlue,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: const Icon(Icons.build, color: Colors.white, size: 20),
-              ),
-              const SizedBox(width: 10),
-              const Text(
-                'GarageGuru',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: AppTheme.textPrimary,
-                ),
-              ),
-            ],
-          ),
 
-          // Notification icon
-          Stack(
-            children: [
-              IconButton(
-                icon: const Icon(Icons.notifications_outlined),
-                color: AppTheme.iconGray,
-                onPressed: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (_) => const NotificationsScreen(),
-                    ),
-                  );
-                },
-              ),
-              // Notification badge
-              Positioned(
-                right: 8,
-                top: 8,
-                child: Container(
-                  width: 8,
-                  height: 8,
-                  decoration: const BoxDecoration(
-                    color: AppTheme.errorRed,
-                    shape: BoxShape.circle,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
 
-  Widget _buildSearchBar() {
+  Widget _buildMapPreview() {
     return Padding(
       padding: const EdgeInsets.all(16),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: AppTheme.dividerColor),
-        ),
-        child: Row(
-          children: [
-            const Icon(
-              Icons.location_on_outlined,
-              color: AppTheme.iconGray,
-              size: 20,
-            ),
-            const SizedBox(width: 12),
-            Text(
-              'Find nearby repair shops',
-            style: TextStyle(color: AppTheme.textHint, fontSize: 14),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildMapSection(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: GestureDetector(
-        onTap: () {
-          Navigator.of(context).push(
-            MaterialPageRoute(builder: (_) => const MapScreen()),
-          );
-        },
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(12),
         child: Container(
-          height: 280,
+          height: 180,
+          width: double.infinity,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: AppTheme.dividerColor),
-            image: const DecorationImage(
-              image: NetworkImage(
-                'https://api.mapbox.com/styles/v1/mapbox/streets-v11/static/-0.1276,51.5074,11/600x400@2x?access_token=pk.eyJ1IjoiZXhhbXBsZSIsImEiOiJja2x2ZGFuYW8wMDFjMm5xbzFxZGc4Ym0yIn0.example',
-              ),
-              fit: BoxFit.cover,
-            ),
+            border: Border.all(color: Theme.of(context).dividerColor.withValues(alpha: 0.1)),
           ),
           child: Stack(
             children: [
-              // Google Maps logo in bottom right (like in design)
+              BlocBuilder<GarageBloc, GarageState>(
+                builder: (context, state) {
+                  final markers = garagesToMarkers(state.allGarages);
+
+                  return FlutterMap(
+                    mapController: _mapController,
+                    options: const MapOptions(
+                      initialCenter: kDefaultMapCenter,
+                      initialZoom: 13,
+                      minZoom: 3,
+                      maxZoom: 19,
+                      interactionOptions: InteractionOptions(
+                        flags: InteractiveFlag.all,
+                      ),
+                    ),
+                    children: [
+                      buildOsmTileLayer(),
+                      MarkerLayer(markers: markers),
+                    ],
+                  );
+                },
+              ),
+              BlocBuilder<GarageBloc, GarageState>(
+                builder: (context, state) {
+                  return MapControlOverlay(
+                    mapController: _mapController,
+                    onFitAll: state.allGarages.any(
+                          (g) => g.latitude != 0.0 || g.longitude != 0.0,
+                        )
+                        ? () => fitMapToGarages(_mapController, state.allGarages)
+                        : null,
+                    padding: const EdgeInsets.only(right: 8, top: 8),
+                  );
+                },
+              ),
               Positioned(
-                bottom: 8,
-                right: 8,
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 4,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                  child: const Text(
-                    'Google',
-                    style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
+                left: 8,
+                top: 8,
+                child: Material(
+                  color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.92),
+                  shape: const CircleBorder(),
+                  elevation: 2,
+                  child: IconButton(
+                    tooltip: 'Full screen map',
+                    icon: const Icon(Icons.open_in_full),
+                    onPressed: () {
+                      final garages =
+                          context.read<GarageBloc>().state.allGarages;
+                      FullScreenOsmMapScreen.openGarages(
+                        context,
+                        garages: garages,
+                      );
+                    },
                   ),
                 ),
               ),
-
-              // User location indicator
-              Center(
-                child: Icon(
-                  Icons.my_location,
-                  color: AppTheme.primaryBlue,
-                  size: 32,
+              ExpandMapHint(
+                onTap: () {
+                  final garages =
+                      context.read<GarageBloc>().state.allGarages;
+                  FullScreenOsmMapScreen.openGarages(
+                    context,
+                    garages: garages,
+                  );
+                },
+              ),
+              Positioned(
+                bottom: 12,
+                right: 60,
+                child: FloatingActionButton.small(
+                  heroTag: 'add_garage_fab',
+                  backgroundColor: const Color(0xFF0EA5E9),
+                  onPressed: () => Navigator.of(context).push(
+                    MaterialPageRoute(builder: (_) => const AddGarageScreen()),
+                  ),
+                  child: const Icon(Icons.add, color: Colors.white),
                 ),
               ),
             ],
@@ -208,164 +159,84 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildQuickActions(BuildContext context) {
+  Widget _buildActionButtons() {
     return Padding(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Row(
         children: [
-          Expanded(
-            child: _buildActionButton(
-              context,
-              label: 'Emergency Repair',
-              color: AppTheme.emergencyOrange,
-              icon: Icons.warning_amber_rounded,
-              onTap: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (_) => const EmergencyRepairScreen(),
-                  ),
-                );
-              },
-            ),
+          _actionBtn(
+            'Emergency Repair',
+            const Color(0xFFF05138),
+            Icons.warning_amber_rounded,
+            () => Navigator.push(context, MaterialPageRoute(builder: (_) => EmergencyRepairScreen())),
           ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: _buildActionButton(
-              context,
-              label: 'Schedule Repair',
-              color: AppTheme.scheduleBlue,
-              icon: Icons.calendar_today,
-              onTap: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (_) => const RequestRepairScreen(),
-                  ),
-                );
-              },
-            ),
+          const SizedBox(width: 8),
+          _actionBtn(
+            'Schedule Repair',
+            const Color(0xFF038DDB),
+            Icons.calendar_today_rounded,
+            () => Navigator.push(context, MaterialPageRoute(builder: (_) => RequestRepairFormScreen())),
           ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: _buildActionButton(
-              context,
-              label: 'Repair Updates',
-              color: AppTheme.repairGreen,
-              icon: Icons.update,
-              onTap: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Repair updates will load from backend'),
-                  ),
-                );
-              },
-            ),
+          const SizedBox(width: 8),
+          _actionBtn(
+            'Repair Updates',
+            const Color(0xFF19B25A),
+            Icons.shield_outlined,
+            () => Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => CustomerShell(initialTab: 2))),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildActionButton(
-    BuildContext context, {
-    required String label,
-    required Color color,
-    required IconData icon,
-    required VoidCallback onTap,
-  }) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(8),
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 12),
-        decoration: BoxDecoration(
-          color: color,
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: Column(
-          children: [
-            Icon(icon, color: Colors.white, size: 24),
-            const SizedBox(height: 6),
-            Text(
-              label,
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 12,
-                fontWeight: FontWeight.w500,
+  Widget _actionBtn(String label, Color color, IconData icon, VoidCallback onTap) {
+    return Expanded(
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(8),
+        child: Container(
+          height: 50,
+          decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(8)),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(icon, color: Colors.white, size: 16),
+              const SizedBox(height: 2),
+              Text(
+                label,
+                style: const TextStyle(color: Colors.white, fontSize: 9, fontWeight: FontWeight.bold),
+                textAlign: TextAlign.center,
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildQuickServices(BuildContext context) {
+  Widget _buildQuickServices() {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
+      padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Quick Services',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: AppTheme.textPrimary,
-            ),
-          ),
+          const Text('Quick Services', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
           const SizedBox(height: 16),
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              _buildServiceIcon(
-                context,
-                icon: Icons.oil_barrel_outlined,
-                label: 'Oil Change',
-                onTap: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (_) => const RequestRepairScreen(),
-                    ),
-                  );
-                },
-              ),
-              _buildServiceIcon(
-                context,
-                icon: Icons.tire_repair,
-                label: 'Tire Service',
-                onTap: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (_) => const TireServiceScreen(),
-                    ),
-                  );
-                },
-              ),
-              _buildServiceIcon(
-                context,
-                icon: Icons.battery_charging_full,
-                label: 'Battery',
-                onTap: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (_) => const BatteryServiceScreen(),
-                    ),
-                  );
-                },
-              ),
-              _buildServiceIcon(
-                context,
-                icon: Icons.add_circle_outline,
-                label: 'Add Vehicle',
-                onTap: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (_) => const AddVehicleScreen(),
-                    ),
-                  );
-                },
-              ),
+              _serviceItem('Oil Change', Icons.oil_barrel_rounded, () {
+                Navigator.of(context).push(MaterialPageRoute(builder: (_) => OilChangeScreen()));
+              }),
+              _serviceItem('Tire Service', Icons.settings_input_component_rounded, () {
+                Navigator.of(context).push(MaterialPageRoute(builder: (_) => TireServiceScreen()));
+              }),
+              _serviceItem('Battery', Icons.battery_charging_full_rounded, () {
+                Navigator.of(context).push(MaterialPageRoute(builder: (_) => BatteryServiceScreen()));
+              }),
+              _serviceItem('Add Vehicle', Icons.add_circle_outline_rounded, () {
+                Navigator.of(context).push(MaterialPageRoute(builder: (_) => AddVehicleScreen()));
+              }),
             ],
           ),
         ],
@@ -373,300 +244,192 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildServiceIcon(
-    BuildContext context, {
-    required IconData icon,
-    required String label,
-    required VoidCallback onTap,
-  }) {
+  Widget _serviceItem(String label, IconData icon, VoidCallback onTap) {
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(12),
+      borderRadius: BorderRadius.circular(28),
       child: Column(
         children: [
           Container(
             width: 56,
             height: 56,
             decoration: BoxDecoration(
-              color: AppTheme.primaryBlue.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(12),
+              color: Theme.of(context).colorScheme.surface, 
+              shape: BoxShape.circle,
+              border: Border.all(color: Theme.of(context).dividerColor.withValues(alpha: 0.1)),
             ),
-            child: Icon(icon, color: AppTheme.primaryBlue, size: 28),
+            child: Icon(icon, color: const Color(0xFF0EA5E9), size: 24),
           ),
           const SizedBox(height: 8),
-          Text(
-            label,
-            style: const TextStyle(fontSize: 12, color: AppTheme.textSecondary),
-          ),
+          Text(label, style: Theme.of(context).textTheme.labelSmall),
         ],
       ),
     );
   }
 
-  Widget _buildNearbyGarages(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
-      child: Column(
-        children: [
-          Row(
+  Widget _buildNearbyGarages() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
-                'Nearby Garages',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: AppTheme.textPrimary,
-                ),
-              ),
+              const Text('Nearby Garages', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
               TextButton(
-                onPressed: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (_) => const FindGaragesScreen(),
-                    ),
-                  );
-                },
-                child: const Text('View All'),
+                onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => FindGaragesScreen())),
+                child: const Text('View All', style: TextStyle(color: Color(0xFF038DDB), fontWeight: FontWeight.bold)),
               ),
             ],
           ),
-          const SizedBox(height: 12),
-          _buildGarageCard(
-            context,
-            name: 'Auto Finit',
-            distance: '0.6km',
-            rating: 5,
-            image:
-                'https://images.unsplash.com/photo-1625047509168-a7026f36de04?w=200&h=200&fit=crop',
-            isFavorite: true,
-            onTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (_) => const FindGaragesScreen(),
+        ),
+        BlocBuilder<GarageBloc, GarageState>(
+          builder: (context, state) {
+            if (state.status == GarageStatus.loading) return const SizedBox(height: 100, child: Center(child: CircularProgressIndicator()));
+            if (state.status == GarageStatus.failure) return const Padding(padding: EdgeInsets.all(16), child: Text('Failed to load garages'));
+            
+            final garages = [...state.allGarages]
+              ..sort((a, b) => a.distanceKm.compareTo(b.distanceKm));
+            final topNearby = garages.take(3).toList();
+
+            if (topNearby.isEmpty) return const Padding(padding: EdgeInsets.all(16), child: Text('No garages found nearby'));
+
+            return ListView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: topNearby.length,
+              itemBuilder: (context, index) => _buildGarageTile(topNearby[index]),
+            );
+          },
+        ),
+      ],
+    );
+  }
+
+  Widget _buildGarageTile(GarageModel garage) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: Row(
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.circular(8),
+            child: Image.network(garage.coverImageUrl, width: 50, height: 50, fit: BoxFit.cover),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(garage.name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                Row(
+                  children: [
+                    Text('${garage.distanceKm.toStringAsFixed(1)} km', style: const TextStyle(color: Color(0xFF6B7280), fontSize: 12)),
+                    const SizedBox(width: 8),
+                    Row(
+                      children: [
+                        Row(
+                          children: List.generate(5, (starIndex) {
+                            return Icon(
+                              Icons.star_rounded,
+                              color: starIndex < garage.rating.floor() ? Colors.orange : const Color(0xFFD1D5DB),
+                              size: 14,
+                            );
+                          }),
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          garage.rating.toStringAsFixed(2),
+                          style: const TextStyle(
+                            color: Color(0xFF1F2937),
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
-              );
+              ],
+            ),
+          ),
+          IconButton(
+            icon: Icon(
+              garage.isFavorite ? Icons.favorite_rounded : Icons.favorite_outline_rounded, 
+              color: garage.isFavorite ? Colors.red : const Color(0xFFD1D5DB)
+            ),
+            onPressed: () {
+              context.read<GarageBloc>().add(ToggleFavorite(garage));
             },
           ),
-          const SizedBox(height: 12),
-          _buildGarageCard(
-            context,
-            name: 'Kigali Motors',
-            distance: '1.2km',
-            rating: 4,
-            image:
-                'https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?w=200&h=200&fit=crop',
-            isFavorite: false,
-            onTap: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Garage details coming with backend'),
-                ),
-              );
-            },
+          const SizedBox(width: 12),
+          ElevatedButton(
+            onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => GarageDetailScreen(garage: garage))),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFFE0F2FE),
+              foregroundColor: const Color(0xFF0369A1),
+              elevation: 0,
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
+            ),
+            child: const Text('Details', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildGarageCard(
-    BuildContext context, {
-    required String name,
-    required String distance,
-    required int rating,
-    required String image,
-    required bool isFavorite,
-    required VoidCallback onTap,
-  }) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(12),
-      child: Container(
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: AppTheme.dividerColor),
-        ),
-        child: Row(
-          children: [
-            // Garage image
-            ClipRRect(
-              borderRadius: BorderRadius.circular(8),
-              child: Image.network(
-                image,
-                width: 60,
-                height: 60,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) {
-                  return Container(
-                    width: 60,
-                    height: 60,
-                    color: AppTheme.dividerColor,
-                    child: const Icon(
-                      Icons.garage,
-                      color: AppTheme.iconGray,
-                    ),
-                  );
-                },
-              ),
-            ),
-            const SizedBox(width: 12),
-
-            // Garage info
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    name,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: AppTheme.textPrimary,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Row(
-                    children: [
-                      Text(
-                        distance,
-                        style: const TextStyle(
-                          fontSize: 12,
-                        color: AppTheme.textSecondary,
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      Text(
-                        '~${distance.replaceAll('km', '')}0.${distance.replaceAll('km', '')}km',
-                        style: const TextStyle(
-                          fontSize: 12,
-                        color: AppTheme.textSecondary,
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      Row(
-                        children: List.generate(
-                          5,
-                          (index) => Icon(
-                            Icons.star,
-                            size: 14,
-                            color: index < rating
-                                ? Colors.amber
-                                : AppTheme.dividerColor,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-
-            // Favorite icon and Details button
-            Column(
-              children: [
-                IconButton(
-                  icon: Icon(
-                    isFavorite ? Icons.favorite : Icons.favorite_border,
-                    color: isFavorite ? AppTheme.errorRed : AppTheme.iconGray,
-                  ),
-                  onPressed: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(
-                          isFavorite
-                              ? 'Removed from favorites'
-                              : 'Added to favorites',
-                        ),
-                      ),
-                    );
-                  },
-                ),
-                TextButton(onPressed: onTap, child: const Text('Details')),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildUpcomingMaintenance(BuildContext context) {
+  Widget _buildUpcomingMaintenance() {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
+      padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Upcoming Maintenance',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: AppTheme.textPrimary,
-            ),
-          ),
-          const SizedBox(height: 12),
+          const Text('Upcoming Maintenance', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+          const SizedBox(height: 16),
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: Theme.of(context).cardColor,
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: AppTheme.dividerColor),
+              border: Border.all(color: Theme.of(context).dividerColor.withValues(alpha: 0.1)),
+              boxShadow: Theme.of(context).brightness == Brightness.dark ? [] : AppShadows.card,
             ),
             child: Row(
               children: [
                 Container(
-                  width: 48,
-                  height: 48,
-                  decoration: BoxDecoration(
-                    color: AppTheme.infoBlue.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: const Icon(
-                    Icons.oil_barrel,
-                    color: AppTheme.infoBlue,
-                    size: 24,
-                  ),
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(color: Theme.of(context).colorScheme.primaryContainer, shape: BoxShape.circle),
+                  child: Icon(Icons.calendar_today_rounded, color: Theme.of(context).colorScheme.primary, size: 24),
                 ),
-                const SizedBox(width: 12),
+                const SizedBox(width: 16),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
-                        'Oil Change Due',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          color: AppTheme.textPrimary,
+                      Text('Oil Change Due', style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
+                      Text('Toyota Camry • RAC 881C', style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Theme.of(context).hintColor)),
+                      Text('Due in 2 days or 300km', style: Theme.of(context).textTheme.bodySmall?.copyWith(color: AppColors.error, fontWeight: FontWeight.bold)),
+                      const SizedBox(height: 8),
+                      ElevatedButton(
+                        onPressed: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (_) => const OilChangeScreen(),
+                            ),
+                          );
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFFE0F2FE),
+                          foregroundColor: const Color(0xFF0369A1),
+                          elevation: 0,
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
                         ),
-                      ),
-                      const SizedBox(height: 4),
-                      const Text(
-                        'Toyota Camry • RAC 881C',
-                        style: TextStyle(
-                          fontSize: 13,
-                          color: AppTheme.textSecondary,
-                        ),
-                      ),
-                      const SizedBox(height: 2),
-                      Text(
-                        'Due in 2 days or 300km',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: AppTheme.warningYellow,
-                        ),
+                        child: const Text('Schedule Now', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
                       ),
                     ],
                   ),
-                ),
-                TextButton(
-                  onPressed: () {
-                    Navigator.pushNamed(context, '/request-repair');
-                  },
-                  child: const Text('Schedule Now'),
                 ),
               ],
             ),

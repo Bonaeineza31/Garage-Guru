@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:garage_guru/core/theme/app_theme.dart';
+import 'package:garage_guru/theme/app_theme.dart';
 import 'package:garage_guru/models/models.dart';
 import 'package:garage_guru/widgets/widgets.dart';
 
@@ -35,7 +35,7 @@ class ServiceHistoryScreen extends StatelessWidget {
     ];
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: GgAppBar(
         title: 'Service History',
       ),
@@ -46,14 +46,14 @@ class ServiceHistoryScreen extends StatelessWidget {
             padding: EdgeInsets.all(AppSpacing.lg),
             child: Text(
               vehicle.fullName,
-              style: AppTextStyles.heading3.copyWith(fontWeight: FontWeight.bold),
+              style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
             ),
           ),
           Expanded(
             child: ListView.separated(
               padding: EdgeInsets.symmetric(horizontal: AppSpacing.lg),
               itemCount: history.length,
-              separatorBuilder: (context, index) => Divider(height: 1),
+              separatorBuilder: (context, index) => Divider(height: 1, color: Theme.of(context).dividerColor.withOpacity(0.1)),
               itemBuilder: (context, index) {
                 final item = history[index];
                 return Padding(
@@ -67,22 +67,16 @@ class ServiceHistoryScreen extends StatelessWidget {
                           children: [
                             Text(
                               item.serviceName,
-                              style: AppTextStyles.subtitle.copyWith(
-                                fontWeight: FontWeight.bold,
-                              ),
+                              style: Theme.of(context).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.bold),
                             ),
-                            SizedBox(height: 4),
+                            const SizedBox(height: 4),
                             Text(
                               item.date,
-                              style: AppTextStyles.bodySmall.copyWith(
-                                color: AppColors.textSecondary,
-                              ),
+                              style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Theme.of(context).hintColor),
                             ),
                             Text(
                               item.garageName,
-                              style: AppTextStyles.bodySmall.copyWith(
-                                color: AppColors.textSecondary,
-                              ),
+                              style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Theme.of(context).hintColor),
                             ),
                           ],
                         ),
@@ -92,16 +86,12 @@ class ServiceHistoryScreen extends StatelessWidget {
                         children: [
                           Text(
                             item.price,
-                            style: AppTextStyles.subtitle.copyWith(
-                              fontWeight: FontWeight.bold,
-                            ),
+                            style: Theme.of(context).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.bold),
                           ),
-                          SizedBox(height: 4),
+                          const SizedBox(height: 4),
                           Text(
                             item.mileage,
-                            style: AppTextStyles.bodySmall.copyWith(
-                              color: AppColors.textSecondary,
-                            ),
+                            style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Theme.of(context).hintColor),
                           ),
                         ],
                       ),

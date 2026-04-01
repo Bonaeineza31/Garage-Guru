@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:garage_guru/core/theme/app_theme.dart';
+import 'package:garage_guru/theme/app_theme.dart';
 import 'package:garage_guru/models/repair_model.dart';
 import 'package:garage_guru/screens/customer/mechanic_chat_screen.dart';
 import 'package:garage_guru/screens/customer/payment_success_screen.dart';
 import 'package:garage_guru/screens/customer/send_feedback_screen.dart';
+import 'package:garage_guru/widgets/cancel_repair_dialog.dart';
 import 'package:intl/intl.dart';
 
 class RepairDetailScreen extends StatelessWidget {
@@ -13,17 +14,21 @@ class RepairDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bool canCancel = repair.status == RepairStatus.mechanicOnWay;
+    final bool canCancel = repair.status == RepairStatus.mechanicOnWay || repair.status == RepairStatus.booked;
     final bool isInProgress = repair.status == RepairStatus.inProgress;
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         backgroundColor: AppColors.info,
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => Navigator.pop(context),
+          onPressed: () {
+            if (Navigator.canPop(context)) {
+              Navigator.pop(context);
+            }
+          },
         ),
         title: const Text(
           'Repairs Details',
@@ -44,18 +49,15 @@ class RepairDetailScreen extends StatelessWidget {
                 children: [
                   // Tabs header
                   Container(
-                    color: Colors.white,
+                    color: Theme.of(context).cardColor,
                     padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
+                        Text(
                           'Repairs',
-                          style: TextStyle(
-                            fontFamily: 'Poppins',
-                            fontWeight: FontWeight.w700,
-                            fontSize: 20,
-                            color: AppColors.textPrimary,
+                          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
                         const SizedBox(height: 8),
@@ -69,20 +71,15 @@ class RepairDetailScreen extends StatelessWidget {
                         const SizedBox(height: 16),
                         Text(
                           repair.serviceName,
-                          style: const TextStyle(
-                            fontFamily: 'Poppins',
-                            fontWeight: FontWeight.w700,
-                            fontSize: 18,
-                            color: AppColors.textPrimary,
+                          style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
                         const SizedBox(height: 2),
                         Text(
                           repair.vehicleInfo,
-                          style: const TextStyle(
-                            fontFamily: 'Poppins',
-                            fontSize: 13,
-                            color: AppColors.textSecondary,
+                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            color: Theme.of(context).hintColor,
                           ),
                         ),
                         const SizedBox(height: 12),
@@ -191,7 +188,7 @@ class RepairDetailScreen extends StatelessWidget {
                               Row(
                                 children: [
                                   Text(
-                                    '${repair.mechanicSpecialty} • ${repair.mechanicRating}',
+                                    '${repair.mechanicSpecialty} • ${repair.mechanicRating.toStringAsFixed(2)}',
                                     style: const TextStyle(
                                       fontFamily: 'Poppins',
                                       fontSize: 12,
@@ -301,15 +298,21 @@ class RepairDetailScreen extends StatelessWidget {
           if (repair.status != RepairStatus.completed)
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                border: Border(top: BorderSide(color: AppColors.divider)),
+              decoration: BoxDecoration(
+                color: Theme.of(context).cardColor,
+                border: Border(top: BorderSide(color: Theme.of(context).dividerColor.withOpacity(0.1))),
               ),
               child: Row(
                 children: [
                   Expanded(
                     child: OutlinedButton(
-                      onPressed: canCancel ? () {} : null,
+                      onPressed: canCancel ? () {
+                        showDialog(
+                          context: context,
+                          barrierColor: Colors.black.withOpacity(0.5),
+                          builder: (_) => CancelRepairDialog(repair: repair),
+                        );
+                      } : null,
                       style: OutlinedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 14),
                         shape: RoundedRectangleBorder(
@@ -323,13 +326,11 @@ class RepairDetailScreen extends StatelessWidget {
                       child: Text(
                         canCancel ? 'Cancel Request' : 'Cannot Cancel –\nIn Progress',
                         textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontFamily: 'Poppins',
-                          fontSize: 13,
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
                           fontWeight: FontWeight.w500,
                           color: canCancel
-                              ? AppColors.textPrimary
-                              : AppColors.textSecondary,
+                              ? Theme.of(context).textTheme.bodyLarge?.color
+                              : Theme.of(context).hintColor,
                         ),
                       ),
                     ),
@@ -341,7 +342,7 @@ class RepairDetailScreen extends StatelessWidget {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (_) => const PaymentSuccessScreen(),
+                            builder: (_) => PaymentSuccessScreen(repair: repair),
                           ),
                         );
                       },
@@ -369,9 +370,9 @@ class RepairDetailScreen extends StatelessWidget {
           else
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                border: Border(top: BorderSide(color: AppColors.divider)),
+              decoration: BoxDecoration(
+                color: Theme.of(context).cardColor,
+                border: Border(top: BorderSide(color: Theme.of(context).dividerColor.withOpacity(0.1))),
               ),
               child: SizedBox(
                 width: double.infinity,
@@ -380,7 +381,7 @@ class RepairDetailScreen extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (_) => const SendFeedbackScreen(),
+                        builder: (_) => SendFeedbackScreen(repair: repair),
                       ),
                     );
                   },
@@ -460,27 +461,23 @@ class _InfoTile extends StatelessWidget {
       children: [
         Text(
           label,
-          style: const TextStyle(
-            fontFamily: 'Poppins',
-            fontSize: 11,
-            color: AppColors.textSecondary,
+          style: Theme.of(context).textTheme.labelSmall?.copyWith(
+            color: Theme.of(context).hintColor,
           ),
         ),
         const SizedBox(height: 2),
         Row(
           children: [
             if (icon != null) ...[
-              Icon(icon, size: 12, color: AppColors.textSecondary),
+              Icon(icon, size: 12, color: Theme.of(context).hintColor),
               const SizedBox(width: 4),
             ],
             Flexible(
               child: Text(
                 value,
-                style: TextStyle(
-                  fontFamily: 'Poppins',
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
-                  color: valueColor ?? AppColors.textPrimary,
+                style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: valueColor,
                 ),
               ),
             ),
@@ -505,7 +502,7 @@ class _Section extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.white,
+      color: Theme.of(context).cardColor,
       padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -518,11 +515,8 @@ class _Section extends StatelessWidget {
               ],
               Text(
                 title,
-                style: const TextStyle(
-                  fontFamily: 'Poppins',
-                  fontWeight: FontWeight.w700,
-                  fontSize: 15,
-                  color: AppColors.textPrimary,
+                style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                  fontWeight: FontWeight.bold,
                 ),
               ),
             ],
@@ -553,20 +547,16 @@ class _CostRow extends StatelessWidget {
       children: [
         Text(
           label,
-          style: TextStyle(
-            fontFamily: 'Poppins',
+          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
             fontSize: isTotal ? 14 : 13,
-            fontWeight: isTotal ? FontWeight.w700 : FontWeight.w400,
-            color: AppColors.textPrimary,
+            fontWeight: isTotal ? FontWeight.bold : FontWeight.normal,
           ),
         ),
         Text(
           'FRw ${amount.toStringAsFixed(0).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (m) => '${m[1]},')}',
-          style: TextStyle(
-            fontFamily: 'Poppins',
+          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
             fontSize: isTotal ? 14 : 13,
-            fontWeight: isTotal ? FontWeight.w700 : FontWeight.w400,
-            color: AppColors.textPrimary,
+            fontWeight: isTotal ? FontWeight.bold : FontWeight.normal,
           ),
         ),
       ],
@@ -597,10 +587,7 @@ class _UpdateItem extends StatelessWidget {
           const SizedBox(height: 2),
           Text(
             update.message,
-            style: const TextStyle(
-              fontFamily: 'Poppins',
-              fontSize: 13,
-              color: AppColors.textPrimary,
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
               height: 1.5,
             ),
           ),

@@ -2,107 +2,7 @@ import 'package:garage_guru/models/models.dart';
 class MockData {
   MockData._();
 
-  static final List<GarageModel> garages = [
-    GarageModel(
-      id: 'g1',
-      ownerId: 'o1',
-      name: 'Premier Auto Care',
-      description:
-          'Full-service auto repair shop with certified mechanics. We specialize in engine diagnostics, brake systems, and complete vehicle maintenance. Trusted by thousands of customers since 2010.',
-      address: '123 Main Street, Downtown',
-      latitude: 37.7749,
-      longitude: -122.4194,
-      phone: '+1 (555) 123-4567',
-      email: 'info@premierautocare.com',
-      website: 'www.premierautocare.com',
-      coverImageUrl: 'https://images.unsplash.com/photo-1625047509248-ec889cbff17f?w=800',
-      galleryImages: [
-        'https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?w=400',
-        'https://images.unsplash.com/photo-1580273916550-e323be2ae537?w=400',
-        'https://images.unsplash.com/photo-1487754180451-c456f719a1fc?w=400',
-        'https://images.unsplash.com/photo-1530046339160-ce3e530c7d2f?w=400',
-      ],
-      services: ['Oil Change', 'Brake Repair', 'Engine Diagnostics', 'Tire Service', 'AC Repair'],
-      specializations: ['Engine', 'Brakes', 'Transmission'],
-      rating: 4.8,
-      reviewCount: 342,
-      isVerified: true,
-      workingHours: {
-        'monday': const WorkingHours(open: '08:00', close: '18:00'),
-        'tuesday': const WorkingHours(open: '08:00', close: '18:00'),
-        'wednesday': const WorkingHours(open: '08:00', close: '18:00'),
-        'thursday': const WorkingHours(open: '08:00', close: '18:00'),
-        'friday': const WorkingHours(open: '08:00', close: '17:00'),
-        'saturday': const WorkingHours(open: '09:00', close: '14:00'),
-        'sunday': const WorkingHours(open: '00:00', close: '00:00', isClosed: true),
-      },
-      distanceKm: 1.2,
-    ),
-    GarageModel(
-      id: 'g2',
-      ownerId: 'o2',
-      name: 'Speedy Garage & Tires',
-      description:
-          'Quick and reliable auto services. Specializing in tire changes, wheel alignment, and basic maintenance. Walk-ins welcome!',
-      address: '456 Oak Avenue, Midtown',
-      latitude: 37.7849,
-      longitude: -122.4094,
-      phone: '+1 (555) 987-6543',
-      coverImageUrl: 'https://images.unsplash.com/photo-1486006920555-c77dcf18193c?w=800',
-      galleryImages: [
-        'https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=400',
-        'https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=400',
-      ],
-      services: ['Tire Change', 'Wheel Alignment', 'Oil Change', 'Battery Replacement'],
-      specializations: ['Tires', 'Quick Service'],
-      rating: 4.5,
-      reviewCount: 189,
-      isVerified: true,
-      distanceKm: 2.5,
-    ),
-    GarageModel(
-      id: 'g3',
-      ownerId: 'o3',
-      name: 'EliteMech Workshop',
-      description:
-          'Premium auto workshop for luxury and performance vehicles. Factory-trained technicians with the latest diagnostic equipment.',
-      address: '789 Elm Blvd, Uptown',
-      latitude: 37.7649,
-      longitude: -122.4294,
-      phone: '+1 (555) 456-7890',
-      email: 'service@elitemech.com',
-      coverImageUrl: 'https://images.unsplash.com/photo-1631295387526-d3a8bfa4d42c?w=800',
-      galleryImages: [
-        'https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=400',
-        'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=400',
-        'https://images.unsplash.com/photo-1514316454349-750a7fd3da3a?w=400',
-      ],
-      services: ['Full Diagnostics', 'Performance Tuning', 'Luxury Car Service', 'Detailing'],
-      specializations: ['Luxury', 'Performance', 'German Cars'],
-      rating: 4.9,
-      reviewCount: 567,
-      isVerified: true,
-      distanceKm: 3.8,
-    ),
-    GarageModel(
-      id: 'g4',
-      ownerId: 'o4',
-      name: 'Budget Fix Auto',
-      description:
-          'Affordable auto repair for everyday vehicles. Honest pricing, no hidden fees. Family-owned and operated for 15 years.',
-      address: '321 Pine Road, Eastside',
-      latitude: 37.7550,
-      longitude: -122.3994,
-      phone: '+1 (555) 321-0987',
-      coverImageUrl: 'https://images.unsplash.com/photo-1580274455191-1c62238fa333?w=800',
-      services: ['General Repair', 'Oil Change', 'Brake Service', 'Exhaust Repair'],
-      specializations: ['Affordable', 'General Repair'],
-      rating: 4.3,
-      reviewCount: 98,
-      isVerified: false,
-      distanceKm: 4.1,
-    ),
-  ];
+  static final List<GarageModel> garages = [];
 
   static final List<ServiceModel> services = [
     const ServiceModel(
@@ -238,39 +138,37 @@ class MockData {
     ),
   ];
 
-  static final List<VehicleModel> vehicles = [
-    VehicleModel(
-      id: 'v1',
-      userId: 'c1',
-      make: 'Toyota',
-      model: 'Camry',
-      year: '2020',
-      plateNumber: 'RAH234H',
-      color: 'Silver',
-      imageUrl: 'https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?w=400',
-      nextServiceDate: DateTime(2025, 5, 25),
-    ),
-    VehicleModel(
-      id: 'v2',
-      userId: 'c1',
-      make: 'Honda',
-      model: 'Civic',
-      year: '2018',
-      plateNumber: 'RAA567K',
-      color: 'Blue',
-      imageUrl: 'https://images.unsplash.com/photo-1599912027806-cfec9f5944b6?w=400',
-      nextServiceDate: DateTime(2025, 6, 10),
-    ),
-  ];
-
   static final currentUser = UserModel(
     id: 'c1',
-    fullName: 'Kelly',
-    email: 'Kellyineza@gmail.com',
+    fullName: 'Alex Thompson',
+    email: 'alex@example.com',
     phone: '+1 (555) 000-1234',
-    profileImageUrl: 'https://i.pravatar.cc/150?img=32',
+    profileImageUrl: 'https://i.pravatar.cc/150?img=12',
     role: UserRole.customer,
     address: '100 Customer Lane, City',
     createdAt: DateTime(2025, 1, 15),
   );
+  static final List<VehicleModel> vehicles = [
+  VehicleModel(
+    id: 'v1',
+    make: 'Toyota',
+    model: 'Camry',
+    year: 2020,
+    color: 'Silver',
+    plateNumber: 'RAH234H',
+    imageUrl: 'https://images.unsplash.com/photo-1550355291-bbee04a92027?w=400',
+    nextServiceDate: DateTime(2025, 5, 25),
+  ),
+  VehicleModel(
+    id: 'v2',
+    make: 'Honda',
+    model: 'Civic',
+    year: 2018,
+    color: 'Blue',
+    plateNumber: 'RAA567K',
+    imageUrl: 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=400',
+    nextServiceDate: DateTime(2025, 6, 10),
+  ),
+];
 }
+

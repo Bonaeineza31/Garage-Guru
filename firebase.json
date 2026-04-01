@@ -1,1 +1,5 @@
+<<<<<<< HEAD
 {"flutter":{"platforms":{"android":{"default":{"projectId":"garageguru-8438b","appId":"1:331669988324:android:6c4c25444b2a72f6ad9df1","fileOutput":"android/app/google-services.json"}},"dart":{"lib/firebase_options.dart":{"projectId":"garageguru-8438b","configurations":{"android":"1:331669988324:android:6c4c25444b2a72f6ad9df1","ios":"1:331669988324:ios:dee6c7cdaa55591fad9df1","macos":"1:331669988324:ios:dee6c7cdaa55591fad9df1","web":"1:331669988324:web:040ca02aaaffe285ad9df1","windows":"1:331669988324:web:5397be2ffc2b2eecad9df1"}}}}}}
+=======
+{"flutter":{"platforms":{"dart":{"lib/firebase_options.dart":{"projectId":"garageguru-8438b","configurations":{"android":"1:331669988324:android:6c4c25444b2a72f6ad9df1","web":"1:331669988324:web:040ca02aaaffe285ad9df1"}}},"android":{"default":{"projectId":"garageguru-8438b","appId":"1:331669988324:android:6c4c25444b2a72f6ad9df1","fileOutput":"android/app/google-services.json"}}}}}
+>>>>>>> origin/main

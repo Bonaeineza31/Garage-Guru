@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:garage_guru/core/theme/app_theme.dart';
+import 'package:garage_guru/theme/app_theme.dart';
 import 'package:garage_guru/screens/customer/home_screen.dart';
 import 'package:garage_guru/screens/customer/find_garages_screen.dart';
 import 'package:garage_guru/screens/customer/repairs_screen.dart';
@@ -15,14 +15,13 @@ class CustomerShell extends StatefulWidget {
 }
 
 class _CustomerShellState extends State<CustomerShell> {
-  late int _currentIndex;
-
-  final _screens = const [
+  final _screens = [
     HomeScreen(),
     FindGaragesScreen(),
     RepairsScreen(),
     ProfileScreen(),
   ];
+    int _currentIndex = 0;
 
   @override
   void initState() {
@@ -39,8 +38,8 @@ class _CustomerShellState extends State<CustomerShell> {
       ),
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
-          color: AppColors.surface,
-          boxShadow: AppShadows.bottomNav,
+          color: Theme.of(context).cardColor,
+          boxShadow: Theme.of(context).brightness == Brightness.dark ? [] : AppShadows.bottomNav,
           borderRadius: const BorderRadius.only(
             topLeft: Radius.circular(AppRadius.lg),
             topRight: Radius.circular(AppRadius.lg),
@@ -53,12 +52,12 @@ class _CustomerShellState extends State<CustomerShell> {
           ),
           child: BottomNavigationBar(
             type: BottomNavigationBarType.fixed,
-            backgroundColor: AppColors.surface,
+            backgroundColor: Theme.of(context).cardColor,
             elevation: 0,
             currentIndex: _currentIndex,
             onTap: (index) => setState(() => _currentIndex = index),
             selectedItemColor: AppColors.primary,
-            unselectedItemColor: AppColors.textSecondary,
+            unselectedItemColor: Theme.of(context).brightness == Brightness.dark ? Colors.white38 : AppColors.textSecondary,
             selectedLabelStyle: const TextStyle(
               fontFamily: 'Poppins',
               fontSize: 12,

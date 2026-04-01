@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:garage_guru/core/theme/app_theme.dart';
+import 'package:garage_guru/theme/app_theme.dart';
 import 'package:garage_guru/models/models.dart';
 import 'package:garage_guru/widgets/widgets.dart';
 import 'package:garage_guru/screens/customer/customer_shell.dart';
@@ -63,7 +63,9 @@ class _PaymentScreenState extends State<PaymentScreen> {
                           child: Image.network(
                             widget.garage.coverImageUrl,
                             fit: BoxFit.cover,
-                            errorBuilder: (_, __, ___) => const Icon(Icons.garage_rounded, color: Colors.white70),
+                            errorBuilder: (_, __, ___) => const Icon(
+                                Icons.garage_rounded,
+                                color: Colors.white70),
                           ),
                         ),
                       ),
@@ -72,8 +74,10 @@ class _PaymentScreenState extends State<PaymentScreen> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(widget.garage.name, style: AppTextStyles.subtitle),
-                            Text(widget.garage.address, style: AppTextStyles.bodySmall),
+                            Text(widget.garage.name,
+                                style: AppTextStyles.subtitle),
+                            Text(widget.garage.address,
+                                style: AppTextStyles.bodySmall),
                           ],
                         ),
                       ),
@@ -83,27 +87,31 @@ class _PaymentScreenState extends State<PaymentScreen> {
                   const Divider(),
                   const SizedBox(height: AppSpacing.md),
                   ...widget.services.map((s) => Padding(
-                    padding: const EdgeInsets.only(bottom: AppSpacing.sm),
-                    child: Row(
-                      children: [
-                        const Icon(Icons.check_circle_rounded, size: 16, color: AppColors.success),
-                        const SizedBox(width: AppSpacing.sm),
-                        Expanded(child: Text(s.name, style: AppTextStyles.body)),
-                        Text(s.formattedPrice, style: AppTextStyles.body),
-                      ],
-                    ),
-                  )),
+                        padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+                        child: Row(
+                          children: [
+                            const Icon(Icons.check_circle_rounded,
+                                size: 16, color: AppColors.success),
+                            const SizedBox(width: AppSpacing.sm),
+                            Expanded(
+                                child: Text(s.name, style: AppTextStyles.body)),
+                            Text(s.formattedPrice, style: AppTextStyles.body),
+                          ],
+                        ),
+                      )),
                   const Divider(height: AppSpacing.xxl),
                   Row(
                     children: [
-                      const Icon(Icons.calendar_month_rounded, size: 16, color: AppColors.textSecondary),
+                      const Icon(Icons.calendar_month_rounded,
+                          size: 16, color: AppColors.textSecondary),
                       const SizedBox(width: AppSpacing.sm),
                       Text(
                         _formatDate(widget.scheduledDate),
                         style: AppTextStyles.body,
                       ),
                       const SizedBox(width: AppSpacing.xl),
-                      const Icon(Icons.schedule_rounded, size: 16, color: AppColors.textSecondary),
+                      const Icon(Icons.schedule_rounded,
+                          size: 16, color: AppColors.textSecondary),
                       const SizedBox(width: AppSpacing.sm),
                       Text(widget.scheduledTime, style: AppTextStyles.body),
                     ],
@@ -115,7 +123,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text('Subtotal', style: AppTextStyles.body),
-                      Text('\$${widget.totalAmount.toStringAsFixed(2)}', style: AppTextStyles.body),
+                      Text('\$${widget.totalAmount.toStringAsFixed(2)}',
+                          style: AppTextStyles.body),
                     ],
                   ),
                   const SizedBox(height: 4),
@@ -182,7 +191,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
     );
   }
 
-  Widget _buildPaymentOption(String id, String title, IconData icon, String subtitle) {
+  Widget _buildPaymentOption(
+      String id, String title, IconData icon, String subtitle) {
     final isSelected = _paymentMethod == id;
     return GestureDetector(
       onTap: () => setState(() => _paymentMethod = id),
@@ -192,10 +202,14 @@ class _PaymentScreenState extends State<PaymentScreen> {
         margin: const EdgeInsets.only(bottom: AppSpacing.sm),
         padding: const EdgeInsets.all(AppSpacing.lg),
         decoration: BoxDecoration(
-          color: isSelected ? AppColors.primary.withOpacity(0.04) : AppColors.surface,
+          color: isSelected
+              ? AppColors.primary.withOpacity(0.04)
+              : AppColors.surface,
           borderRadius: BorderRadius.circular(AppRadius.lg),
           border: Border.all(
-            color: isSelected ? AppColors.primary : AppColors.divider.withOpacity(0.5),
+            color: isSelected
+                ? AppColors.primary
+                : AppColors.divider.withOpacity(0.5),
             width: isSelected ? 2 : 1,
           ),
         ),
@@ -205,10 +219,14 @@ class _PaymentScreenState extends State<PaymentScreen> {
               width: 44,
               height: 44,
               decoration: BoxDecoration(
-                color: isSelected ? AppColors.primary.withOpacity(0.15) : AppColors.background,
+                color: isSelected
+                    ? AppColors.primary.withOpacity(0.15)
+                    : AppColors.background,
                 borderRadius: BorderRadius.circular(AppRadius.sm),
               ),
-              child: Icon(icon, color: isSelected ? AppColors.primary : AppColors.textSecondary),
+              child: Icon(icon,
+                  color:
+                      isSelected ? AppColors.primary : AppColors.textSecondary),
             ),
             const SizedBox(width: AppSpacing.md),
             Expanded(
@@ -255,7 +273,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                 width: 120,
                 height: 120,
                 decoration: BoxDecoration(
-                  gradient: AppColors.successGradient,
+                  color: AppColors.success,
                   shape: BoxShape.circle,
                   boxShadow: [
                     BoxShadow(
@@ -265,7 +283,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
                     ),
                   ],
                 ),
-                child: const Icon(Icons.check_rounded, color: Colors.white, size: 60),
+                child: const Icon(Icons.check_rounded,
+                    color: Colors.white, size: 60),
               ),
               const SizedBox(height: AppSpacing.xxl),
               Text(
@@ -276,7 +295,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
               const SizedBox(height: AppSpacing.md),
               Text(
                 'Your booking has been confirmed.\nYou will receive a confirmation email shortly.',
-                style: AppTextStyles.body.copyWith(color: AppColors.textSecondary),
+                style:
+                    AppTextStyles.body.copyWith(color: AppColors.textSecondary),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: AppSpacing.xxxl * 2),
@@ -296,7 +316,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
                 isOutlined: true,
                 onPressed: () {
                   Navigator.of(context).pushAndRemoveUntil(
-                    MaterialPageRoute(builder: (_) => const CustomerShell(initialTab: 2)),
+                    MaterialPageRoute(
+                        builder: (_) => const CustomerShell(initialTab: 2)),
                     (route) => false,
                   );
                 },
@@ -310,8 +331,18 @@ class _PaymentScreenState extends State<PaymentScreen> {
 
   String _formatDate(DateTime date) {
     final months = [
-      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
     ];
     return '${months[date.month - 1]} ${date.day}, ${date.year}';
   }

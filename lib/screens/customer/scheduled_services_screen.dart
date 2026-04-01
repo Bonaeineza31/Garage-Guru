@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:garage_guru/core/theme/app_theme.dart';
+import 'package:garage_guru/theme/app_theme.dart';
+import 'package:garage_guru/screens/customer/request_repair_form_screen.dart';
 import 'package:garage_guru/widgets/widgets.dart';
 
 class ScheduledServicesScreen extends StatelessWidget {
@@ -8,7 +9,7 @@ class ScheduledServicesScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: GgAppBar(
         title: 'Scheduled Services',
         actions: [
@@ -25,7 +26,7 @@ class ScheduledServicesScreen extends StatelessWidget {
           children: [
             Text(
               'Select Service Type',
-              style: AppTextStyles.heading2,
+              style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: AppSpacing.lg),
             _ServiceSelectionCard(
@@ -33,24 +34,28 @@ class ScheduledServicesScreen extends StatelessWidget {
               subtitle: 'Replace engine oil and filter',
               estCost: r'$45 - $80',
               estTime: '30 min',
+              repairTypeForRequest: 'Oil Change',
             ),
             _ServiceSelectionCard(
               title: 'Tire Rotation',
               subtitle: 'Rotate tires to ensure even wear',
               estCost: r'$30 - $50',
               estTime: '30 min',
+              repairTypeForRequest: 'Tire Rotation',
             ),
             _ServiceSelectionCard(
               title: 'Brake Service',
               subtitle: 'Inspect and service brake system',
               estCost: r'$100 - $300',
               estTime: '1-2 hours',
+              repairTypeForRequest: 'Brake Service',
             ),
             _ServiceSelectionCard(
               title: 'Full Inspection',
               subtitle: 'Complete vehicle inspection',
               estCost: r'$80 - $150',
               estTime: '1 hour',
+              repairTypeForRequest: 'Full Inspection',
             ),
           ],
         ),
@@ -64,12 +69,14 @@ class _ServiceSelectionCard extends StatelessWidget {
   final String subtitle;
   final String estCost;
   final String estTime;
+  final String repairTypeForRequest;
 
   const _ServiceSelectionCard({
     required this.title,
     required this.subtitle,
     required this.estCost,
     required this.estTime,
+    required this.repairTypeForRequest,
   });
 
   @override
@@ -78,11 +85,11 @@ class _ServiceSelectionCard extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: AppSpacing.md),
       padding: const EdgeInsets.all(AppSpacing.lg),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(AppRadius.lg),
-        border: Border.all(color: AppColors.divider.withOpacity(0.5)),
-        boxShadow: [
-          BoxShadow(color: Colors.black12, blurRadius: 4, offset: Offset(0, 2)),
+        border: Border.all(color: Theme.of(context).dividerColor.withOpacity(0.1)),
+        boxShadow: Theme.of(context).brightness == Brightness.dark ? [] : [
+           const BoxShadow(color: Colors.black12, blurRadius: 4, offset: Offset(0, 2)),
         ],
       ),
       child: Column(
@@ -97,23 +104,30 @@ class _ServiceSelectionCard extends StatelessWidget {
                   children: [
                     Text(
                       title,
-                      style: AppTextStyles.subtitle.copyWith(
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.bold,
-                        fontSize: 18,
                       ),
                     ),
-                    SizedBox(height: 4),
+                    const SizedBox(height: 4),
                     Text(
                       subtitle,
-                      style: AppTextStyles.bodySmall.copyWith(
-                        color: AppColors.textSecondary,
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: Theme.of(context).hintColor,
                       ),
                     ),
                   ],
                 ),
               ),
               OutlinedButton(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => RequestRepairFormScreen(
+                        initialRepairType: repairTypeForRequest,
+                      ),
+                    ),
+                  );
+                },
                 style: OutlinedButton.styleFrom(
                   foregroundColor: AppColors.primary,
                   side: BorderSide(color: AppColors.primary),

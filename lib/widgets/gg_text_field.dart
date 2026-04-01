@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:garage_guru/core/theme/app_theme.dart';
+import 'package:garage_guru/theme/app_theme.dart';
 class GgTextField extends StatelessWidget {
   final String label;
   final String? hint;
@@ -40,7 +40,12 @@ class GgTextField extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: AppTextStyles.label.copyWith(fontWeight: FontWeight.w600)),
+        Text(
+          label, 
+          style: Theme.of(context).textTheme.labelLarge?.copyWith(
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         const SizedBox(height: AppSpacing.sm),
         TextFormField(
           controller: controller,
@@ -53,15 +58,15 @@ class GgTextField extends StatelessWidget {
           onChanged: onChanged,
           inputFormatters: inputFormatters,
           enabled: enabled,
-          style: AppTextStyles.body,
+          style: Theme.of(context).textTheme.bodyMedium,
           decoration: InputDecoration(
-            hintText: hint,
+            hintStyle: TextStyle(color: Theme.of(context).hintColor),
             prefixIcon: prefixIcon != null
-                ? Icon(prefixIcon, color: AppColors.textHint, size: 20)
+                ? Icon(prefixIcon, color: Theme.of(context).hintColor, size: 20)
                 : null,
             suffixIcon: suffix,
             filled: true,
-            fillColor: AppColors.background,
+            fillColor: Theme.of(context).cardColor,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(AppRadius.md),
               borderSide: BorderSide.none,
@@ -110,9 +115,9 @@ class GgSearchBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(AppRadius.lg),
-        boxShadow: AppShadows.elevated,
+        boxShadow: Theme.of(context).brightness == Brightness.dark ? [] : AppShadows.elevated,
       ),
       child: Row(
         children: [
@@ -120,13 +125,13 @@ class GgSearchBar extends StatelessWidget {
             child: TextField(
               controller: controller,
               onChanged: onChanged,
-              style: AppTextStyles.body,
-              decoration: InputDecoration(
+              style: Theme.of(context).textTheme.bodyMedium,
+            decoration: InputDecoration(
                 hintText: hint,
-                hintStyle: AppTextStyles.body.copyWith(color: AppColors.textHint),
-                prefixIcon: const Padding(
-                  padding: EdgeInsets.only(left: 12, right: 4),
-                  child: Icon(Icons.search_rounded, color: AppColors.textHint, size: 22),
+                hintStyle: TextStyle(color: Theme.of(context).hintColor),
+                prefixIcon: Padding(
+                  padding: const EdgeInsets.only(left: 12, right: 4),
+                  child: Icon(Icons.search_rounded, color: Theme.of(context).hintColor, size: 22),
                 ),
                 prefixIconConstraints: const BoxConstraints(minWidth: 40),
                 border: InputBorder.none,

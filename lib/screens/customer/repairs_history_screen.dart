@@ -1,55 +1,58 @@
 import 'package:flutter/material.dart';
-import 'package:garage_guru/core/theme/app_theme.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:garage_guru/theme/app_theme.dart';
 import 'package:garage_guru/models/repair_model.dart';
 import 'package:garage_guru/screens/customer/repair_detail_screen.dart';
+import 'package:garage_guru/blocs/booking_bloc.dart';
 import 'package:intl/intl.dart';
 
 class RepairsHistoryScreen extends StatelessWidget {
   const RepairsHistoryScreen({super.key});
 
-  static final List<RepairHistoryModel> _history = [
-    RepairHistoryModel(
-      id: 'h1',
-      serviceName: 'Oil Change',
-      vehicleMake: 'Toyota',
-      vehicleModel: 'Camry',
-      vehiclePlate: 'BA01234',
-      date: DateTime(2025, 5, 5),
-      mechanicName: 'Jean Claude',
-      location: 'Auto Finit',
-      cost: 30000,
-      nextServiceDue: DateTime(2025, 8, 5),
-    ),
-    RepairHistoryModel(
-      id: 'h2',
-      serviceName: 'Tire Rotation',
-      vehicleMake: 'Toyota',
-      vehicleModel: 'Camry',
-      vehiclePlate: 'BA01234',
-      date: DateTime(2025, 4, 20),
-      mechanicName: 'Marie Claire',
-      location: 'Kigali Motors',
-      cost: 15000,
-      nextServiceDue: DateTime(2025, 10, 20),
-    ),
-  ];
-
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: AppColors.background,
-      child: ListView.separated(
-        padding: const EdgeInsets.all(16),
-        itemCount: _history.length,
-        separatorBuilder: (_, __) => const SizedBox(height: 12),
-        itemBuilder: (context, index) => _HistoryCard(item: _history[index]),
-      ),
+    return BlocBuilder<BookingBloc, BookingState>(
+      builder: (context, state) {
+        if (state.status == BookingStatus.loading) {
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        final history = state.activeRepairs.where((r) => 
+          r.status == RepairStatus.completed || r.status == RepairStatus.cancelled
+        ).toList();
+
+        if (history.isEmpty) {
+          return Center(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(Icons.history_rounded, size: 64, color: AppColors.textHint),
+                const SizedBox(height: 16),
+                Text(
+                  'No repair history',
+                  style: TextStyle(color: AppColors.textHint, fontSize: 16),
+                ),
+              ],
+            ),
+          );
+        }
+
+        return Container(
+          color: Theme.of(context).scaffoldBackgroundColor,
+          child: ListView.separated(
+            padding: const EdgeInsets.all(16),
+            itemCount: history.length,
+            separatorBuilder: (_, __) => const SizedBox(height: 12),
+            itemBuilder: (context, index) => _HistoryCard(item: history[index]),
+          ),
+        );
+      },
     );
   }
 }
 
 class _HistoryCard extends StatelessWidget {
-  final RepairHistoryModel item;
+  final RepairModel item;
 
   const _HistoryCard({required this.item});
 
@@ -58,9 +61,10 @@ class _HistoryCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(12),
-        boxShadow: AppShadows.card,
+        boxShadow: Theme.of(context).brightness == Brightness.dark ? [] : AppShadows.card,
+        border: Border.all(color: Theme.of(context).dividerColor.withOpacity(0.1)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -74,21 +78,12 @@ class _HistoryCard extends StatelessWidget {
                   children: [
                     Text(
                       item.serviceName,
-                      style: const TextStyle(
-                        fontFamily: 'Poppins',
-                        fontWeight: FontWeight.w700,
-                        fontSize: 15,
-                        color: AppColors.textPrimary,
-                      ),
+                      style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 2),
                     Text(
                       item.vehicleInfo,
-                      style: const TextStyle(
-                        fontFamily: 'Poppins',
-                        fontSize: 12,
-                        color: AppColors.textSecondary,
-                      ),
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Theme.of(context).hintColor),
                     ),
                   ],
                 ),
@@ -97,22 +92,24 @@ class _HistoryCard extends StatelessWidget {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                 decoration: BoxDecoration(
-                  color: AppColors.success.withOpacity(0.1),
+                  color: (item.status == RepairStatus.cancelled ? AppColors.error : AppColors.success).withOpacity(0.1),
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
-                  children: const [
-                    Icon(Icons.check_circle_outline,
-                        size: 12, color: AppColors.success),
-                    SizedBox(width: 4),
+                  children: [
+                    Icon(
+                        item.status == RepairStatus.cancelled ? Icons.cancel_outlined : Icons.check_circle_outline,
+                        size: 12, 
+                        color: item.status == RepairStatus.cancelled ? AppColors.error : AppColors.success),
+                    const SizedBox(width: 4),
                     Text(
-                      'Completed',
+                      item.statusLabel,
                       style: TextStyle(
                         fontFamily: 'Poppins',
                         fontSize: 11,
                         fontWeight: FontWeight.w600,
-                        color: AppColors.success,
+                        color: item.status == RepairStatus.cancelled ? AppColors.error : AppColors.success,
                       ),
                     ),
                   ],
@@ -128,7 +125,7 @@ class _HistoryCard extends StatelessWidget {
               Expanded(
                 child: _DetailItem(
                   label: 'Date',
-                  value: DateFormat('MMM dd, yyyy').format(item.date),
+                  value: DateFormat('MMM dd, yyyy').format(item.startDate),
                   icon: Icons.calendar_today_outlined,
                 ),
               ),
@@ -153,36 +150,38 @@ class _HistoryCard extends StatelessWidget {
                 child: _DetailItem(
                   label: 'Cost',
                   value:
-                      'FRw ${item.cost.toStringAsFixed(0).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (m) => '${m[1]},')}',
+                      'FRw ${item.totalCost.toStringAsFixed(0).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (m) => '${m[1]},')}',
                   isBold: true,
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 10),
-          const Divider(color: AppColors.divider, height: 1),
-          const SizedBox(height: 10),
-          Row(
-            children: [
-              const Text(
-                'Next service due: ',
-                style: TextStyle(
-                  fontFamily: 'Poppins',
-                  fontSize: 13,
-                  color: AppColors.textSecondary,
+          if (item.status != RepairStatus.cancelled) ...[
+            const SizedBox(height: 10),
+            const Divider(color: AppColors.divider, height: 1),
+            const SizedBox(height: 10),
+            Row(
+              children: [
+                const Text(
+                  'Next service due: ',
+                  style: TextStyle(
+                    fontFamily: 'Poppins',
+                    fontSize: 13,
+                    color: AppColors.textSecondary,
+                  ),
                 ),
-              ),
-              Text(
-                DateFormat('MMM dd, yyyy').format(item.nextServiceDue),
-                style: const TextStyle(
-                  fontFamily: 'Poppins',
-                  fontSize: 13,
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.info,
+                Text(
+                  DateFormat('MMM dd, yyyy').format(item.startDate.add(const Duration(days: 90))),
+                  style: const TextStyle(
+                    fontFamily: 'Poppins',
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.info,
+                  ),
                 ),
-              ),
-            ],
-          ),
+              ],
+            ),
+          ],
           const SizedBox(height: 10),
           Align(
             alignment: Alignment.centerRight,
@@ -191,33 +190,7 @@ class _HistoryCard extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (_) => RepairDetailScreen(
-                      repair: RepairModel(
-                        id: item.id,
-                        serviceName: item.serviceName,
-                        vehicleMake: item.vehicleMake,
-                        vehicleModel: item.vehicleModel,
-                        vehiclePlate: item.vehiclePlate,
-                        progressPercent: 1.0,
-                        status: RepairStatus.completed,
-                        mechanicName: item.mechanicName,
-                        mechanicSpecialty: 'General Mechanic',
-                        mechanicRating: 4.8,
-                        location: item.location,
-                        startDate: item.date,
-                        estimatedCompletion: 'Completed',
-                        repairDescription: 'Service completed successfully.',
-                        partsCost: item.cost * 0.6,
-                        laborCost: item.cost * 0.4,
-                        updates: [
-                          RepairUpdate(
-                            timestamp: item.date,
-                            message: 'Service completed successfully.',
-                          ),
-                        ],
-                        isPaid: true,
-                      ),
-                    ),
+                    builder: (_) => RepairDetailScreen(repair: item),
                   ),
                 );
               },
@@ -265,26 +238,21 @@ class _DetailItem extends StatelessWidget {
       children: [
         Text(
           label,
-          style: const TextStyle(
-            fontFamily: 'Poppins',
-            fontSize: 11,
-            color: AppColors.textSecondary,
-          ),
+          style: Theme.of(context).textTheme.labelSmall?.copyWith(color: Theme.of(context).hintColor),
         ),
         const SizedBox(height: 2),
         Row(
           children: [
             if (icon != null) ...[
-              Icon(icon, size: 12, color: AppColors.textSecondary),
+              Icon(icon, size: 12, color: Theme.of(context).hintColor),
               const SizedBox(width: 4),
             ],
-            Text(
-              value,
-              style: TextStyle(
-                fontFamily: 'Poppins',
-                fontSize: 13,
-                fontWeight: isBold ? FontWeight.w700 : FontWeight.w500,
-                color: AppColors.textPrimary,
+            Flexible(
+              child: Text(
+                value,
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  fontWeight: isBold ? FontWeight.bold : FontWeight.w500,
+                ),
               ),
             ),
           ],

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:garage_guru/screens/auth/auth_ui.dart';
+import 'package:garage_guru/screens/auth/auth_theme.dart';
+import 'package:garage_guru/screens/auth/auth_widgets.dart';
 import 'package:garage_guru/screens/auth/login_screen.dart';
 import 'package:garage_guru/screens/auth/register_screen.dart';
 
@@ -9,100 +10,129 @@ class LandingScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setSystemUIOverlayStyle(
-      const SystemUiOverlayStyle(
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: const SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
         statusBarIconBrightness: Brightness.light,
+        systemNavigationBarColor: Colors.black87,
+        systemNavigationBarIconBrightness: Brightness.light,
       ),
-    );
-
-    return Scaffold(
-      backgroundColor: Colors.black,
-      body: Stack(
-        fit: StackFit.expand,
-        children: [
-          Image.network(
-            'https://images.unsplash.com/photo-1487754180451-c456f719a1fc?auto=format&fit=crop&w=1400&q=70',
-            fit: BoxFit.cover,
-            errorBuilder: (_, __, ___) => Container(color: const Color(0xFF0B1320)),
-          ),
-          Container(
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  Color(0x22000000),
-                  Color(0x66000000),
-                  Color(0xCC000000),
-                ],
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
+      child: Scaffold(
+        body: Stack(
+          fit: StackFit.expand,
+          children: [
+            Image.asset(
+              'assets/images/landing_hero.jpg',
+              fit: BoxFit.cover,
+              alignment: Alignment.center,
+              errorBuilder: (_, __, ___) => Container(
+                color: const Color(0xFF1E293B),
               ),
             ),
-          ),
-          SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+            DecoratedBox(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Colors.black.withValues(alpha: 0.35),
+                    Colors.black.withValues(alpha: 0.72),
+                  ],
+                ),
+              ),
+            ),
+            SafeArea(
               child: Column(
                 children: [
-                  const Spacer(),
-                  const Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      'Welcome to GarageGuru',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 26,
-                        fontWeight: FontWeight.w700,
-                        height: 1.15,
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 28),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            'Welcome to GarageGuru',
+                            textAlign: TextAlign.center,
+                            style: Theme.of(context).textTheme.headlineMedium!.copyWith(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 28,
+                                  height: 1.2,
+                                  letterSpacing: -0.4,
+                                  fontFamily: 'Poppins',
+                                ),
+                          ),
+                          const SizedBox(height: 14),
+                          Text(
+                            'Join over 10,000 repair shops over the World',
+                            textAlign: TextAlign.center,
+                            style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                                  color: Colors.white.withValues(alpha: 0.92),
+                                  fontSize: 15,
+                                  height: 1.45,
+                                  fontFamily: 'Poppins',
+                                  fontWeight: FontWeight.w400,
+                                ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
-                  const SizedBox(height: 10),
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      'Join over 10,000 repair shops over the World',
-                      style: TextStyle(
-                        color: Colors.white.withOpacity(0.85),
-                        fontSize: 13,
-                        height: 1.4,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 18),
-                  AuthPrimaryButton(
-                    label: 'Create an account',
-                    onPressed: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(builder: (_) => const RegisterScreen()),
-                      );
-                    },
-                  ),
-                  const SizedBox(height: 14),
-                  TextButton(
-                    onPressed: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(builder: (_) => const LoginScreen()),
-                      );
-                    },
-                    style: TextButton.styleFrom(
-                      foregroundColor: Colors.white.withOpacity(0.85),
-                      padding: EdgeInsets.zero,
-                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                      minimumSize: const Size(0, 0),
-                    ),
-                    child: const Text(
-                      'Already have an account?',
-                      style: TextStyle(decoration: TextDecoration.underline),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(24, 0, 24, 28),
+                    child: Column(
+                      children: [
+                        AuthPrimaryButton(
+                          label: 'Create an account',
+                          onPressed: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute<void>(
+                                builder: (_) => const RegisterScreen(),
+                              ),
+                            );
+                          },
+                        ),
+                        const SizedBox(height: 18),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              'Already have an account? ',
+                              style: TextStyle(
+                                color: Colors.white.withValues(alpha: 0.95),
+                                fontSize: 14,
+                                fontFamily: 'Poppins',
+                              ),
+                            ),
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute<void>(
+                                    builder: (_) => const LoginScreen(),
+                                  ),
+                                );
+                              },
+                              child: Text(
+                                'Log in',
+                                style: TextStyle(
+                                  color: AuthTheme.link,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w700,
+                                  fontFamily: 'Poppins',
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
                   ),
                 ],
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
 }
-

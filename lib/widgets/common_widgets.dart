@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:garage_guru/core/theme/app_theme.dart';
+import 'package:garage_guru/theme/app_theme.dart';
 class GgAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
   final List<Widget>? actions;
@@ -8,6 +8,8 @@ class GgAppBar extends StatelessWidget implements PreferredSizeWidget {
   final Color? foregroundColor;
   final Widget? leading;
   final double? elevation;
+  final PreferredSizeWidget? bottom;
+  final double? toolbarHeight;
 
   const GgAppBar({
     super.key,
@@ -18,17 +20,21 @@ class GgAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.foregroundColor,
     this.leading,
     this.elevation,
+    this.bottom,
+    this.toolbarHeight,
   });
 
   @override
-  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
+  Size get preferredSize => Size.fromHeight((toolbarHeight ?? kToolbarHeight) + (bottom?.preferredSize.height ?? 0.0));
 
   @override
   Widget build(BuildContext context) {
     return AppBar(
       title: Text(title),
-      backgroundColor: backgroundColor ?? AppColors.primary,
-      foregroundColor: foregroundColor ?? AppColors.textOnPrimary,
+      bottom: bottom,
+      toolbarHeight: toolbarHeight,
+      backgroundColor: backgroundColor ?? (Theme.of(context).brightness == Brightness.dark ? const Color(0xFF0F172A) : AppColors.primary),
+      foregroundColor: foregroundColor ?? Colors.white,
       elevation: elevation ?? 0,
       leading: showBack
           ? (leading ??
@@ -41,13 +47,20 @@ class GgAppBar extends StatelessWidget implements PreferredSizeWidget {
                   ),
                   child: const Icon(Icons.arrow_back_ios_new, size: 16),
                 ),
-                onPressed: () => Navigator.of(context).pop(),
+                onPressed: () {
+                  if (Navigator.of(context).canPop()) {
+                    Navigator.of(context).pop();
+                  }
+                },
               ))
           : leading,
       actions: actions,
     );
   }
 }
+
+
+
 class SectionHeader extends StatelessWidget {
   final String title;
   final String? actionText;
@@ -195,7 +208,7 @@ class UserAvatar extends StatelessWidget {
           ),
           child: CircleAvatar(
             radius: radius,
-            backgroundColor: AppColors.primaryLight,
+            backgroundColor: Theme.of(context).scaffoldBackgroundColor,
             backgroundImage: imageUrl != null ? NetworkImage(imageUrl!) : null,
             child: imageUrl == null
                 ? Text(
@@ -219,7 +232,7 @@ class UserAvatar extends StatelessWidget {
               decoration: BoxDecoration(
                 color: badgeColor ?? AppColors.success,
                 shape: BoxShape.circle,
-                border: Border.all(color: AppColors.surface, width: 2),
+                border: Border.all(color: Theme.of(context).cardColor, width: 2),
               ),
             ),
           ),
@@ -278,7 +291,7 @@ class InfoRow extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(4),
                 decoration: BoxDecoration(
-                  color: AppColors.background,
+                  color: Theme.of(context).scaffoldBackgroundColor.withOpacity(0.5),
                   borderRadius: BorderRadius.circular(AppRadius.sm),
                 ),
                 child: const Icon(Icons.chevron_right, color: AppColors.textSecondary, size: 18),
@@ -312,10 +325,10 @@ class StatCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(AppSpacing.lg),
       decoration: BoxDecoration(
-        color: AppColors.cardBackground,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(AppRadius.lg),
-        boxShadow: AppShadows.card,
-        border: Border.all(color: AppColors.divider.withOpacity(0.5)),
+        boxShadow: Theme.of(context).brightness == Brightness.dark ? [] : AppShadows.card,
+        border: Border.all(color: Theme.of(context).dividerColor.withOpacity(0.1)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -369,10 +382,9 @@ class StatCard extends StatelessWidget {
           const Spacer(),
           Text(
             value,
-            style: AppTextStyles.heading2.copyWith(
-              color: AppColors.textPrimary,
-              fontWeight: FontWeight.w700,
-            ),
+            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
           ),
           const SizedBox(height: 2),
           Text(title, style: AppTextStyles.bodySmall),

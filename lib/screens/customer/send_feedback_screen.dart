@@ -1,12 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:garage_guru/core/theme/app_theme.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:garage_guru/theme/app_theme.dart';
 import 'package:garage_guru/models/repair_model.dart';
+import 'package:garage_guru/blocs/auth_bloc.dart';
+import 'package:garage_guru/blocs/booking_bloc.dart';
 import 'package:intl/intl.dart';
 
 enum _FeedbackType { veryGood, notSatisfied, compliment, other }
 
 class SendFeedbackScreen extends StatefulWidget {
-  const SendFeedbackScreen({super.key});
+  final RepairModel repair;
+  const SendFeedbackScreen({super.key, required this.repair});
 
   @override
   State<SendFeedbackScreen> createState() => _SendFeedbackScreenState();
@@ -45,7 +50,11 @@ class _SendFeedbackScreenState extends State<SendFeedbackScreen> {
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => Navigator.pop(context),
+          onPressed: () {
+            if (Navigator.canPop(context)) {
+              Navigator.pop(context);
+            }
+          },
         ),
         title: const Text(
           'Send Feedback',
@@ -276,14 +285,56 @@ class _SendFeedbackScreenState extends State<SendFeedbackScreen> {
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton.icon(
-                      onPressed: () {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Feedback submitted successfully!'),
-                            backgroundColor: AppColors.success,
-                          ),
-                        );
-                        Navigator.pop(context);
+                      onPressed: () async {
+                        final user = context.read<AuthBloc>().state.user;
+                        if (user != null) {
+                          String userName = user.displayName ?? '';
+                          if (userName.isEmpty) {
+                            final userDoc = await FirebaseFirestore.instance
+                                .collection('users')
+                                .doc(user.uid)
+                                .get();
+                            userName = userDoc.data()?['name'] ?? user.email?.split('@').first ?? 'GarageGuru User';
+                          }
+
+                          // 1. Submit feedback via Bloc (handles reviews collection and garage rating)
+                          context.read<BookingBloc>().add(
+                            SubmitFeedback(
+                              garageId: widget.repair.garageId,
+                              repairId: widget.repair.id,
+                              isBooking: widget.repair.isBooking,
+                              userName: userName,
+                              userPhoto: user.photoURL ?? 'https://ui-avatars.com/api/?name=$userName',
+                              serviceName: widget.repair.serviceName,
+                              rating: _starRating,
+                              comment: _detailsController.text,
+                              userId: user.uid,
+                            ),
+                          );
+
+                          // 2. Directly update repair status to completed as requested
+                          final collection = widget.repair.isBooking ? 'bookings' : 'repairs';
+                          final statusValue = widget.repair.isBooking ? 'Completed' : 'completed';
+                          
+                          await FirebaseFirestore.instance
+                              .collection(collection)
+                              .doc(widget.repair.id)
+                              .update({'status': statusValue});
+
+                          if (mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Feedback submitted successfully!'),
+                                backgroundColor: AppColors.success,
+                              ),
+                            );
+                            
+                            // 3. Go back
+                            if (mounted && Navigator.canPop(context)) {
+                              Navigator.pop(context);
+                            }
+                          }
+                        }
                       },
                       icon: const Icon(Icons.send_rounded,
                           size: 16, color: Colors.white),

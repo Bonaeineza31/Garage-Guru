@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:garage_guru/core/theme/app_theme.dart';
+import 'package:garage_guru/theme/app_theme.dart';
 import 'package:garage_guru/data/mock_data.dart';
 import 'package:garage_guru/models/models.dart';
 import 'package:garage_guru/widgets/widgets.dart';
@@ -30,20 +30,16 @@ class _OwnerBookingsScreenState extends State<OwnerBookingsScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Bookings', style: AppTextStyles.heading3.copyWith(color: Colors.white)),
-        backgroundColor: AppColors.primary,
-        foregroundColor: AppColors.textOnPrimary,
-        automaticallyImplyLeading: false,
-        elevation: 0,
+      appBar: GgAppBar(
+        title: 'Bookings',
         bottom: TabBar(
           controller: _tabController,
           isScrollable: true,
           indicatorColor: AppColors.accent,
-          indicatorWeight: 2.5,
+          indicatorWeight: 3,
           labelColor: Colors.white,
           unselectedLabelColor: Colors.white60,
-          labelStyle: AppTextStyles.subtitle.copyWith(fontSize: 14),
+          labelStyle: const TextStyle(fontFamily: 'Poppins', fontWeight: FontWeight.w600, fontSize: 13),
           tabAlignment: TabAlignment.start,
           tabs: const [
             Tab(text: 'Pending'),
@@ -128,10 +124,10 @@ class _OwnerBookingCard extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(bottom: AppSpacing.md),
       decoration: BoxDecoration(
-        color: AppColors.cardBackground,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(AppRadius.xl),
-        border: Border.all(color: AppColors.divider.withOpacity(0.3)),
-        boxShadow: AppShadows.card,
+        border: Border.all(color: Theme.of(context).dividerColor.withOpacity(0.1)),
+        boxShadow: Theme.of(context).brightness == Brightness.dark ? [] : AppShadows.card,
       ),
       child: Padding(
         padding: const EdgeInsets.all(AppSpacing.lg),
@@ -165,24 +161,24 @@ class _OwnerBookingCard extends StatelessWidget {
               padding: const EdgeInsets.only(bottom: 4),
               child: Row(
                 children: [
-                  const Icon(Icons.build_rounded, size: 14, color: AppColors.textSecondary),
+                  const Icon(Icons.build_rounded, size: 14, color: AppColors.primary),
                   const SizedBox(width: AppSpacing.sm),
-                  Expanded(child: Text(s.name, style: AppTextStyles.body)),
-                  Text('\$${s.price.toStringAsFixed(2)}', style: AppTextStyles.body),
+                  Expanded(child: Text(s.name, style: Theme.of(context).textTheme.bodyMedium)),
+                  Text('\$${s.price.toStringAsFixed(2)}', style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600)),
                 ],
               ),
             )),
             const SizedBox(height: AppSpacing.sm),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text('Total', style: AppTextStyles.subtitle),
-                Text(
-                  '\$${booking.totalAmount.toStringAsFixed(2)}',
-                  style: AppTextStyles.price.copyWith(fontSize: 16),
-                ),
-              ],
-            ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text('Total', style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
+                  Text(
+                    '\$${booking.totalAmount.toStringAsFixed(2)}',
+                    style: AppTextStyles.price.copyWith(fontSize: 18, color: AppColors.primary),
+                  ),
+                ],
+              ),
             if (onAccept != null || onDecline != null || onComplete != null) ...[
               const SizedBox(height: AppSpacing.md),
               Row(

@@ -1,7 +1,10 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:garage_guru/screens/auth/auth_ui.dart';
-import 'package:garage_guru/screens/auth/login_screen.dart';
+import 'package:garage_guru/theme/app_theme.dart';
+import 'package:garage_guru/screens/auth/auth_theme.dart';
+import 'package:garage_guru/screens/auth/auth_widgets.dart';
+import 'package:garage_guru/screens/auth/register_screen.dart';
 
 class ResetPasswordScreen extends StatefulWidget {
   const ResetPasswordScreen({super.key});
@@ -13,7 +16,7 @@ class ResetPasswordScreen extends StatefulWidget {
 class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
-  bool _isLoading = false;
+  bool _loading = false;
 
   @override
   void dispose() {
@@ -21,98 +24,100 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
     super.dispose();
   }
 
-  Future<void> _submit() async {
+  Future<void> _sendLink() async {
     if (!_formKey.currentState!.validate()) return;
-    setState(() => _isLoading = true);
-    await Future.delayed(const Duration(milliseconds: 800));
-    if (!mounted) return;
-    setState(() => _isLoading = false);
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('If an account exists, we sent a reset link.')),
-    );
-
-    Navigator.of(context).pushAndRemoveUntil(
-      MaterialPageRoute(builder: (_) => const LoginScreen()),
-      (route) => false,
-    );
+    setState(() => _loading = true);
+    try {
+      await FirebaseAuth.instance.sendPasswordResetEmail(
+        email: _emailController.text.trim(),
+      );
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Check your email for a reset link.')),
+      );
+      Navigator.of(context).pop();
+    } on FirebaseAuthException catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.message ?? 'Could not send reset email')),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Something went wrong: $e')),
+      );
+    } finally {
+      if (mounted) setState(() => _loading = false);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setSystemUIOverlayStyle(
-      const SystemUiOverlayStyle(
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: const SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
         statusBarIconBrightness: Brightness.dark,
       ),
-    );
-
-    return Scaffold(
-      backgroundColor: AuthUi.bg,
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 24),
-          child: AuthCard(
+      child: AuthShell(
+        onBack: () => Navigator.of(context).pop(),
+        body: Form(
+          key: _formKey,
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.fromLTRB(24, 28, 24, 24),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                AuthBackButton(
-                  onPressed: () => Navigator.of(context).pop(),
-                ),
-                const SizedBox(height: 6),
-                const Text(
+                Text(
                   'Reset your password',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w700,
-                    color: AuthUi.textPrimary,
-                  ),
-                ),
-                const SizedBox(height: 6),
-                const Text(
-                  'We\'ll send you a link to reset your password',
-                  style: TextStyle(fontSize: 13, color: AuthUi.textMuted, height: 1.4),
-                ),
-                const SizedBox(height: 18),
-                Form(
-                  key: _formKey,
-                  child: AuthTextField(
-                    label: 'Email address',
-                    placeholder: 'Email address',
-                    controller: _emailController,
-                    keyboardType: TextInputType.emailAddress,
-                    validator: (v) {
-                      if (v == null || v.trim().isEmpty) return 'Email is required';
-                      if (!v.contains('@')) return 'Enter a valid email';
-                      return null;
-                    },
-                  ),
-                ),
-                const SizedBox(height: 14),
-                AuthPrimaryButton(
-                  label: 'Send Reset Link',
-                  onPressed: _isLoading ? null : _submit,
-                  isLoading: _isLoading,
+                  textAlign: TextAlign.center,
+                  style: AuthTheme.title(context),
                 ),
                 const SizedBox(height: 10),
+                Text(
+                  "We'll send you a link to reset your password",
+                  textAlign: TextAlign.center,
+                  style: AuthTheme.subtitleStyle(context),
+                ),
+                const SizedBox(height: 28),
+                AuthTextField(
+                  controller: _emailController,
+                  hint: 'you@example.com',
+                  keyboardType: TextInputType.emailAddress,
+                  validator: (v) {
+                    if (v == null || v.isEmpty) return 'Enter your email';
+                    if (!v.contains('@')) return 'Enter a valid email';
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 24),
+                AuthPrimaryButton(
+                  label: 'Send Reset Link',
+                  isLoading: _loading,
+                  onPressed: _sendLink,
+                ),
+                const SizedBox(height: 22),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Text('Don’t have an account? ', style: TextStyle(color: AuthUi.textMuted)),
-                    TextButton(
-                      onPressed: () {
-                        Navigator.of(context).pushAndRemoveUntil(
-                          MaterialPageRoute(builder: (_) => const LoginScreen()),
-                          (route) => false,
+                    Text(
+                      "Don't have an account? ",
+                      style: AppTextStyles.body.copyWith(color: AppColors.textSecondary),
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.of(context).pushReplacement(
+                          MaterialPageRoute<void>(
+                            builder: (_) => const RegisterScreen(),
+                          ),
                         );
                       },
-                      style: TextButton.styleFrom(
-                        foregroundColor: AuthUi.blue,
-                        padding: EdgeInsets.zero,
-                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                        minimumSize: const Size(0, 0),
+                      child: Text(
+                        'Sign up',
+                        style: AppTextStyles.body.copyWith(
+                          color: AuthTheme.link,
+                          fontWeight: FontWeight.w700,
+                        ),
                       ),
-                      child: const Text('Sign up'),
                     ),
                   ],
                 ),
@@ -124,4 +129,3 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
     );
   }
 }
-

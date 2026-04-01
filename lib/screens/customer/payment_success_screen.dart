@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:garage_guru/core/theme/app_theme.dart';
+import 'package:garage_guru/theme/app_theme.dart';
+import 'package:garage_guru/models/repair_model.dart';
 import 'package:garage_guru/screens/customer/send_feedback_screen.dart';
 
 class PaymentSuccessScreen extends StatelessWidget {
-  const PaymentSuccessScreen({super.key});
+  final RepairModel repair;
+  const PaymentSuccessScreen({super.key, required this.repair});
 
   @override
   Widget build(BuildContext context) {
@@ -55,7 +57,7 @@ class PaymentSuccessScreen extends StatelessWidget {
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
-                        builder: (_) => const SendFeedbackScreen(),
+                        builder: (_) => SendFeedbackScreen(repair: repair),
                       ),
                     );
                   },

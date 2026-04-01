@@ -1,272 +1,380 @@
+
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:garage_guru/screens/auth/auth_ui.dart';
+import 'package:flutter/services.dart';
+import 'package:garage_guru/core/theme/app_theme.dart';
+import 'package:garage_guru/widgets/widgets.dart';
+import 'package:garage_guru/screens/auth/auth_theme.dart';
+import 'package:garage_guru/screens/auth/auth_widgets.dart';
 import 'package:garage_guru/screens/auth/login_screen.dart';
 import 'package:garage_guru/screens/customer/customer_shell.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:garage_guru/screens/customer/privacy_policy_screen.dart';
+import 'package:garage_guru/screens/customer/terms_of_service_screen.dart';
+import 'package:garage_guru/screens/owner/owner_shell.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
 
-  @override
-  State<RegisterScreen> createState() => _RegisterScreenState();
-}
-
-class _RegisterScreenState extends State<RegisterScreen> {
-  final _formKey = GlobalKey<FormState>();
-  final _nameController = TextEditingController();
-  final _emailController = TextEditingController();
-  final _phoneController = TextEditingController();
-  final _passwordController = TextEditingController();
-  final _confirmPasswordController = TextEditingController();
-  bool _obscurePassword = true;
-  bool _obscureConfirm = true;
-  bool _isLoading = false;
-  bool _acceptedTerms = false;
-
-  @override
-  void dispose() {
-    _nameController.dispose();
-    _emailController.dispose();
-    _phoneController.dispose();
-    _passwordController.dispose();
-    _confirmPasswordController.dispose();
-    super.dispose();
-  }
-
   Future<void> _handleRegister() async {
+    if (!_agreedToTerms) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please accept the Terms and Privacy Policy')),
+      );
+      return;
+    }
     if (!_formKey.currentState!.validate()) return;
-    if (!_acceptedTerms) return;
     setState(() => _isLoading = true);
     try {
-      final credential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+      final userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: _emailController.text.trim(),
         password: _passwordController.text.trim(),
       );
-      await credential.user?.sendEmailVerification();
-      setState(() => _isLoading = false);
-      showDialog(
-        context: context,
-        builder: (ctx) => AlertDialog(
-          title: const Text('Verify Your Email'),
-          content: const Text('A verification link has been sent to your email. Please verify before logging in.'),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(ctx).pop();
-                Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(builder: (_) => const LoginScreen()),
-                );
-              },
-              child: const Text('OK'),
-            ),
-          ],
-        ),
-      );
+      final user = userCredential.user;
+      if (user != null) {
+        await user.updateDisplayName(_nameController.text.trim());
+        await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
+          'name': _nameController.text.trim(),
+          'email': _emailController.text.trim(),
+          'phone': _phoneController.text.trim(),
+          'role': _selectedRole,
+          'createdAt': FieldValue.serverTimestamp(),
+        });
+        try {
+          await user.sendEmailVerification();
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('We sent a verification link to your email. Check spam if you don’t see it.'),
+              ),
+            );
+          }
+        } on FirebaseAuthException catch (e) {
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text(e.message ?? 'Could not send verification email')),
+            );
+          }
+        }
+        if (!mounted) return;
+        final destination =
+            _selectedRole == 'garage_owner' ? const OwnerShell() : const CustomerShell();
+        Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute<void>(builder: (_) => destination),
+          (route) => false,
+        );
+      }
     } on FirebaseAuthException catch (e) {
-      setState(() => _isLoading = false);
-      String msg = 'Registration failed. Please try again.';
-      if (e.code == 'email-already-in-use') msg = 'Email already in use.';
-      if (e.code == 'invalid-email') msg = 'Invalid email address.';
-      if (e.code == 'weak-password') msg = 'Password is too weak.';
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg)));
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.message ?? 'Registration failed')),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: $e')),
+      );
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
+  }
+              const SnackBar(
+                content: Text('We sent a verification link to your email. Check spam if you don’t see it.'),
+              ),
+            );
+          }
+        } on FirebaseAuthException catch (e) {
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text(e.message ?? 'Could not send verification email')),
+            );
+          }
+        }
+
+        if (!mounted) return;
+        final destination =
+            _selectedRole == 'garage_owner' ? const OwnerShell() : const CustomerShell();
+        Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute<void>(builder: (_) => destination),
+          (route) => false,
+        );
+>>>>>>> c0b7a48c9430978b1a6d6587b5dcf3f5a6e3937e
+>>>>>>> 2f8307a (refactor(auth): migrate authentication screens to new theme system)
+      }
+    } on FirebaseAuthException catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.message ?? 'Registration failed')),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: $e')),
+      );
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+>>>>>>> origin/main
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AuthUi.bg,
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 24),
-          child: Form(
-            key: _formKey,
-            child: AuthCard(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  AuthBackButton(onPressed: () => Navigator.of(context).pop()),
-                  const SizedBox(height: 8),
-                  const Text(
-                    'Create an account',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w700,
-                      color: AuthUi.textPrimary,
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: const SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.dark,
+      ),
+      child: AuthShell(
+        body: Form(
+          key: _formKey,
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.fromLTRB(24, 28, 24, 24),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Text(
+                  'Create an account',
+                  textAlign: TextAlign.center,
+                  style: AuthTheme.title(context),
+                ),
+                const SizedBox(height: 10),
+                Text(
+                  'Join GarageGuru for reliable car repair services',
+                  textAlign: TextAlign.center,
+                  style: AuthTheme.subtitleStyle(context),
+                ),
+                const SizedBox(height: 14),
+                _rolePicker(context),
+                const SizedBox(height: 18),
+                const AuthSocialRow(),
+                const SizedBox(height: 20),
+                const AuthOrDivider(),
+                const SizedBox(height: 20),
+                AuthTextField(
+                  controller: _nameController,
+                  hint: 'Uwera Maria',
+                  validator: (value) {
+                    if (value == null || value.isEmpty) return 'Name is required';
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 14),
+                AuthTextField(
+                  controller: _emailController,
+                  hint: 'you@example.com',
+                  keyboardType: TextInputType.emailAddress,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) return 'Email is required';
+                    if (!value.contains('@')) return 'Enter a valid email';
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 14),
+                AuthTextField(
+                  controller: _phoneController,
+                  hint: '+250 78 123 4567',
+                  keyboardType: TextInputType.phone,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) return 'Phone is required';
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 14),
+                AuthTextField(
+                  controller: _passwordController,
+                  hint: '••••••••',
+                  obscureText: _obscurePassword,
+                  suffix: IconButton(
+                    splashRadius: 20,
+                    icon: Icon(
+                      _obscurePassword ? Icons.visibility_off_outlined : Icons.visibility_outlined,
+                      color: AppColors.textSecondary,
+                      size: 22,
                     ),
+                    onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
                   ),
-                  const SizedBox(height: 6),
-                  const Text(
-                    'Join GarageGuru for reliable car repair services',
-                    style: TextStyle(fontSize: 13, color: AuthUi.textMuted, height: 1.4),
-                  ),
-                  const SizedBox(height: 12),
-                  const AuthSocialRow(),
-                  const SizedBox(height: 12),
-                  const AuthDivider(),
-                  const SizedBox(height: 12),
-                  AuthTextField(
-                    label: 'Full Name',
-                    placeholder: 'Full Name',
-                    controller: _nameController,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) return 'Name is required';
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 12),
-                  AuthTextField(
-                    label: 'Email address',
-                    placeholder: 'Email address',
-                    controller: _emailController,
-                    keyboardType: TextInputType.emailAddress,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) return 'Email is required';
-                      if (!value.contains('@')) return 'Enter a valid email';
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 12),
-                  AuthTextField(
-                    label: 'Phone number',
-                    placeholder: 'Phone number',
-                    controller: _phoneController,
-                    keyboardType: TextInputType.phone,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) return 'Phone is required';
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 12),
-                  AuthTextField(
-                    label: 'Password',
-                    placeholder: 'Password',
-                    controller: _passwordController,
-                    obscureText: _obscurePassword,
-                    suffix: IconButton(
-                      icon: Icon(
-                        _obscurePassword ? Icons.visibility_off_rounded : Icons.visibility_rounded,
-                        size: 20,
-                        color: const Color(0xFF7B8794),
-                      ),
-                      onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) return 'Password is required';
+                    if (value.length < 6) return 'Password must be at least 6 characters';
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 14),
+                AuthTextField(
+                  controller: _confirmPasswordController,
+                  hint: '••••••••',
+                  obscureText: _obscureConfirm,
+                  suffix: IconButton(
+                    splashRadius: 20,
+                    icon: Icon(
+                      _obscureConfirm ? Icons.visibility_off_outlined : Icons.visibility_outlined,
+                      color: AppColors.textSecondary,
+                      size: 22,
                     ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) return 'Password is required';
-                      if (value.length < 6) return 'Password must be at least 6 characters';
-                      return null;
-                    },
+                    onPressed: () => setState(() => _obscureConfirm = !_obscureConfirm),
                   ),
-                  const SizedBox(height: 12),
-                  AuthTextField(
-                    label: 'Confirm Password',
-                    placeholder: 'Confirm Password',
-                    controller: _confirmPasswordController,
-                    obscureText: _obscureConfirm,
-                    suffix: IconButton(
-                      icon: Icon(
-                        _obscureConfirm ? Icons.visibility_off_rounded : Icons.visibility_rounded,
-                        size: 20,
-                        color: const Color(0xFF7B8794),
-                      ),
-                      onPressed: () => setState(() => _obscureConfirm = !_obscureConfirm),
-                    ),
-                    validator: (value) {
-                      if (value != _passwordController.text) return 'Passwords don\'t match';
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 10),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Checkbox(
-                        value: _acceptedTerms,
-                        onChanged: (v) => setState(() => _acceptedTerms = v ?? false),
-                        activeColor: AuthUi.blue,
+                  validator: (value) {
+                    if (value != _passwordController.text) return 'Passwords don\'t match';
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 16),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(
+                      height: 24,
+                      width: 24,
+                      child: Checkbox(
+                        value: _agreedToTerms,
                         materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        side: const BorderSide(color: AuthTheme.fieldBorder, width: 1.5),
+                        fillColor: WidgetStateProperty.resolveWith((states) {
+                          if (states.contains(WidgetState.selected)) {
+                            return AuthTheme.primary;
+                          }
+                          return Colors.white;
+                        }),
+                        checkColor: Colors.white,
+                        onChanged: (v) => setState(() => _agreedToTerms = v ?? false),
                       ),
-                      const SizedBox(width: 6),
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.only(top: 10),
-                          child: Wrap(
-                            spacing: 4,
-                            runSpacing: 2,
-                            children: [
-                              const Text(
-                                'I agree to the ',
-                                style: TextStyle(fontSize: 12, color: AuthUi.textMuted, height: 1.35),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.only(top: 2),
+                        child: Wrap(
+                          crossAxisAlignment: WrapCrossAlignment.center,
+                          spacing: 0,
+                          runSpacing: 4,
+                          children: [
+                            Text(
+                              'I agree to the ',
+                              style: AppTextStyles.body.copyWith(
+                                color: AppColors.textSecondary,
+                                height: 1.4,
                               ),
-                              Text(
-                                'Terms of service',
-                                style: const TextStyle(
-                                  fontSize: 12,
-                                  color: AuthUi.blue,
+                            ),
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute<void>(
+                                    builder: (_) => const TermsOfServiceScreen(),
+                                  ),
+                                );
+                              },
+                              child: Text(
+                                'Terms of Service',
+                                style: AppTextStyles.body.copyWith(
+                                  color: AuthTheme.link,
                                   fontWeight: FontWeight.w600,
+                                  height: 1.4,
                                 ),
                               ),
-                              const Text(
-                                ' and ',
-                                style: TextStyle(fontSize: 12, color: AuthUi.textMuted, height: 1.35),
+                            ),
+                            Text(
+                              ' and ',
+                              style: AppTextStyles.body.copyWith(
+                                color: AppColors.textSecondary,
+                                height: 1.4,
                               ),
-                              Text(
+                            ),
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute<void>(
+                                    builder: (_) => const PrivacyPolicyScreen(),
+                                  ),
+                                );
+                              },
+                              child: Text(
                                 'Privacy Policy',
-                                style: const TextStyle(
-                                  fontSize: 12,
-                                  color: AuthUi.blue,
+                                style: AppTextStyles.body.copyWith(
+                                  color: AuthTheme.link,
                                   fontWeight: FontWeight.w600,
+                                  height: 1.4,
                                 ),
                               ),
-                            ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 20),
+                AuthPrimaryButton(
+                  label: 'Create account',
+                  isLoading: _isLoading,
+                  onPressed: _handleRegister,
+                ),
+                const SizedBox(height: 22),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      'Already have an account? ',
+                      style: AppTextStyles.body.copyWith(color: AppColors.textSecondary),
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute<void>(
+                            builder: (_) => const LoginScreen(),
                           ),
+                        );
+                      },
+                      child: Text(
+                        'Sign in',
+                        style: AppTextStyles.body.copyWith(
+                          color: AuthTheme.link,
+                          fontWeight: FontWeight.w700,
                         ),
                       ),
-                    ],
-                  ),
-                  const SizedBox(height: 6),
-                  AuthPrimaryButton(
-                    label: 'Create account',
-                    onPressed: _isLoading
-                        ? null
-                        : () {
-                            if (!_acceptedTerms) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(content: Text('Please accept the terms to continue.')),
-                              );
-                              return;
-                            }
-                            _handleRegister();
-                          },
-                    isLoading: _isLoading,
-                  ),
-                  const SizedBox(height: 10),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Text('Already have an account? ', style: TextStyle(color: AuthUi.textMuted)),
-                      TextButton(
-                        onPressed: () {
-                          Navigator.of(context).pushReplacement(
-                            MaterialPageRoute(builder: (_) => const LoginScreen()),
-                          );
-                        },
-                        style: TextButton.styleFrom(
-                          foregroundColor: AuthUi.blue,
-                          padding: EdgeInsets.zero,
-                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                          minimumSize: const Size(0, 0),
-                        ),
-                        child: const Text('Sign in'),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
+                    ),
+                  ],
+                ),
+              ],
             ),
           ),
         ),
       ),
+    );
+  }
+
+  Widget _rolePicker(BuildContext context) {
+    final subtitle = AuthTheme.subtitleStyle(context);
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Text('Registering as ', style: subtitle.copyWith(fontSize: 13)),
+        GestureDetector(
+          onTap: () => setState(() => _selectedRole = 'customer'),
+          child: Text(
+            'Customer',
+            style: subtitle.copyWith(
+              fontSize: 13,
+              fontWeight: _selectedRole == 'customer' ? FontWeight.w700 : FontWeight.w500,
+              color: _selectedRole == 'customer' ? AuthTheme.link : AuthTheme.subtitle,
+              decoration: _selectedRole == 'customer' ? TextDecoration.underline : null,
+            ),
+          ),
+        ),
+        Text('  ·  ', style: subtitle.copyWith(fontSize: 13)),
+        GestureDetector(
+          onTap: () => setState(() => _selectedRole = 'garage_owner'),
+          child: Text(
+            'Garage owner',
+            style: subtitle.copyWith(
+              fontSize: 13,
+              fontWeight: _selectedRole == 'garage_owner' ? FontWeight.w700 : FontWeight.w500,
+              color: _selectedRole == 'garage_owner' ? AuthTheme.link : AuthTheme.subtitle,
+              decoration: _selectedRole == 'garage_owner' ? TextDecoration.underline : null,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
