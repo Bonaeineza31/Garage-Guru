@@ -33,22 +33,60 @@ class ServiceCard extends StatelessWidget {
         ),
         child: Row(
           children: [
-            Container(
-              width: 50,
-              height: 50,
-              decoration: BoxDecoration(
-                gradient: isSelected
-                    ? AppColors.primaryGradient
-                    : null,
-                color: isSelected ? null : AppColors.background,
-                borderRadius: BorderRadius.circular(AppRadius.md),
-              ),
-              child: Icon(
-                _getServiceIcon(service.category),
-                color: isSelected ? Colors.white : AppColors.textSecondary,
-                size: 24,
-              ),
+            ServiceIcon(
+              category: service.category,
+              isSelected: isSelected,
             ),
+            /// Standalone widget for displaying a service icon with styling.
+            class ServiceIcon extends StatelessWidget {
+              final String category;
+              final bool isSelected;
+
+              const ServiceIcon({
+                super.key,
+                required this.category,
+                this.isSelected = false,
+              });
+
+              @override
+              Widget build(BuildContext context) {
+                return Container(
+                  width: 50,
+                  height: 50,
+                  decoration: BoxDecoration(
+                    gradient: isSelected ? AppColors.primaryGradient : null,
+                    color: isSelected ? null : AppColors.background,
+                    borderRadius: BorderRadius.circular(AppRadius.md),
+                  ),
+                  child: Icon(
+                    _getServiceIcon(category),
+                    color: isSelected ? Colors.white : AppColors.textSecondary,
+                    size: 24,
+                  ),
+                );
+              }
+
+              IconData _getServiceIcon(String category) {
+                switch (category.toLowerCase()) {
+                  case 'maintenance':
+                    return Icons.build_rounded;
+                  case 'brakes':
+                    return Icons.disc_full_rounded;
+                  case 'diagnostics':
+                    return Icons.computer_rounded;
+                  case 'tires':
+                    return Icons.tire_repair_rounded;
+                  case 'climate':
+                    return Icons.ac_unit_rounded;
+                  case 'electrical':
+                    return Icons.electrical_services_rounded;
+                  case 'drivetrain':
+                    return Icons.settings_rounded;
+                  default:
+                    return Icons.car_repair_rounded;
+                }
+              }
+            }
             const SizedBox(width: AppSpacing.md),
             Expanded(
               child: Column(
@@ -115,26 +153,7 @@ class ServiceCard extends StatelessWidget {
     );
   }
 
-  IconData _getServiceIcon(String category) {
-    switch (category.toLowerCase()) {
-      case 'maintenance':
-        return Icons.build_rounded;
-      case 'brakes':
-        return Icons.disc_full_rounded;
-      case 'diagnostics':
-        return Icons.computer_rounded;
-      case 'tires':
-        return Icons.tire_repair_rounded;
-      case 'climate':
-        return Icons.ac_unit_rounded;
-      case 'electrical':
-        return Icons.electrical_services_rounded;
-      case 'drivetrain':
-        return Icons.settings_rounded;
-      default:
-        return Icons.car_repair_rounded;
-    }
-  }
+  // ...existing code...
 }
 class ServiceTag extends StatelessWidget {
   final String name;
