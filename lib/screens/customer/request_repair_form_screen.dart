@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:garage_guru/theme/app_theme.dart';
 
-/// Customer "Request Repair" form (Figma: blue header, repair type, date/time, location, vehicle, issue).
+/// Lets the customer describe their repair need: type, date/time, location, vehicle, and issue.
 class RequestRepairFormScreen extends StatefulWidget {
   final String? initialRepairType;
 
