@@ -30,14 +30,16 @@ class ReviewCard extends StatelessWidget {
                   shape: BoxShape.circle,
                 ),
                 child: review.customerImageUrl != null
-                    ? ClipOval(
-                        child: Image.network(
-                          review.customerImageUrl!,
-                          width: 44,
-                          height: 44,
-                          fit: BoxFit.cover,
-                          errorBuilder: (_, __, ___) => Center(
-                            child: Text(
+                    ? Semantics(
+                        label: 'Customer profile image',
+                        child: ClipOval(
+                          child: Image.network(
+                            review.customerImageUrl!,
+                            width: 44,
+                            height: 44,
+                            fit: BoxFit.cover,
+                            errorBuilder: (_, __, ___) => Center(
+                              child: Text(
                               review.customerName[0].toUpperCase(),
                               style: AppTextStyles.subtitle.copyWith(color: Colors.white),
                             ),
