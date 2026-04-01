@@ -101,16 +101,11 @@ class _LoginScreenState extends State<LoginScreen> {
     try {
       final cred = await AuthService.signInWithGoogle();
       final user = cred.user;
-      // Additional code for handling Google sign-in
     } catch (e) {
-      // TODO: Handle Google sign-in errors more gracefully.
-      // Handle error
     } finally {
       setState(() => _isLoading = false);
     }
   }
-
-  // Additional methods and widget build function...
 
 }
 
