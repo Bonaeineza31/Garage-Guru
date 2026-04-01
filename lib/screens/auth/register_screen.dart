@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:garage_guru/screens/auth/auth_ui.dart';
 import 'package:garage_guru/screens/auth/login_screen.dart';
 import 'package:garage_guru/screens/customer/customer_shell.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -32,19 +33,43 @@ class _RegisterScreenState extends State<RegisterScreen> {
     super.dispose();
   }
 
-  void _handleRegister() {
+  Future<void> _handleRegister() async {
     if (!_formKey.currentState!.validate()) return;
     if (!_acceptedTerms) return;
     setState(() => _isLoading = true);
-
-    Future.delayed(const Duration(seconds: 1), () {
-      if (!mounted) return;
-      setState(() => _isLoading = false);
-      Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(builder: (_) => const CustomerShell()),
-        (route) => false,
+    try {
+      final credential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: _emailController.text.trim(),
+        password: _passwordController.text.trim(),
       );
-    });
+      await credential.user?.sendEmailVerification();
+      setState(() => _isLoading = false);
+      showDialog(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: const Text('Verify Your Email'),
+          content: const Text('A verification link has been sent to your email. Please verify before logging in.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(ctx).pop();
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(builder: (_) => const LoginScreen()),
+                );
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
+    } on FirebaseAuthException catch (e) {
+      setState(() => _isLoading = false);
+      String msg = 'Registration failed. Please try again.';
+      if (e.code == 'email-already-in-use') msg = 'Email already in use.';
+      if (e.code == 'invalid-email') msg = 'Invalid email address.';
+      if (e.code == 'weak-password') msg = 'Password is too weak.';
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg)));
+    }
   }
 
   @override
