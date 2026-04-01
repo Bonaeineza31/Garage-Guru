@@ -1,14 +1,9 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
-import 'package:garage_guru/core/auth/auth_service.dart';
-import 'package:garage_guru/core/theme/app_theme.dart';
-import 'package:garage_guru/widgets/widgets.dart';
 import 'package:garage_guru/screens/customer/my_vehicles_screen.dart';
 import 'package:garage_guru/screens/customer/notifications_screen.dart';
 import 'package:garage_guru/screens/customer/edit_profile_screen.dart';
 import 'package:garage_guru/screens/customer/account_settings_screen.dart';
 
+<<<<<<< HEAD
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
 
@@ -141,6 +136,60 @@ class ProfileScreen extends StatelessWidget {
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1),
           child: Container(color: AppColors.divider, height: 1),
+=======
+class ProfileScreen extends StatefulWidget {
+  const ProfileScreen({super.key});
+
+  @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+  String _displayName = '';
+  String _email = '';
+  String? _photoUrl;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUser();
+  }
+
+  Future<void> _loadUser() async {
+    final firebaseUser = FirebaseAuth.instance.currentUser;
+    if (firebaseUser == null) return;
+
+    String name = firebaseUser.displayName ?? '';
+    if (name.isEmpty) {
+      final doc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(firebaseUser.uid)
+          .get();
+      name = doc.data()?['name'] ?? firebaseUser.email?.split('@').first ?? 'User';
+    }
+
+    if (mounted) {
+      setState(() {
+        _displayName = name;
+        _email = firebaseUser.email ?? '';
+        _photoUrl = firebaseUser.photoURL;
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final displayName = _displayName.isEmpty ? '...' : _displayName;
+    final email = _email;
+    final photoUrl = _photoUrl;
+
+    return Scaffold(
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(80),
+          child: SafeArea(
+          child: CustomerHeader(showSearch: false),
+>>>>>>> 4022811fcd9f3b11667f026fa510b591aedd21d2
         ),
       ),
       body: SingleChildScrollView(
@@ -159,12 +208,18 @@ class ProfileScreen extends StatelessWidget {
                     children: [
                       Container(
                         padding: const EdgeInsets.all(4),
+<<<<<<< HEAD
                         decoration: const BoxDecoration(
                           color: Colors.white,
+=======
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).cardColor,
+>>>>>>> 4022811fcd9f3b11667f026fa510b591aedd21d2
                           shape: BoxShape.circle,
                         ),
                         child: CircleAvatar(
                           radius: 50,
+<<<<<<< HEAD
                           backgroundImage: NetworkImage(
                             photoUrl ?? 'https://i.pravatar.cc/150?img=1',
                           ),
@@ -178,12 +233,33 @@ class ProfileScreen extends StatelessWidget {
                           boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 4)],
                         ),
                         child: Icon(Icons.camera_alt_outlined, color: AppColors.primary, size: 20),
+=======
+                          backgroundImage: photoUrl != null ? NetworkImage(photoUrl) : const NetworkImage('https://i.pravatar.cc/150?img=1'),
+                        ),
+                      ),
+                      Positioned(
+                        bottom: 0,
+                        right: 0,
+                        child: Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: Theme.of(context).cardColor,
+                            shape: BoxShape.circle,
+                            boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 4)],
+                          ),
+                          child: const Icon(Icons.camera_alt_outlined, color: AppColors.primary, size: 20),
+                        ),
+>>>>>>> 4022811fcd9f3b11667f026fa510b591aedd21d2
                       ),
                     ],
                   ),
                   const SizedBox(height: AppSpacing.md),
                   Text(
+<<<<<<< HEAD
                     fullName,
+=======
+                    displayName,
+>>>>>>> 4022811fcd9f3b11667f026fa510b591aedd21d2
                     style: AppTextStyles.heading2.copyWith(color: Colors.white),
                   ),
                   const SizedBox(height: 4),
@@ -195,7 +271,11 @@ class ProfileScreen extends StatelessWidget {
                   GestureDetector(
                     onTap: () {
                       Navigator.of(context).push(
+<<<<<<< HEAD
                         MaterialPageRoute(builder: (_) => const EditProfileScreen()),
+=======
+                        MaterialPageRoute(builder: (_) => EditProfileScreen()),
+>>>>>>> 4022811fcd9f3b11667f026fa510b591aedd21d2
                       );
                     },
                     child: Container(
@@ -212,7 +292,11 @@ class ProfileScreen extends StatelessWidget {
                           const SizedBox(width: 4),
                           Text(
                             'Edit Profile',
+<<<<<<< HEAD
                             style: AppTextStyles.caption.copyWith(color: Colors.white, fontWeight: FontWeight.w600),
+=======
+                            style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600, fontSize: 11),
+>>>>>>> 4022811fcd9f3b11667f026fa510b591aedd21d2
                           ),
                         ],
                       ),
@@ -227,7 +311,11 @@ class ProfileScreen extends StatelessWidget {
               title: 'My Vehicles',
               onTap: () {
                 Navigator.of(context).push(
+<<<<<<< HEAD
                   MaterialPageRoute(builder: (_) => const MyVehiclesScreen()),
+=======
+                  MaterialPageRoute(builder: (_) => MyVehiclesScreen()),
+>>>>>>> 4022811fcd9f3b11667f026fa510b591aedd21d2
                 );
               },
             ),
@@ -236,7 +324,11 @@ class ProfileScreen extends StatelessWidget {
               title: 'Notifications',
               onTap: () {
                 Navigator.of(context).push(
+<<<<<<< HEAD
                   MaterialPageRoute(builder: (_) => const NotificationsScreen()),
+=======
+                  MaterialPageRoute(builder: (_) => NotificationsScreen()),
+>>>>>>> 4022811fcd9f3b11667f026fa510b591aedd21d2
                 );
               },
             ),
@@ -245,7 +337,11 @@ class ProfileScreen extends StatelessWidget {
               title: 'Account Settings',
               onTap: () {
                 Navigator.of(context).push(
+<<<<<<< HEAD
                   MaterialPageRoute(builder: (_) => const AccountSettingsScreen()),
+=======
+                  MaterialPageRoute(builder: (_) => AccountSettingsScreen()),
+>>>>>>> 4022811fcd9f3b11667f026fa510b591aedd21d2
                 );
               },
             ),
@@ -256,10 +352,21 @@ class ProfileScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+<<<<<<< HEAD
                   Text('App Information', style: AppTextStyles.subtitle.copyWith(fontWeight: FontWeight.bold)),
                   const SizedBox(height: 8),
                   Text('Version: 1.0.0', style: AppTextStyles.bodySmall.copyWith(color: AppColors.textSecondary)),
+<<<<<<< HEAD
                   Text('\u00a9 2026 GarageGuru', style: AppTextStyles.bodySmall.copyWith(color: AppColors.textSecondary)),
+=======
+                  Text('© 2026 GarageGuru', style: AppTextStyles.bodySmall.copyWith(color: AppColors.textSecondary)),
+=======
+                  Text('App Information', style: Theme.of(context).textTheme.titleLarge),
+                  const SizedBox(height: 8),
+                  Text('Version: 1.0.0', style: Theme.of(context).textTheme.bodySmall),
+                  Text('© 2026 GarageGuru', style: Theme.of(context).textTheme.bodySmall),
+>>>>>>> 4022811fcd9f3b11667f026fa510b591aedd21d2
+>>>>>>> d15190b (refactor(customer): migrate remaining customer screens to new theme system)
                 ],
               ),
             ),
@@ -267,8 +374,16 @@ class ProfileScreen extends StatelessWidget {
           ],
         ),
       ),
+<<<<<<< HEAD
       );
     },
+=======
+<<<<<<< HEAD
+        );
+      },
+=======
+>>>>>>> 4022811fcd9f3b11667f026fa510b591aedd21d2
+>>>>>>> d15190b (refactor(customer): migrate remaining customer screens to new theme system)
     );
   }
 
@@ -276,17 +391,22 @@ class ProfileScreen extends StatelessWidget {
     return ListTile(
       onTap: onTap,
       leading: Icon(icon, color: AppColors.primary),
+<<<<<<< HEAD
       title: Text(title, style: AppTextStyles.body.copyWith(fontWeight: FontWeight.w500)),
       trailing: const Icon(Icons.chevron_right, color: AppColors.textSecondary, size: 20),
       contentPadding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
       shape: const Border(bottom: BorderSide(color: Color(0xFFEEEEEE), width: 1)),
+=======
+      title: Text(title, style: Theme.of(context).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w500)),
+      trailing: Icon(Icons.chevron_right, color: Theme.of(context).hintColor, size: 20),
+      contentPadding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
+      shape: Border(bottom: BorderSide(color: Theme.of(context).dividerColor, width: 1)),
+>>>>>>> 4022811fcd9f3b11667f026fa510b591aedd21d2
     );
   }
 
   Widget _buildLogoutItem(BuildContext context) {
     return ListTile(
-      onTap: () async {
-        await AuthService.signOut();
       },
       leading: const Icon(Icons.logout_rounded, color: Colors.redAccent),
       title: Text('Logout', style: AppTextStyles.body.copyWith(color: Colors.redAccent, fontWeight: FontWeight.w500)),

@@ -1,8 +1,5 @@
 
 import 'package:flutter/material.dart';
-import 'package:garage_guru/core/auth/auth_service.dart';
-import 'package:garage_guru/core/theme/app_theme.dart';
-import 'package:garage_guru/widgets/widgets.dart';
 
 class AccountSettingsScreen extends StatefulWidget {
   const AccountSettingsScreen({super.key});
@@ -164,14 +161,11 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
                 MaterialPageRoute(builder: (_) => NotificationsScreen()),
               ),
             ),
-            _buildToggleItem(
-              icon: Icons.dark_mode_outlined,
               title: 'Dark Mode',
               value: themeProvider.isDarkMode,
               onChanged: (v) {
                 themeProvider.toggleTheme(v);
               },
-            ),
             _buildToggleItem(
               icon: Icons.email_outlined,
               title: 'Email Notifications',
@@ -238,9 +232,17 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
                           child: const Text('Cancel'),
                         ),
                         TextButton(
+<<<<<<< HEAD
                           onPressed: () async {
                             Navigator.pop(ctx);
                             await AuthService.signOut();
+=======
+                          onPressed: () {
+                            Navigator.of(context).pushAndRemoveUntil(
+                              MaterialPageRoute(builder: (_) => LoginScreen()),
+                              (route) => false,
+                            );
+>>>>>>> 4022811fcd9f3b11667f026fa510b591aedd21d2
                           },
                           },
                           child: Text('Log Out', style: TextStyle(color: AppColors.error)),
