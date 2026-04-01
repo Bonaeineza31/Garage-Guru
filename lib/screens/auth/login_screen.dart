@@ -1,3 +1,9 @@
+<<<<<<< HEAD
+=======
+// TODO: Add password strength validation for login.
+/// Login screen for GarageGuru.
+/// Handles user authentication and email verification logic.
+>>>>>>> bede56d (docs(login): add TODO for password strength validation)
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -21,6 +27,7 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+    // TODO: Improve error handling for Google sign-in.
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
@@ -35,6 +42,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future<void> _handleLogin() async {
+      // Email verification logic: block access if not verified.
     if (!_formKey.currentState!.validate()) return;
     setState(() => _isLoading = true);
     try {
@@ -73,6 +81,8 @@ class _LoginScreenState extends State<LoginScreen> {
         MaterialPageRoute(builder: (_) => const CustomerShell()),
       );
     } on FirebaseAuthException catch (e) {
+      // Debug print for login failures
+      debugPrint('Login failed: \\${e.code} - \\${e.message}');
       setState(() => _isLoading = false);
       String msg = 'Login failed. Please try again.';
       if (e.code == 'user-not-found') msg = 'No user found for that email.';
@@ -96,6 +106,7 @@ class _LoginScreenState extends State<LoginScreen> {
       final user = cred.user;
       // Additional code for handling Google sign-in
     } catch (e) {
+      // TODO: Handle Google sign-in errors more gracefully.
       // Handle error
     } finally {
       setState(() => _isLoading = false);
